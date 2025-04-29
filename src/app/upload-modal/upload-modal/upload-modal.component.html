@@ -1,0 +1,152 @@
+<div
+  *ngIf="isOpen"
+  class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-4"
+>
+  <div
+    class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col"
+  >
+    <!-- Modal Header -->
+    <div class="p-4 border-b">
+      <div class="flex justify-between items-center">
+        <h3 class="text-xl font-semibold text-gray-800">
+          Upload Markdown File
+        </h3>
+        <button
+          (click)="closeModal()"
+          class="text-gray-500 hover:text-gray-700"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="p-6 overflow-y-auto flex-grow">
+      <div
+        *ngIf="error"
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"
+      >
+        {{ error }}
+      </div>
+
+      <div *ngIf="isLoading" class="text-center py-8">
+        <div
+          class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-700 mx-auto"
+        ></div>
+        <p class="mt-2 text-gray-600">Processing file...</p>
+      </div>
+
+      <!-- File Upload Area -->
+      <div
+        *ngIf="!selectedFile && !isLoading"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+        class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center cursor-pointer hover:border-indigo-500 transition-colors"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-12 w-12 mx-auto text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+          />
+        </svg>
+
+        <p class="mt-4 text-lg font-medium text-gray-700">
+          Drop your Markdown file here
+        </p>
+        <p class="mt-2 text-sm text-gray-500">or</p>
+
+        <label
+          class="mt-4 inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 cursor-pointer"
+        >
+          <span>Browse Files</span>
+          <input
+            type="file"
+            class="hidden"
+            accept=".md"
+            (change)="onFileSelected($event)"
+          />
+        </label>
+
+        <p class="mt-4 text-xs text-gray-500">Only .md files are supported</p>
+      </div>
+
+      <!-- File Preview -->
+      <div *ngIf="selectedFile && fileContent" class="mt-4">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-medium text-gray-800">
+              {{ selectedFile.name }}
+            </h3>
+            <p class="text-sm text-gray-500">
+              {{ selectedFile.size | number }} bytes
+            </p>
+          </div>
+
+          <button
+            type="button"
+            (click)="togglePreview()"
+            class="px-3 py-1 text-sm text-indigo-600 hover:text-indigo-800"
+          >
+            {{ isPreview ? "Show Raw" : "Preview" }}
+          </button>
+        </div>
+
+        <!-- Content Preview -->
+        <div
+          *ngIf="!isPreview"
+          class="border rounded-md p-4 bg-gray-50 font-mono text-sm overflow-auto max-h-96"
+        >
+          {{ fileContent }}
+        </div>
+
+        <!-- Markdown Preview -->
+        <div
+          *ngIf="isPreview"
+          class="border rounded-md p-4 bg-gray-50 overflow-auto max-h-96"
+        >
+          <markdown [data]="fileContent"></markdown>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="border-t p-4 flex justify-end space-x-3">
+      <button
+        (click)="closeModal()"
+        class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        Cancel
+      </button>
+      <button
+        *ngIf="selectedFile && fileContent"
+        (click)="uploadFile()"
+        [disabled]="isLoading"
+        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+      >
+        {{ isLoading ? "Uploading..." : "Upload File" }}
+      </button>
+    </div>
+  </div>
+</div>

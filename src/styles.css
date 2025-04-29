@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-50 text-gray-900;
+}
+
+/* Custom styling for markdown content */
+markdown {
+  @apply text-gray-800;
+}
+
+markdown h1 {
+  @apply text-3xl font-bold mt-6 mb-4;
+}
+
+markdown h2 {
+  @apply text-2xl font-bold mt-5 mb-3;
+}
+
+markdown h3 {
+  @apply text-xl font-bold mt-4 mb-2;
+}
+
+markdown h4 {
+  @apply text-lg font-bold mt-3 mb-1;
+}
+
+markdown p {
+  @apply my-3;
+}
+
+markdown ul,
+markdown ol {
+  @apply my-3 ml-6;
+}
+
+markdown ul {
+  @apply list-disc;
+}
+
+markdown ol {
+  @apply list-decimal;
+}
+
+markdown a {
+  @apply text-indigo-600 hover:text-indigo-800 underline;
+}
+
+markdown blockquote {
+  @apply border-l-4 border-gray-300 pl-4 italic my-4 text-gray-600;
+}
+
+markdown pre {
+  @apply bg-gray-800 text-white p-4 rounded my-4 overflow-x-auto;
+}
+
+markdown code:not(pre code) {
+  @apply bg-gray-100 px-1 py-0.5 rounded text-sm;
+}
+
+markdown table {
+  @apply w-full border-collapse my-4;
+}
+
+markdown th {
+  @apply bg-gray-100 border border-gray-300 px-4 py-2 text-left;
+}
+
+markdown td {
+  @apply border border-gray-300 px-4 py-2;
+}
+
+markdown img {
+  @apply max-w-full h-auto mx-auto my-4;
+}
+
+markdown hr {
+  @apply my-6 border-t border-gray-300;
+}
+
+/* Tailwind config for form elements */
+@layer components {
+  .form-input {
+    @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500;
+  }
+
+  .btn {
+    @apply px-4 py-2 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500;
+  }
+
+  .btn-secondary {
+    @apply bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-indigo-500;
+  }
+}

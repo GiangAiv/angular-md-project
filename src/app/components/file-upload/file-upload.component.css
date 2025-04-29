@@ -1,0 +1,8 @@
+.dragarea {
+  transition: all 0.3s ease;
+}
+
+.dragover {
+  background-color: rgba(99, 102, 241, 0.05);
+  border-color: rgba(99, 102, 241, 0.5);
+}
