@@ -72,7 +72,12 @@
       </div>
 
       <div class="border-t pt-4">
-        <markdown [data]="file.content"></markdown>
+        <div class="border-t pt-4">
+          <!-- Use app-md-renderer with parsedContent instead of app-markdown-renderer -->
+          <app-md-renderer
+            [parsedContent]="parsedMarkdownContent"
+          ></app-md-renderer>
+        </div>
       </div>
 
       <div class="flex justify-between mt-6 pt-4 border-t">

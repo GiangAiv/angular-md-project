@@ -13,6 +13,9 @@ import { MarkdownFormComponent } from './components/markdown-form/markdown-form.
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { UploadModalComponent } from './upload-modal/upload-modal/upload-modal.component';
 import { MarkdownListComponent } from './components/markdown-list/markdown-list.component';
+import { MarkdownRenderModule } from './components/markdown/markdown.module';
+import { DashboardModule } from './components/dashboard/dashboard.module';
+import { MarkdownModule } from 'ngx-markdown';
 
 @NgModule({
   declarations: [
@@ -31,6 +34,9 @@ import { MarkdownListComponent } from './components/markdown-list/markdown-list.
     ReactiveFormsModule,
     HttpClientModule,
     CoreModule,
+    MarkdownRenderModule,
+    DashboardModule,
+    MarkdownModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent],

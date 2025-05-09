@@ -1,0 +1,22 @@
+<div class="chart-container border rounded-md p-4 bg-white shadow-sm">
+  <h3 *ngIf="props?.title" class="text-lg font-semibold mb-3">
+    {{ props.title }}
+  </h3>
+  <div class="chart-canvas">
+    <!-- In a real implementation, you would use a charting library like Chart.js or ngx-charts -->
+    <div class="flex items-end h-40 space-x-2">
+      <div
+        *ngFor="let value of props?.data; let i = index"
+        class="bg-blue-500 w-8"
+        [style.height.%]="getBarHeight(value)"
+        [title]="props?.labels?.[i] + ': ' + value"
+      ></div>
+    </div>
+
+    <div *ngIf="props?.labels" class="flex mt-2 space-x-2">
+      <div *ngFor="let label of props.labels" class="w-8 text-center text-xs">
+        {{ label }}
+      </div>
+    </div>
+  </div>
+</div>

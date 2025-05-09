@@ -1,0 +1,6 @@
+<div class="area-chart-container">
+  <div class="chart-header" *ngIf="props.downloadableImage">
+    <button (click)="downloadImage()" class="download-btn">Download Chart</button>
+  </div>
+  <canvas #chartCanvas></canvas>
+</div> 
