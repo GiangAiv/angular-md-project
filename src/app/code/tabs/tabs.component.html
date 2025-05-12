@@ -1,0 +1,22 @@
+<div class="tabs-container">
+  <div class="tabs-header flex border-b border-base-300">
+    <ng-container *ngFor="let tab of tabs">
+      <button
+        class="tab-button px-4 py-2 text-sm font-medium"
+        [ngClass]="{
+          'active': tab.active,
+          'text-base-content': tab.active,
+          'border-b-2': tab.active,
+          'border-primary': tab.active,
+          'text-base-content/70': !tab.active
+        }"
+        (click)="selectTab(tab)"
+      >
+        {{ tab.title }}
+      </button>
+    </ng-container>
+  </div>
+  <div class="tabs-content p-4">
+    <ng-content></ng-content>
+  </div>
+</div> 

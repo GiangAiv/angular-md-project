@@ -1,22 +1,9 @@
-<div class="min-h-screen bg-gray-50">
-  <header class="bg-indigo-600 shadow-md">
-    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-      <h1 class="text-3xl font-bold text-white">{{ title }}</h1>
-    </div>
-  </header>
-
-  <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <router-outlet></router-outlet>
-  </main>
-
-  <footer class="bg-gray-100 border-t">
-    <div
-      class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-gray-500"
-    >
-      <p>
-        © {{ currentYear }} Markdown Editor. Built with Angular and Tailwind
-        CSS.
-      </p>
-    </div>
-  </footer>
-</div>
+<ng-doc-root>
+  <ng-doc-navbar [leftContent]="leftContent">
+    <ng-template #leftContent>
+      <h3 style="margin: 0" >MyAwesomeDoc</h3>
+    </ng-template>
+  </ng-doc-navbar>
+  <ng-doc-sidebar></ng-doc-sidebar>
+  <router-outlet></router-outlet>
+</ng-doc-root>

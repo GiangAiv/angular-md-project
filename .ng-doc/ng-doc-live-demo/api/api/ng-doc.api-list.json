@@ -1,0 +1,77 @@
+[
+  {
+    "title": "my-lib",
+    "items": [
+      {
+        "route": "my-lib/classes/AccordionItemComponent",
+        "type": "Component",
+        "name": "AccordionItemComponent"
+      },
+      {
+        "route": "my-lib/classes/AccordionComponent",
+        "type": "Component",
+        "name": "AccordionComponent"
+      },
+      {
+        "route": "my-lib/classes/AlertComponent",
+        "type": "Component",
+        "name": "AlertComponent"
+      },
+      {
+        "route": "my-lib/type-aliases/AreaChartType",
+        "type": "TypeAlias",
+        "name": "AreaChartType"
+      },
+      {
+        "route": "my-lib/type-aliases/StepPosition",
+        "type": "TypeAlias",
+        "name": "StepPosition"
+      },
+      {
+        "route": "my-lib/type-aliases/HandleMissing",
+        "type": "TypeAlias",
+        "name": "HandleMissing"
+      },
+      {
+        "route": "my-lib/classes/AreaChartComponent",
+        "type": "Component",
+        "name": "AreaChartComponent"
+      },
+      {
+        "route": "my-lib/classes/BarChartComponent",
+        "type": "Component",
+        "name": "BarChartComponent"
+      },
+      {
+        "route": "my-lib/classes/BubbleChartComponent",
+        "type": "Component",
+        "name": "BubbleChartComponent"
+      },
+      {
+        "route": "my-lib/classes/TableColumnComponent",
+        "type": "Component",
+        "name": "TableColumnComponent"
+      },
+      {
+        "route": "my-lib/classes/DataTableComponent",
+        "type": "Component",
+        "name": "DataTableComponent"
+      },
+      {
+        "route": "my-lib/classes/ModalComponent",
+        "type": "Component",
+        "name": "ModalComponent"
+      },
+      {
+        "route": "my-lib/classes/TabComponent",
+        "type": "Component",
+        "name": "TabComponent"
+      },
+      {
+        "route": "my-lib/classes/TabsComponent",
+        "type": "Component",
+        "name": "TabsComponent"
+      }
+    ]
+  }
+]

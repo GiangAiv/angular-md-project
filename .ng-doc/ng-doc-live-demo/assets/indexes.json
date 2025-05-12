@@ -1,0 +1,1862 @@
+[
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Area Chart",
+    "route": "/chart-components/area-chart",
+    "fragment": "area-chart",
+    "content": "The Area Chart component is a versatile visualization tool that displays data as a filled area between the x-axis and the line connecting data points. It's perfect for showing trends and cumulative values over time."
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Importing",
+    "route": "/chart-components/area-chart",
+    "fragment": "importing",
+    "content": "Component can be imported from the root of my-lib"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Importing",
+    "route": "/chart-components/area-chart",
+    "fragment": "importing",
+    "content": "To use the AreaChartComponent in your project, you need to import it from our library:"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Basic Usage",
+    "route": "/chart-components/area-chart",
+    "fragment": "basic-usage",
+    "content": "To create an area chart using our library, you can use the following code:"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Chart Types",
+    "route": "/chart-components/area-chart",
+    "fragment": "chart-types",
+    "content": "The component supports different chart types: area: Standard area chartstacked: Stacked area chartstacked100: 100% stacked area chartstepped: Stepped area chart"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Styling",
+    "route": "/chart-components/area-chart",
+    "fragment": "styling",
+    "content": "You can customize the appearance using various properties:"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "Property Type Default Description"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "data any[] [] Array of data points"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "x string '' Field name for x-axis values"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "y string '' Field name for y-axis values"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "series string '' Field name for series grouping"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "chartType 'area' | 'stacked' | 'stacked100' | 'stepped' 'area' Type of area chart"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "title string '' Chart title"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "fillColor string undefined Color for area fill"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "lineColor string undefined Color for line"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "line boolean true Show line"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "markers boolean false Show data point markers"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "markerShape string 'circle' Shape of markers"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "markerSize number 3 Size of markers"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "handleMissing 'gap' | 'zero' | 'connect' 'gap' How to handle missing data"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "step boolean false Use stepped lines"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "stepPosition 'start' | 'middle' | 'end' 'middle' Position of steps"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "showLabels boolean true Show data labels"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "labelSize number 12 Size of labels"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "labelPosition 'top' | 'bottom' | 'middle' 'top' Position of labels"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Area Chart"
+    ],
+    "pageType": "guide",
+    "title": "Area Chart",
+    "section": "Properties",
+    "route": "/chart-components/area-chart",
+    "fragment": "properties",
+    "content": "downloadableImage boolean false Enable image download"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Bar Chart",
+    "route": "/chart-components/bar-chart",
+    "fragment": "bar-chart",
+    "content": "The Bar Chart component is a versatile visualization tool that displays data using rectangular bars with lengths proportional to the values they represent. It's ideal for comparing quantities across different categories and showing trends over time."
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Importing",
+    "route": "/chart-components/bar-chart",
+    "fragment": "importing",
+    "content": "Component can be imported from the root of my-lib"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Importing",
+    "route": "/chart-components/bar-chart",
+    "fragment": "importing",
+    "content": "To use the BarChartComponent in your project, you need to import it from our library:"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Basic Usage",
+    "route": "/chart-components/bar-chart",
+    "fragment": "basic-usage",
+    "content": "To create a bar chart using our library, you can use the following code:"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Chart Types",
+    "route": "/chart-components/bar-chart",
+    "fragment": "chart-types",
+    "content": "The component supports different chart types: bar: Standard vertical bar charthorizontalBar: Horizontal bar chartstackedBar: Stacked bar chartstackedHorizontalBar: Stacked horizontal bar chart"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Styling",
+    "route": "/chart-components/bar-chart",
+    "fragment": "styling",
+    "content": "You can customize the appearance using various properties:"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Features",
+    "route": "/chart-components/bar-chart",
+    "fragment": "features",
+    "content": "The component supports various features: Multiple chart types (vertical, horizontal, stacked)Custom bar colors and bordersAxis customizationInteractive tooltipsImage downloadCurrency formattingGrid lines and labelsLegend display"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "Property Type Default Description"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "data any[] [] Array of data points"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "x string 'region' Field name for x-axis values"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "y string 'revenue' Field name for y-axis values"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "type string 'bar' Type of bar chart"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "title string '' Chart title"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "barColor string '#0070f3' Color for bars"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "borderColor string '#0070f3' Color for bar borders"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "showLegend boolean true Show chart legend"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "yFmt string '' Format string for y-axis values"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "yAxisTitle string '' Title for y-axis"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "xAxisTitle string '' Title for x-axis"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "chartAreaHeight number 300 Height of chart area in pixels"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "labels boolean true Show data labels"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "xGridlines boolean true Show x-axis gridlines"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "yGridlines boolean true Show y-axis gridlines"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bar Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bar Chart",
+    "section": "Properties",
+    "route": "/chart-components/bar-chart",
+    "fragment": "properties",
+    "content": "downloadableImage boolean false Enable image download"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Bubble Chart",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "bubble-chart",
+    "content": "The Bubble Chart component is a powerful visualization tool that displays three dimensions of data using x and y coordinates and bubble size. It's perfect for showing relationships between three variables and identifying patterns or clusters in your data."
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Importing",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "importing",
+    "content": "Component can be imported from the root of my-lib"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Importing",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "importing",
+    "content": "To use the BubbleChartComponent in your project, you need to import it from our library:"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Basic Usage",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "basic-usage",
+    "content": "To create a bubble chart using our library, you can use the following code:"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Features",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "features",
+    "content": "The component supports various features: Multiple series with different colorsLogarithmic or linear scalesCustom bubble stylingAxis customizationInteractive tooltipsImage download"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Styling",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "styling",
+    "content": "You can customize the appearance using various properties:"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "Property Type Default Description"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "data any[] [] Array of data points"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "x string undefined Field name for x-axis values"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "y string undefined Field name for y-axis values"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "r string undefined Field name for bubble radius"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "series string undefined Field name for series grouping"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "xType string undefined Type of x-axis data"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "yType string undefined Type of y-axis data"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "xLog boolean false Use logarithmic scale for x-axis"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "yLog boolean false Use logarithmic scale for y-axis"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "title string undefined Chart title"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "subtitle string undefined Chart subtitle"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "legend boolean true Show legend"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "xAxisTitle string undefined Title for x-axis"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "yAxisTitle string undefined Title for y-axis"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "xGridlines boolean true Show x-axis gridlines"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "yGridlines boolean true Show y-axis gridlines"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "bubbleOpacity number 0.5 Opacity of bubbles"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "bubbleBorderWidth number 1 Width of bubble borders"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "bubbleBorderColor string undefined Color of bubble borders"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "bubbleHoverRadius number 8 Radius of bubbles on hover"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "bubbleHoverBorderWidth number 2 Width of bubble borders on hover"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "chartAreaHeight number 400 Height of chart area in pixels"
+  },
+  {
+    "breadcrumbs": [
+      "Chart Components",
+      "Bubble Chart"
+    ],
+    "pageType": "guide",
+    "title": "Bubble Chart",
+    "section": "Properties",
+    "route": "/chart-components/bubble-chart",
+    "fragment": "properties",
+    "content": "downloadableImage boolean false Enable image download"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "DataTable",
+    "route": "/data-components/data-table",
+    "fragment": "datatable",
+    "content": "The DataTable component is a powerful and flexible table component that provides features like sorting, pagination, custom styling, and more. It's built with Tailwind CSS for a modern and responsive design."
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Importing",
+    "route": "/data-components/data-table",
+    "fragment": "importing",
+    "content": "Component can be imported from the root of my-lib"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Importing",
+    "route": "/data-components/data-table",
+    "fragment": "importing",
+    "content": "To use the DataTableComponent in your project, you need to import it from our library:"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Basic Usage",
+    "route": "/data-components/data-table",
+    "fragment": "basic-usage",
+    "content": "To create a basic table using our library, you can use the following code:"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Features",
+    "route": "/data-components/data-table",
+    "fragment": "features",
+    "content": "The component supports various features: Sortable columnsPaginationCustom cell templatesDownloadable dataFullscreen modeCustom stylingResponsive designRow stripingSticky headers"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Sorting",
+    "route": "/data-components/data-table",
+    "fragment": "sorting",
+    "content": "Enable sorting on columns by setting the sortable property:"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Pagination",
+    "route": "/data-components/data-table",
+    "fragment": "pagination",
+    "content": "Add pagination to your table:"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Custom Styling",
+    "route": "/data-components/data-table",
+    "fragment": "custom-styling",
+    "content": "Customize the appearance of your table using Tailwind CSS classes:"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Properties",
+    "route": "/data-components/data-table",
+    "fragment": "properties",
+    "content": "Property Type Default Description"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Properties",
+    "route": "/data-components/data-table",
+    "fragment": "properties",
+    "content": "title string undefined Table title"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Properties",
+    "route": "/data-components/data-table",
+    "fragment": "properties",
+    "content": "columns any[] [] Array of column definitions"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Properties",
+    "route": "/data-components/data-table",
+    "fragment": "properties",
+    "content": "data any[] [] Array of data objects"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Properties",
+    "route": "/data-components/data-table",
+    "fragment": "properties",
+    "content": "downloadable boolean false Enable data download"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Properties",
+    "route": "/data-components/data-table",
+    "fragment": "properties",
+    "content": "fullscreen boolean false Enable fullscreen mode"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Properties",
+    "route": "/data-components/data-table",
+    "fragment": "properties",
+    "content": "showFooter boolean true Show pagination footer"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Properties",
+    "route": "/data-components/data-table",
+    "fragment": "properties",
+    "content": "currentPage number 1 Current page number"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Properties",
+    "route": "/data-components/data-table",
+    "fragment": "properties",
+    "content": "pageSize number 10 Number of items per page"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Properties",
+    "route": "/data-components/data-table",
+    "fragment": "properties",
+    "content": "totalItems number 0 Total number of items"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Column Properties",
+    "route": "/data-components/data-table",
+    "fragment": "column-properties",
+    "content": "Property Type Default Description"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Column Properties",
+    "route": "/data-components/data-table",
+    "fragment": "column-properties",
+    "content": "key string required Field name in data object"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Column Properties",
+    "route": "/data-components/data-table",
+    "fragment": "column-properties",
+    "content": "label string required Column header text"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Column Properties",
+    "route": "/data-components/data-table",
+    "fragment": "column-properties",
+    "content": "width string undefined Column width"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Column Properties",
+    "route": "/data-components/data-table",
+    "fragment": "column-properties",
+    "content": "minWidth string undefined Minimum column width"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Column Properties",
+    "route": "/data-components/data-table",
+    "fragment": "column-properties",
+    "content": "sortable boolean false Enable column sorting"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Column Properties",
+    "route": "/data-components/data-table",
+    "fragment": "column-properties",
+    "content": "headerClass string undefined Custom header classes"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Column Properties",
+    "route": "/data-components/data-table",
+    "fragment": "column-properties",
+    "content": "cellClass string undefined Custom cell classes"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Column Properties",
+    "route": "/data-components/data-table",
+    "fragment": "column-properties",
+    "content": "template TemplateRef undefined Custom cell template"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Events",
+    "route": "/data-components/data-table",
+    "fragment": "events",
+    "content": "Event Type Description"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Events",
+    "route": "/data-components/data-table",
+    "fragment": "events",
+    "content": "onDownload void Emitted when download button is clicked"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Events",
+    "route": "/data-components/data-table",
+    "fragment": "events",
+    "content": "onFullscreen void Emitted when fullscreen button is clicked"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Events",
+    "route": "/data-components/data-table",
+    "fragment": "events",
+    "content": "onSort any Emitted when column is sorted"
+  },
+  {
+    "breadcrumbs": [
+      "Data Components",
+      "DataTable"
+    ],
+    "pageType": "guide",
+    "title": "DataTable",
+    "section": "Events",
+    "route": "/data-components/data-table",
+    "fragment": "events",
+    "content": "onPageChange number Emitted when page is changed"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Accordion"
+    ],
+    "pageType": "guide",
+    "title": "Accordion",
+    "section": "Accordion",
+    "route": "/ui-components/accordion",
+    "fragment": "accordion",
+    "content": "An accordion is a vertically stacked set of interactive headings that each reveal an associated section of content."
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Accordion"
+    ],
+    "pageType": "guide",
+    "title": "Accordion",
+    "section": "Importing an accordion",
+    "route": "/ui-components/accordion",
+    "fragment": "importing-an-accordion",
+    "content": "Component can be imported from the root of my-lib"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Accordion"
+    ],
+    "pageType": "guide",
+    "title": "Accordion",
+    "section": "Importing an accordion",
+    "route": "/ui-components/accordion",
+    "fragment": "importing-an-accordion",
+    "content": "To use the AccordionComponent in your project, you need to import the AccordionModule from our library:"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Accordion"
+    ],
+    "pageType": "guide",
+    "title": "Accordion",
+    "section": "Creating an accordion",
+    "route": "/ui-components/accordion",
+    "fragment": "creating-an-accordion",
+    "content": "To create an accordion using our library, you can use the following code: This will create a simple accordion with three sections."
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Accordion"
+    ],
+    "pageType": "guide",
+    "title": "Accordion",
+    "section": "Styling an accordion",
+    "route": "/ui-components/accordion",
+    "fragment": "styling-an-accordion",
+    "content": "You can style the accordion using Tailwind CSS classes. The component comes with default styling that you can customize:"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Alert"
+    ],
+    "pageType": "guide",
+    "title": "Alert",
+    "section": "Alert",
+    "route": "/ui-components/alert",
+    "fragment": "alert",
+    "content": "The Alert component is used to display important messages to users, such as notifications, warnings, or errors."
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Alert"
+    ],
+    "pageType": "guide",
+    "title": "Alert",
+    "section": "Alert Types",
+    "route": "/ui-components/alert",
+    "fragment": "alert-types",
+    "content": "The Alert component supports five different types:"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Alert"
+    ],
+    "pageType": "guide",
+    "title": "Alert",
+    "section": "Alert Types",
+    "route": "/ui-components/alert",
+    "fragment": "alert-types",
+    "content": "Base (status=\"base\") Used for general informationGray color schemeDefault style"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Alert"
+    ],
+    "pageType": "guide",
+    "title": "Alert",
+    "section": "Alert Types",
+    "route": "/ui-components/alert",
+    "fragment": "alert-types",
+    "content": "Info (status=\"info\") Used for general informationBlue color schemeInformation icon"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Alert"
+    ],
+    "pageType": "guide",
+    "title": "Alert",
+    "section": "Alert Types",
+    "route": "/ui-components/alert",
+    "fragment": "alert-types",
+    "content": "Positive (status=\"positive\") Used for successful operationsGreen color schemeCheckmark icon"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Alert"
+    ],
+    "pageType": "guide",
+    "title": "Alert",
+    "section": "Alert Types",
+    "route": "/ui-components/alert",
+    "fragment": "alert-types",
+    "content": "Warning (status=\"warning\") Used for cautionary messagesYellow color schemeWarning icon"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Alert"
+    ],
+    "pageType": "guide",
+    "title": "Alert",
+    "section": "Alert Types",
+    "route": "/ui-components/alert",
+    "fragment": "alert-types",
+    "content": "Negative (status=\"negative\") Used for error messagesRed color schemeError icon"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Alert"
+    ],
+    "pageType": "guide",
+    "title": "Alert",
+    "section": "Accessibility",
+    "route": "/ui-components/alert",
+    "fragment": "accessibility",
+    "content": "The Alert component follows WAI-ARIA best practices: Uses appropriate ARIA roles and attributesProvides clear visual indicatorsSupports keyboard navigationMaintains proper color contrast ratios"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Alert"
+    ],
+    "pageType": "guide",
+    "title": "Alert",
+    "section": "Styling",
+    "route": "/ui-components/alert",
+    "fragment": "styling",
+    "content": "The component uses Tailwind CSS classes for styling. You can customize the appearance by:"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Alert"
+    ],
+    "pageType": "guide",
+    "title": "Alert",
+    "section": "Styling",
+    "route": "/ui-components/alert",
+    "fragment": "styling",
+    "content": "Modifying the Tailwind configuration Adding custom classes to the component Using the provided CSS variables for theming"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Alert"
+    ],
+    "pageType": "guide",
+    "title": "Alert",
+    "section": "Best Practices",
+    "route": "/ui-components/alert",
+    "fragment": "best-practices",
+    "content": "Use appropriate alert types for different situations Keep messages clear and concise Make alerts dismissible when appropriate Consider using alerts for temporary messages Ensure proper color contrast for accessibility Test with screen readers Consider mobile responsiveness"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Modal"
+    ],
+    "pageType": "guide",
+    "title": "Modal",
+    "section": "Modal",
+    "route": "/ui-components/modal",
+    "fragment": "modal",
+    "content": "A modal component provides a dialog box that appears on top of the main content, typically used for displaying important information or collecting user input."
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Modal"
+    ],
+    "pageType": "guide",
+    "title": "Modal",
+    "section": "Importing modal",
+    "route": "/ui-components/modal",
+    "fragment": "importing-modal",
+    "content": "Component can be imported from the root of my-lib"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Modal"
+    ],
+    "pageType": "guide",
+    "title": "Modal",
+    "section": "Importing modal",
+    "route": "/ui-components/modal",
+    "fragment": "importing-modal",
+    "content": "To use the ModalComponent in your project, you need to import the ModalModule from our library:"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Modal"
+    ],
+    "pageType": "guide",
+    "title": "Modal",
+    "section": "Creating modal",
+    "route": "/ui-components/modal",
+    "fragment": "creating-modal",
+    "content": "To create a modal component using our library, you can use the following code: This will create a modal dialog that can be opened and closed."
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Modal"
+    ],
+    "pageType": "guide",
+    "title": "Modal",
+    "section": "Styling modal",
+    "route": "/ui-components/modal",
+    "fragment": "styling-modal",
+    "content": "You can style the modal component using Tailwind CSS classes. The component comes with default styling that you can customize:"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Modal"
+    ],
+    "pageType": "guide",
+    "title": "Modal",
+    "section": "Properties",
+    "route": "/ui-components/modal",
+    "fragment": "properties",
+    "content": "open: Controls the visibility of the modaltitle: The title displayed in the modal headersize: The size of the modal ('sm', 'md', 'lg', 'xl')className: Additional CSS classes for custom styling"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Tabs"
+    ],
+    "pageType": "guide",
+    "title": "Tabs",
+    "section": "Tabs",
+    "route": "/ui-components/tabs",
+    "fragment": "tabs",
+    "content": "A tabs component provides a way to organize content into separate views where only one view is visible at a time."
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Tabs"
+    ],
+    "pageType": "guide",
+    "title": "Tabs",
+    "section": "Importing tabs",
+    "route": "/ui-components/tabs",
+    "fragment": "importing-tabs",
+    "content": "Component can be imported from the root of my-lib"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Tabs"
+    ],
+    "pageType": "guide",
+    "title": "Tabs",
+    "section": "Importing tabs",
+    "route": "/ui-components/tabs",
+    "fragment": "importing-tabs",
+    "content": "To use the TabsComponent in your project, you need to import the TabsModule from our library:"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Tabs"
+    ],
+    "pageType": "guide",
+    "title": "Tabs",
+    "section": "Creating tabs",
+    "route": "/ui-components/tabs",
+    "fragment": "creating-tabs",
+    "content": "To create a tabs component using our library, you can use the following code: This will create a tabbed interface with two tabs that can be switched between."
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Tabs"
+    ],
+    "pageType": "guide",
+    "title": "Tabs",
+    "section": "Styling tabs",
+    "route": "/ui-components/tabs",
+    "fragment": "styling-tabs",
+    "content": "You can style the tabs component using Tailwind CSS classes. The component comes with default styling that you can customize:"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Tabs"
+    ],
+    "pageType": "guide",
+    "title": "Tabs",
+    "section": "Properties",
+    "route": "/ui-components/tabs",
+    "fragment": "properties",
+    "content": "activeTab: The index of the currently active tabclassName: Additional CSS classes for custom styling"
+  },
+  {
+    "breadcrumbs": [
+      "UI Components",
+      "Tabs"
+    ],
+    "pageType": "guide",
+    "title": "Tabs",
+    "section": "Tab Properties",
+    "route": "/ui-components/tabs",
+    "fragment": "tab-properties",
+    "content": "title: The title displayed in the tab headerclassName: Additional CSS classes for custom styling"
+  },
+  {
+    "breadcrumbs": [
+      "API",
+      "my-lib",
+      "AccordionItemComponent"
+    ],
+    "pageType": "api",
+    "title": "AccordionItemComponent",
+    "section": "AccordionItemComponent",
+    "route": "/api/my-lib/classes/AccordionItemComponent",
+    "fragment": "accordionitemcomponent"
+  },
+  {
+    "breadcrumbs": [
+      "API",
+      "my-lib",
+      "AccordionComponent"
+    ],
+    "pageType": "api",
+    "title": "AccordionComponent",
+    "section": "AccordionComponent",
+    "route": "/api/my-lib/classes/AccordionComponent",
+    "fragment": "accordioncomponent"
+  },
+  {
+    "breadcrumbs": [
+      "API",
+      "my-lib",
+      "AlertComponent"
+    ],
+    "pageType": "api",
+    "title": "AlertComponent",
+    "section": "AlertComponent",
+    "route": "/api/my-lib/classes/AlertComponent",
+    "fragment": "alertcomponent"
+  },
+  {
+    "breadcrumbs": [
+      "API",
+      "my-lib",
+      "AreaChartType"
+    ],
+    "pageType": "api",
+    "title": "AreaChartType",
+    "section": "AreaChartType",
+    "route": "/api/my-lib/type-aliases/AreaChartType",
+    "fragment": "areacharttype"
+  },
+  {
+    "breadcrumbs": [
+      "API",
+      "my-lib",
+      "StepPosition"
+    ],
+    "pageType": "api",
+    "title": "StepPosition",
+    "section": "StepPosition",
+    "route": "/api/my-lib/type-aliases/StepPosition",
+    "fragment": "stepposition"
+  },
+  {
+    "breadcrumbs": [
+      "API",
+      "my-lib",
+      "HandleMissing"
+    ],
+    "pageType": "api",
+    "title": "HandleMissing",
+    "section": "HandleMissing",
+    "route": "/api/my-lib/type-aliases/HandleMissing",
+    "fragment": "handlemissing"
+  },
+  {
+    "breadcrumbs": [
+      "API",
+      "my-lib",
+      "AreaChartComponent"
+    ],
+    "pageType": "api",
+    "title": "AreaChartComponent",
+    "section": "AreaChartComponent",
+    "route": "/api/my-lib/classes/AreaChartComponent",
+    "fragment": "areachartcomponent"
+  },
+  {
+    "breadcrumbs": [
+      "API",
+      "my-lib",
+      "BarChartComponent"
+    ],
+    "pageType": "api",
+    "title": "BarChartComponent",
+    "section": "BarChartComponent",
+    "route": "/api/my-lib/classes/BarChartComponent",
+    "fragment": "barchartcomponent"
+  },
+  {
+    "breadcrumbs": [
+      "API",
+      "my-lib",
+      "BubbleChartComponent"
+    ],
+    "pageType": "api",
+    "title": "BubbleChartComponent",
+    "section": "BubbleChartComponent",
+    "route": "/api/my-lib/classes/BubbleChartComponent",
+    "fragment": "bubblechartcomponent"
+  },
+  {
+    "breadcrumbs": [
+      "API",
+      "my-lib",
+      "TableColumnComponent"
+    ],
+    "pageType": "api",
+    "title": "TableColumnComponent",
+    "section": "TableColumnComponent",
+    "route": "/api/my-lib/classes/TableColumnComponent",
+    "fragment": "tablecolumncomponent"
+  },
+  {
+    "breadcrumbs": [
+      "API",
+      "my-lib",
+      "DataTableComponent"
+    ],
+    "pageType": "api",
+    "title": "DataTableComponent",
+    "section": "DataTableComponent",
+    "route": "/api/my-lib/classes/DataTableComponent",
+    "fragment": "datatablecomponent"
+  },
+  {
+    "breadcrumbs": [
+      "API",
+      "my-lib",
+      "ModalComponent"
+    ],
+    "pageType": "api",
+    "title": "ModalComponent",
+    "section": "ModalComponent",
+    "route": "/api/my-lib/classes/ModalComponent",
+    "fragment": "modalcomponent"
+  },
+  {
+    "breadcrumbs": [
+      "API",
+      "my-lib",
+      "TabComponent"
+    ],
+    "pageType": "api",
+    "title": "TabComponent",
+    "section": "TabComponent",
+    "route": "/api/my-lib/classes/TabComponent",
+    "fragment": "tabcomponent"
+  },
+  {
+    "breadcrumbs": [
+      "API",
+      "my-lib",
+      "TabsComponent"
+    ],
+    "pageType": "api",
+    "title": "TabsComponent",
+    "section": "TabsComponent",
+    "route": "/api/my-lib/classes/TabsComponent",
+    "fragment": "tabscomponent"
+  }
+]

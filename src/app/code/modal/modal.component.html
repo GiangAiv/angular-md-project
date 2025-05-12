@@ -1,0 +1,29 @@
+<button
+  *ngIf="buttonText"
+  class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+  (click)="open = true">
+  {{ buttonText }}
+</button>
+
+
+
+<div class="fixed inset-0 z-50 flex items-center justify-center" [@modalAnimation] [class.hidden]="!open">
+  <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" (click)="closeModal()"></div>
+  <div class="relative z-50 max-h-[90vh] w-4/5 overflow-y-auto" #modalContent >
+    <div [class]="contentClasses">
+      <div [class]="headerClasses">
+        <h3 *ngIf="title" class="text-lg font-semibold">{{ title }}</h3>
+        <button
+          class="absolute right-2 top-2 rounded-full p-1 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+          (click)="closeModal()">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div [class]="bodyClasses">
+        <ng-content></ng-content>
+      </div>
+    </div>
+  </div>
+</div> 

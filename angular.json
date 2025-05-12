@@ -3,32 +3,51 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "md-editor": {
+    "ng-doc-live-demo": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@ng-doc/builder:browser",
           "options": {
-            "outputPath": "dist/md-editor",
+            "outputPath": "dist/ng-doc-live-demo",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
             "assets": [
-              "src/favicon.ico",
-              "src/assets",
               {
                 "glob": "**/*",
-                "input": "evidence-reports/build",
-                "output": "/evidence"
-              }
+                "input": "node_modules/@ng-doc/app/assets",
+                "output": "assets/ng-doc/app"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@ng-doc/ui-kit/assets",
+                "output": "assets/ng-doc/ui-kit"
+              },
+              {
+                "glob": "**/*",
+                "input": ".ng-doc/ng-doc-live-demo/assets",
+                "output": "assets/ng-doc"
+              },
+              "src/favicon.ico",
+              "src/assets"
             ],
-            "styles": ["src/styles.css"],
-            "scripts": []
+            "styles": [
+              "node_modules/@ng-doc/app/styles/global.css",
+              "src/styles.scss"
+            ],
+            "scripts": [],
+            "allowedCommonJsDependencies": ["@ng-doc/core"]
           },
           "configurations": {
             "production": {
@@ -58,24 +77,21 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@ng-doc/builder:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "md-editor:build:production"
+              "browserTarget": "ng-doc-live-demo:build:production"
             },
             "development": {
-              "browserTarget": "md-editor:build:development"
+              "browserTarget": "ng-doc-live-demo:build:development"
             }
           },
-          "defaultConfiguration": "development",
-          "options": {
-            "proxyConfig": "src/proxy.conf.json"
-          }
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "md-editor:build"
+            "browserTarget": "ng-doc-live-demo:build"
           }
         },
         "test": {
@@ -83,8 +99,9 @@
           "options": {
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.css"],
+            "styles": ["src/styles.scss"],
             "scripts": []
           }
         }
@@ -92,6 +109,6 @@
     }
   },
   "cli": {
-    "analytics": "f98f5d17-49a4-49b6-b429-2e46a19659fb"
+    "analytics": "70f5de3b-6371-4dfc-8a67-7ffedd751e5e"
   }
 }

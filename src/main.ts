@@ -1,7 +1,39 @@
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import {
+  NG_DOC_DEFAULT_PAGE_PROCESSORS,
+  NG_DOC_DEFAULT_PAGE_SKELETON,
+  NgDocDefaultSearchEngine,
+  provideMainPageProcessor,
+  provideNgDocApp,
+  providePageSkeleton,
+  provideSearchEngine
+} from '@ng-doc/app';
+import { NG_DOC_ROUTING, provideNgDocContext } from '@ng-doc/generated';
+import { AppComponent } from './app/app.component';
 
-import { AppModule } from './app/app.module';
 
-
-platformBrowserDynamic().bootstrapModule(AppModule)
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideHttpClient(withInterceptorsFromDi()),
+    provideAnimations(),
+    provideRouter([
+      {path: '', redirectTo: 'button', pathMatch: 'full'},
+      ...NG_DOC_ROUTING,
+    ], withInMemoryScrolling({
+      scrollPositionRestoration: 'enabled',
+      anchorScrolling: 'enabled'
+    }),),
+    // NgDoc providers
+    provideNgDocApp({
+      defaultThemeId: 'auto'
+    }),
+    provideNgDocContext(),
+    provideSearchEngine(NgDocDefaultSearchEngine),
+    providePageSkeleton(NG_DOC_DEFAULT_PAGE_SKELETON),
+    provideMainPageProcessor(NG_DOC_DEFAULT_PAGE_PROCESSORS),
+  ]
+})
   .catch(err => console.error(err));

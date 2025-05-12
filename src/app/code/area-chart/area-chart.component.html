@@ -1,0 +1,11 @@
+<div class="w-full h-[400px] relative flex flex-col">
+  <div *ngIf="downloadableImage" class="absolute top-2.5 right-2.5 z-10 pointer-events-auto">
+    <button 
+      (click)="downloadImage()" 
+      class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow transition-colors duration-300 text-sm"
+    >
+      Download Chart
+    </button>
+  </div>
+  <canvas #chartCanvas class="w-full h-full relative z-[1]"></canvas>
+</div> 

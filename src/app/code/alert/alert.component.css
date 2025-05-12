@@ -1,0 +1,8 @@
+/* Additional styles for markdown content inside alerts */
+.alert :global(.markdown:first-child) {
+  margin-top: 0;
+}
+
+.alert :global(.markdown:last-child) {
+  margin-bottom: 0;
+} 
