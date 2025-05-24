@@ -1,0 +1,14 @@
+<div 
+  [class]="getContainerClasses()"
+  [attr.aria-label]="getAriaLabel()"
+  role="text"
+>
+  <span 
+    *ngIf="props?.showArrow !== false"
+    class="flex-shrink-0"
+    [innerHTML]="getArrowIcon() | safeHtml"
+  ></span>
+  <span class="whitespace-nowrap">
+    {{ getPrefix() }}{{ getFormattedValue() }}
+  </span>
+</div> 

@@ -1,0 +1,75 @@
+.alert {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.375rem;
+  border-width: 1px;
+}
+
+/* Base styles */
+.border-base-content\/50 {
+  border-color: rgba(var(--base-content), 0.5);
+}
+
+.bg-base-content\/10 {
+  background-color: rgba(var(--base-content), 0.1);
+}
+
+/* Info styles */
+.border-info\/50 {
+  border-color: rgba(var(--info), 0.5);
+}
+
+.bg-info\/10 {
+  background-color: rgba(var(--info), 0.1);
+}
+
+.text-info {
+  color: var(--info);
+}
+
+/* Negative styles */
+.border-negative\/50 {
+  border-color: rgba(var(--negative), 0.5);
+}
+
+.bg-negative\/10 {
+  background-color: rgba(var(--negative), 0.1);
+}
+
+.text-negative {
+  color: var(--negative);
+}
+
+/* Positive styles */
+.border-positive\/50 {
+  border-color: rgba(var(--positive), 0.5);
+}
+
+.bg-positive\/10 {
+  background-color: rgba(var(--positive), 0.1);
+}
+
+.text-positive {
+  color: var(--positive);
+}
+
+/* Warning styles */
+.border-warning\/50 {
+  border-color: rgba(var(--warning), 0.5);
+}
+
+.bg-warning\/10 {
+  background-color: rgba(var(--warning), 0.1);
+}
+
+.text-warning {
+  color: var(--warning);
+}
+
+.alert :global(.markdown:first-child) {
+  margin-top: 0;
+}
+
+.alert :global(.markdown:last-child) {
+  margin-bottom: 0;
+} 

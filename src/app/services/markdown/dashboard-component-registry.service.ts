@@ -1,20 +1,33 @@
 // src/app/services/markdown/dashboard-component-registry.service.ts
 import { Injectable } from '@angular/core';
-import { AccordionItemComponent } from 'src/app/components/dashboard/accordion/accordion-item/accordion-item.component';
-import { AccordionComponent } from 'src/app/components/dashboard/accordion/accordion.component';
+import { AccordionItemComponent } from 'src/app/components/ui/accordion/accordion-item/accordion-item.component';
+import { AccordionComponent } from 'src/app/components/ui/accordion/accordion.component';
 import { AreaChartComponent } from 'src/app/components/dashboard/area-chart/area-chart.component';
 import { BubbleChartComponent } from 'src/app/components/dashboard/bubble-chart/bubble-chart.component';
 import { LineChartComponent } from 'src/app/components/dashboard/line-chart/line-chart.component';
-import { ModalComponent } from 'src/app/components/dashboard/modal/modal.component';
+import { ModalComponent } from 'src/app/components/ui/modal/modal.component';
 import {
   TabItem,
   TabsComponent,
-} from 'src/app/components/dashboard/tabs/tabs.component';
+} from 'src/app/components/ui/tabs/tabs.component';
 import { BarChartComponent } from '../../components/dashboard/bar-chart/bar-chart.component';
 import { CardComponent } from '../../components/dashboard/card/card.component';
 import { ChartComponent } from '../../components/dashboard/chart/chart.component';
-import { TableComponent } from '../../components/dashboard/table/table.component';
+import { TableComponent } from '../../components/ui/table/table.component';
 import { ComponentRegistryService } from './component-registry.service';
+import { ValueComponent } from '../../components/data/value/value.component';
+import { DeltaComponent } from '../../components/data/delta/delta.component';
+import { BigValueComponent } from '../../components/data/big-value/big-value.component';
+import { DataTableComponent } from '../../components/data/data-table/data-table.component';
+import { ButtonGroupComponent } from '../../components/input/button-group/button-group.component';
+import { CheckboxComponent } from '../../components/input/checkbox/checkbox.component';
+import { DateInputComponent } from '../../components/input/date-input/date-input.component';
+import { DateRangeComponent } from '../../components/input/date-range/date-range.component';
+import { DimensionGridComponent } from 'src/app/components/input/dimension-grid/dimension-grid.component';
+import { DropdownComponent } from 'src/app/components/input/dropdown/dropdown.component';
+import { SliderComponent } from 'src/app/components/input/slider/slider.component';
+import { TextInputComponent } from 'src/app/components/input/text-input/text-input.component';
+
 
 @Injectable({
   providedIn: 'root',
@@ -215,6 +228,149 @@ export class DashboardComponentRegistryService {
     //     };
     //   },
     // });
+
+    // Data
+    this.componentRegistry.register({
+      type: 'Value',
+      name: 'Value',
+      description: 'A value component for displaying a value',
+      render: (props) => {
+        return {
+          component: ValueComponent,
+          props,
+        };
+      },
+    });
+
+    this.componentRegistry.register({
+      type: 'Delta',
+      name: 'Delta',
+      description: 'A delta component for displaying a delta',
+      render: (props) => {
+        return {
+          component: DeltaComponent,
+          props,
+        };
+      },
+    });
+
+    this.componentRegistry.register({
+      type: 'BigValue',
+      name: 'Big Value',
+      description: 'A big value component for displaying a big value',
+      render: (props) => {
+        return {
+          component: BigValueComponent,
+          props,
+        };
+      },
+    });
+
+    this.componentRegistry.register({
+      type: 'DataTable',
+      name: 'Data Table',
+      description: 'A data table component for displaying a data table',
+      render: (props) => {
+        return {
+          component: DataTableComponent,
+          props,
+        };
+      },
+    });
+    
+
+    // INPUT
+    this.componentRegistry.register({
+      type: 'ButtonGroup',
+      name: 'Button Group',
+      description: 'A button group component for displaying a button group',
+      render: (props) => {
+        return {
+          component: ButtonGroupComponent,
+          props,
+        };
+      },
+    });
+
+    this.componentRegistry.register({
+      type: 'Checkbox',
+      name: 'Checkbox',
+      description: 'A checkbox component for displaying a checkbox',
+      render: (props) => {
+        return {
+          component: CheckboxComponent,
+          props,
+        };
+      },
+    });
+
+    this.componentRegistry.register({
+      type: 'DateInput',
+      name: 'Date Input',
+      description: 'A date input component for displaying a date input',
+      render: (props) => {
+        return {
+          component: DateInputComponent,
+          props,
+        };
+      },
+    });
+    this.componentRegistry.register({
+      type: "DateRange",
+      name: "Date Range",
+      description: "A date range input component for displaying a date range input",
+      render: (props) => {
+        return {
+          component: DateRangeComponent,
+          props,
+        };
+      },
+    });
+    this.componentRegistry.register({
+      type: "DimensionGrid",
+      name: "Dimension Grid",
+      description: "A dimension grid component for displaying a dimension grid",
+      render: (props) => {
+        return {
+          component: DimensionGridComponent,
+          props,
+        };
+      },
+    });
+    this.componentRegistry.register({
+      type: "Dropdown",
+      name: "Dropdown",
+      description: "A dropdown component for displaying a dropdown",
+      render: (props) => {
+        return {
+          component: DropdownComponent,
+          props,
+        };
+      },
+    });
+    this.componentRegistry.register({
+      type: "Slider",
+      name: "Slider",
+      description: "A slider component for displaying a slider",
+      render: (props) => {
+        return {
+          component: SliderComponent,
+          props,
+        };
+      },
+    });
+    this.componentRegistry.register({
+      type: "TextInput",
+      name: "Text Input",
+      description: "A text input component for displaying a text input",
+      render: (props) => {
+        return {
+          component: TextInputComponent,
+          props,
+        };
+      },
+    });
+
 
     this.componentsRegistered = true;
   }

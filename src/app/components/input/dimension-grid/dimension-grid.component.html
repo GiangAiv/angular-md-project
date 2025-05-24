@@ -1,0 +1,14 @@
+<div [class]="getContainerClasses()">
+  <button
+    *ngFor="let item of props?.items"
+    [class]="getItemClasses(item.value)"
+    [attr.aria-pressed]="isSelected(item.value)"
+    [attr.aria-disabled]="isDisabled(item.value)"
+    [attr.aria-label]="getAriaLabel(item)"
+    [disabled]="isDisabled(item.value)"
+    (click)="handleItemClick(item.value)"
+    type="button"
+    role="button">
+    {{ item.label }}
+  </button>
+</div> 

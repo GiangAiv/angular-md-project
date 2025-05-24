@@ -1,0 +1,17 @@
+<div [class]="getContainerClasses()">
+  <img
+    [src]="props?.src"
+    [alt]="props?.alt"
+    [class]="getImageClasses()"
+    [style]="getImageStyles()"
+    [loading]="props?.loading || 'lazy'"
+    [attr.aria-label]="getAriaLabel()"
+    [attr.role]="props?.alt ? undefined : 'img'"
+    (error)="onError($event)" />
+  
+  <p
+    *ngIf="shouldShowCaption()"
+    [class]="getCaptionClasses()">
+    {{ props?.caption }}
+  </p>
+</div> 

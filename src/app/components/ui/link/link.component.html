@@ -1,0 +1,17 @@
+<a
+  [href]="props?.href"
+  [class]="getLinkClasses()"
+  [attr.target]="isExternal() ? '_blank' : null"
+  [attr.rel]="isExternal() ? 'noopener noreferrer' : null"
+  [attr.aria-label]="getAriaLabel()">
+  
+  <!-- Link Text -->
+  <span>{{ props?.text }}</span>
+
+  <!-- Icon (if enabled) -->
+  <div
+    *ngIf="shouldShowIcon()"
+    [class]="getIconClasses()"
+    [innerHTML]="getIcon()">
+  </div>
+</a> 

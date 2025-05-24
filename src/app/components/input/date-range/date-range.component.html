@@ -1,0 +1,29 @@
+<div [class]="getContainerClasses()">
+  <mat-form-field class="w-full">
+    <mat-label *ngIf="props?.label">{{ props?.label }}</mat-label>
+    <mat-date-range-input
+      [rangePicker]="picker"
+      [min]="props?.minDate"
+      [max]="props?.maxDate"
+      [disabled]="!!props?.disabled"
+    >
+      <input 
+        matStartDate
+        [id]="getId() + '-start'"
+        [placeholder]="'Start date'"
+        [(ngModel)]="selected.start"
+        (dateChange)="handleDateRangeChange($event.value, selected.end)"
+      >
+      <input 
+        matEndDate
+        [id]="getId() + '-end'"
+        [placeholder]="'End date'"
+        [(ngModel)]="selected.end"
+        (dateChange)="handleDateRangeChange(selected.start, $event.value)"
+      >
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-date-range-picker #picker></mat-date-range-picker>
+    <mat-hint *ngIf="props?.placeholder">{{ props?.placeholder }}</mat-hint>
+  </mat-form-field>
+</div> 

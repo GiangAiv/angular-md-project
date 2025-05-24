@@ -1,0 +1,24 @@
+<div [class]="getContainerClasses()">
+  <input
+    type="range"
+    [class]="getSliderClasses()"
+    [min]="props?.min"
+    [max]="props?.max"
+    [step]="props?.step"
+    [value]="currentValue"
+    [disabled]="props?.disabled"
+    (input)="onInput($event)"
+    aria-label="Slider"
+    role="slider"
+    [attr.aria-valuemin]="props?.min"
+    [attr.aria-valuemax]="props?.max"
+    [attr.aria-valuenow]="currentValue"
+    [attr.aria-disabled]="props?.disabled" />
+  
+  <span
+    *ngIf="props?.showValue"
+    [class]="getValueClasses()"
+    aria-hidden="true">
+    {{ formatValue(currentValue) }}
+  </span>
+</div> 

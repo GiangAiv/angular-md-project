@@ -1,5 +1,17 @@
 import { DomPortalOutlet, TemplatePortal } from '@angular/cdk/portal';
-import { AfterViewInit, ApplicationRef, Component, EventEmitter, OnDestroy, Output, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import {
+  AfterViewInit,
+  ApplicationRef,
+  Component,
+  ComponentFactoryResolver,
+  EventEmitter,
+  Injector,
+  OnDestroy,
+  Output,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { BaseComponent } from '../../base-component';
 
 interface ModalProps {
@@ -7,24 +19,30 @@ interface ModalProps {
   title: string;
   buttonText: string;
   innerText: string;
+  children?: string;
 }
 
 @Component({
   selector: 'app-modal',
   templateUrl: './modal.component.html',
-  styleUrls: ['./modal.component.css']
+  styleUrls: ['./modal.component.css'],
 })
-export class ModalComponent extends BaseComponent<ModalProps> implements AfterViewInit, OnDestroy {
+export class ModalComponent
+  extends BaseComponent<ModalProps>
+  implements AfterViewInit, OnDestroy
+{
   @Output() close = new EventEmitter<void>();
   @ViewChild('modalContainer') modalContainer!: TemplateRef<any>;
-  
+
   private portalOutlet: DomPortalOutlet | null = null;
   private portal: TemplatePortal | null = null;
   closing = false;
 
   constructor(
     private viewContainerRef: ViewContainerRef,
+    private componentFactoryResolver: ComponentFactoryResolver,
     private appRef: ApplicationRef,
+    private injector: Injector,
   ) {
     super();
   }
@@ -34,18 +52,19 @@ export class ModalComponent extends BaseComponent<ModalProps> implements AfterVi
     const container = document.createElement('div');
     container.id = 'modal-portal-container';
     document.body.appendChild(container);
-    
+
     this.portalOutlet = new DomPortalOutlet(
       container,
+      this.componentFactoryResolver,
       this.appRef,
-
+      this.injector,
     );
 
     // Create and attach the template portal
     if (this.modalContainer) {
       this.portal = new TemplatePortal(
         this.modalContainer,
-        this.viewContainerRef
+        this.viewContainerRef,
       );
       this.portalOutlet.attach(this.portal);
     }
@@ -82,7 +101,9 @@ export class ModalComponent extends BaseComponent<ModalProps> implements AfterVi
 
   get titleClasses(): string {
     return `relative flex justify-between items-start ${
-      this.props.title.trim() !== '' ? 'pt-3 pb-1 px-5 text-lg font-semibold break-normal text-center' : ''
+      this.props.title.trim() !== ''
+        ? 'pt-3 pb-1 px-5 text-lg font-semibold break-normal text-center'
+        : ''
     }`;
   }
 
@@ -91,4 +112,4 @@ export class ModalComponent extends BaseComponent<ModalProps> implements AfterVi
       this.props.title.trim() !== '' ? 'my-4' : 'my-6'
     } text-sm break-normal`;
   }
-} 
+}

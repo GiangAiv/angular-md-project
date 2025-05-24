@@ -1,0 +1,166 @@
+# DateRange Component
+
+A modern, accessible date range picker component powered by ngx-daterangepicker-material. Features a clean design, predefined ranges, and full keyboard support.
+
+## Features
+
+- Clean, modern design
+- Predefined date ranges
+- Linked calendars
+- Date range restrictions
+- Disabled state support
+- Custom formatting
+- Dropdown year/month selection
+- Keyboard accessible
+- Mobile-friendly interface
+- Proper focus management
+
+## Dependencies
+
+The component requires ngx-daterangepicker-material:
+```bash
+npm install ngx-daterangepicker-material @angular/material moment
+```
+
+## Props
+
+```tsx
+interface DateRangeProps {
+  startDate?: Date | string;  // Optional: Start date of the range
+  endDate?: Date | string;    // Optional: End date of the range
+  minDate?: Date;            // Optional: Minimum selectable date
+  maxDate?: Date;            // Optional: Maximum selectable date
+  placeholder?: string;      // Optional: Placeholder text
+  disabled?: boolean;        // Optional: Disabled state
+}
+```
+
+## Usage Examples
+
+### Basic Usage
+
+```jsx
+<DateRange 
+  placeholder="Select date range..."
+/>
+```
+
+### With Initial Dates
+
+```jsx
+<DateRange 
+  startDate={new Date('2024-01-01')}
+  endDate={new Date('2024-12-31')}
+/>
+```
+
+### With Date Restrictions
+
+```jsx
+const today = new Date();
+const nextYear = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate());
+
+<DateRange 
+  minDate={today}
+  maxDate={nextYear}
+  placeholder="Select dates within next year"
+/>
+```
+
+### Disabled State
+
+```jsx
+<DateRange 
+  startDate={new Date('2024-01-01')}
+  endDate={new Date('2024-12-31')}
+  disabled={true}
+/>
+```
+
+## Styling
+
+The component includes comprehensive built-in styling:
+
+### Container
+- Flex column layout
+- Proper spacing
+- Full width support
+
+### Input
+- Full width (`w-full`)
+- Consistent padding (`px-3 py-2`)
+- Gray border (`border-gray-300`)
+- Rounded corners (`rounded-md`)
+- Small text size (`text-sm`)
+- Dark text (`text-gray-900`)
+- Gray placeholder (`placeholder-gray-400`)
+- Focus states with blue ring
+- Smooth transitions
+
+### Disabled State
+- Reduced opacity
+- Not-allowed cursor
+- Light gray background
+- Visual indication
+
+## Calendar Features
+
+The component includes several calendar-specific features:
+
+### Predefined Ranges
+- Today
+- Yesterday
+- Last 7 Days
+- Last 30 Days
+- This Month
+- Last Month
+- Custom Range
+
+### Calendar Navigation
+- Month/Year dropdowns
+- Linked calendars
+- Previous/Next navigation
+- Clear selection option
+
+## Accessibility
+
+The component implements several accessibility features:
+- ARIA labels
+- Keyboard navigation
+- Focus management
+- Screen reader support
+- High contrast states
+
+## State Management
+
+The component handles state in the following ways:
+- Tracks selected date range
+- Updates on user selection
+- Manages disabled state
+- Handles date restrictions
+- Preserves selection across renders
+
+## Technical Details
+
+### Date Handling
+- Uses Moment.js for date manipulation
+- Supports both Date objects and strings
+- Handles timezone differences
+- Proper date formatting
+
+### Event Handling
+- Change events with complete range
+- Proper disabled state handling
+- Range validation
+- Format standardization
+
+## Notes
+
+- The component extends BaseComponent for consistent behavior
+- Uses ngx-daterangepicker-material for the calendar
+- Supports both Date objects and date strings
+- Mobile-friendly interface
+- All styling is customizable
+- Includes predefined ranges
+- Supports keyboard navigation
+- Component is standalone with proper imports 

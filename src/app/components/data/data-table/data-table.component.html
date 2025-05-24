@@ -1,0 +1,49 @@
+<div class="w-full overflow-x-auto">
+  <table [class]="getTableClasses()" role="grid">
+    <!-- Table Header -->
+    <thead [class]="getHeaderClasses()">
+      <tr>
+        <th 
+          *ngFor="let column of props?.columns"
+          [class]="getHeaderCellClasses()"
+          [attr.aria-sort]="getSortDirection(column.key)"
+          [attr.aria-label]="getSortAriaLabel(column.key)"
+          (click)="handleSort(column.key)"
+          scope="col"
+        >
+          <div class="flex items-center gap-2">
+            {{ column.label }}
+            <span *ngIf="props?.sortable" class="text-gray-400 text-sm">
+              {{ getSortIcon(column.key) }}
+            </span>
+          </div>
+        </th>
+      </tr>
+    </thead>
+
+    <!-- Table Body -->
+    <tbody>
+      <tr 
+        *ngFor="let row of props?.rows; let i = index"
+        [class]="getRowClasses(i)"
+      >
+        <td 
+          *ngFor="let column of props?.columns"
+          [class]="getCellClasses()"
+        >
+          {{ row[column.key] }}
+        </td>
+      </tr>
+
+      <!-- Empty State -->
+      <tr *ngIf="!props?.rows?.length">
+        <td 
+          [attr.colspan]="props?.columns?.length"
+          class="px-4 py-8 text-center text-gray-500"
+        >
+          No data available
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div> 

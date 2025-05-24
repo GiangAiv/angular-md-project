@@ -1,0 +1,23 @@
+<div [class]="getContainerClasses()">
+  <label
+    *ngIf="props?.label"
+    [for]="getId()"
+    [class]="getLabelClasses()">
+    {{ props?.label }}
+  </label>
+  
+  <input
+    [id]="getId()"
+    [class]="getInputClasses()"
+    [type]="props?.type"
+    [value]="props?.value"
+    [name]="props?.name"
+    [placeholder]="props?.placeholder || ''"
+    [disabled]="props?.disabled"
+    [readonly]="props?.readonly"
+    [autocomplete]="props?.autocomplete"
+    [attr.aria-label]="getAriaLabel()"
+    [attr.aria-disabled]="props?.disabled"
+    [attr.aria-readonly]="props?.readonly"
+    (input)="onInput($event)" />
+</div> 

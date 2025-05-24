@@ -19,5 +19,68 @@
     "createdAt": "2025-05-07T07:26:26.736Z",
     "updatedAt": "2025-05-07T07:26:26.736Z",
     "tags": []
+  },
+  {
+    "id": "af963c3e-0149-455b-b555-36f4a2cd4052",
+    "title": "Bubble Chart",
+    "createdAt": "2025-05-10T15:41:00.371Z",
+    "updatedAt": "2025-05-10T15:42:01.917Z",
+    "tags": []
+  },
+  {
+    "id": "59176d33-3098-4037-ad99-680558c1e9c7",
+    "title": "Value Component",
+    "createdAt": "2025-05-23T23:23:36.879Z",
+    "updatedAt": "2025-05-23T23:23:36.879Z",
+    "tags": []
+  },
+  {
+    "id": "af84562c-19c5-472b-8598-c1ccb9fc47a9",
+    "title": "Big Value",
+    "createdAt": "2025-05-23T23:34:05.680Z",
+    "updatedAt": "2025-05-23T23:34:05.680Z",
+    "tags": []
+  },
+  {
+    "id": "c2d32c96-1297-41c8-b855-feb1b1157a23",
+    "title": "Data table",
+    "createdAt": "2025-05-23T23:40:32.207Z",
+    "updatedAt": "2025-05-23T23:40:32.207Z",
+    "tags": []
+  },
+  {
+    "id": "4755e235-848c-46f1-a93f-04776516b6bc",
+    "title": "Delta",
+    "createdAt": "2025-05-23T23:44:43.900Z",
+    "updatedAt": "2025-05-23T23:44:43.900Z",
+    "tags": []
+  },
+  {
+    "id": "0229ec60-3592-477d-a549-6b4d1d28000b",
+    "title": "Button Group",
+    "createdAt": "2025-05-23T23:54:19.517Z",
+    "updatedAt": "2025-05-23T23:58:37.297Z",
+    "tags": []
+  },
+  {
+    "id": "cb0b8472-7760-40ef-bda9-fb3f60881847",
+    "title": "Checkbox",
+    "createdAt": "2025-05-23T23:59:13.035Z",
+    "updatedAt": "2025-05-24T00:01:30.549Z",
+    "tags": []
+  },
+  {
+    "id": "76f90cb0-2cda-4d6c-b314-a81315eeec5b",
+    "title": "Date Input",
+    "createdAt": "2025-05-24T00:32:51.025Z",
+    "updatedAt": "2025-05-24T00:39:54.514Z",
+    "tags": []
+  },
+  {
+    "id": "900f37f2-a8b1-40e7-b830-8e5ada135490",
+    "title": "Date range",
+    "createdAt": "2025-05-24T00:42:59.063Z",
+    "updatedAt": "2025-05-24T00:45:33.817Z",
+    "tags": []
   }
 ]

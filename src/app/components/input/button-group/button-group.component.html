@@ -1,0 +1,14 @@
+<div 
+  [class]="getContainerClasses()"
+  role="group"
+  aria-label="Button group">
+  
+  <button
+    *ngFor="let option of props?.options"
+    type="button"
+    [class]="getButtonClasses(getOptionValue(option))"
+    [attr.aria-pressed]="isSelected(getOptionValue(option))"
+    (click)="onButtonClick(getOptionValue(option))">
+    {{ getOptionLabel(option) }}
+  </button>
+</div> 

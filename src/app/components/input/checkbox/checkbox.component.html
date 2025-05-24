@@ -1,0 +1,23 @@
+<div [class]="getContainerClasses()">
+  <div [class]="getCheckboxWrapperClasses()">
+    <input
+      #checkboxInput
+      type="checkbox"
+      [class]="getCheckboxClasses()"
+      [id]="getId()"
+      [name]="props?.name"
+      [checked]="props?.checked"
+      [disabled]="props?.disabled"
+      [attr.aria-checked]="props?.indeterminate ? 'mixed' : props?.checked"
+      [attr.aria-disabled]="props?.disabled"
+      (change)="handleChange($event)"
+    />
+  </div>
+  <label
+    *ngIf="props?.label"
+    [for]="getId()"
+    [class]="getLabelClasses()"
+  >
+    {{ props?.label }}
+  </label>
+</div> 

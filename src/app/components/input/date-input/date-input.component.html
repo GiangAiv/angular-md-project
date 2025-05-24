@@ -1,0 +1,20 @@
+<div [class]="getContainerClasses()">
+  <mat-form-field  class="w-full">
+    <mat-label *ngIf="props?.label">{{ props?.label }}</mat-label>
+    <input 
+      matInput 
+      [matDatepicker]="picker"
+      [id]="getId()"
+      [placeholder]="props?.placeholder || 'Select date...'"
+      [(ngModel)]="selected"
+      [min]="getMinDate()"
+      [max]="getMaxDate()"
+      [disabled]="!!props?.disabled"
+      (dateChange)="handleDateChange($event.value)"
+      [matDatepickerFilter]="dateFilter"
+    >
+    <mat-hint *ngIf="props?.placeholder">{{ props?.placeholder }}</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+</div> 

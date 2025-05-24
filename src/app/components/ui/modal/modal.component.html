@@ -36,7 +36,7 @@
         </ng-container>
       </div>
       <div [class]="contentClasses">
-        {{ props.innerText }}
+        <ng-container *ngIf="props.innerText">{{ props.innerText }}</ng-container>
         <ng-content></ng-content>
       </div>
     </div>

@@ -1,0 +1,17 @@
+<div
+  [class]="getContainerClasses()"
+  [attr.aria-label]="getAriaLabel()">
+  
+  <!-- Clock Icon -->
+  <div
+    *ngIf="shouldShowIcon()"
+    [class]="getIconClasses()"
+    [innerHTML]="getClockIcon()">
+  </div>
+
+  <!-- Label and Time -->
+  <div class="flex gap-1 sm:gap-2">
+    <span *ngIf="props?.label">{{ props.label }}:</span>
+    <span [class]="getTimeClasses()">{{ getFormattedTime() }}</span>
+  </div>
+</div> 
