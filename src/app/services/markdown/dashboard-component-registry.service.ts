@@ -27,6 +27,18 @@ import { DimensionGridComponent } from 'src/app/components/input/dimension-grid/
 import { DropdownComponent } from 'src/app/components/input/dropdown/dropdown.component';
 import { SliderComponent } from 'src/app/components/input/slider/slider.component';
 import { TextInputComponent } from 'src/app/components/input/text-input/text-input.component';
+import { AlertComponent } from 'src/app/components/ui/alert/alert.component';
+import { DetailsComponent } from 'src/app/components/ui/details/details.component';
+import { DownloadDataComponent } from 'src/app/components/ui/download-data/download-data.component';
+import { EmbedComponent } from 'src/app/components/ui/embed/embed.component';
+import { ImageComponent } from 'src/app/components/ui/image/image.component';
+import { InfoComponent } from 'src/app/components/ui/info/info.component';
+import { LastRefreshedComponent } from 'src/app/components/ui/last-refreshed/last-refreshed.component';
+import { LineBreakComponent } from 'src/app/components/ui/line-break/line-break.component';
+import { LinkComponent } from 'src/app/components/ui/link/link.component';
+import { LinkButtonComponent } from 'src/app/components/ui/link-button/link-button.component';
+import { NoteComponent } from 'src/app/components/ui/note/note.component';
+import { PageBreakComponent } from 'src/app/components/ui/page-break/page-break.component';
 
 
 @Injectable({
@@ -372,6 +384,148 @@ export class DashboardComponentRegistryService {
     });
 
 
+
+    // UI
+    this.componentRegistry.register({
+      type: "Alert",
+      name: "Alert",
+      description: "An alert component for displaying an alert",
+      render: (props) => {
+        return {
+          component: AlertComponent,
+          props,
+        };
+      },
+    });
+    this.componentRegistry.register({
+      type: "Details",
+      name: "Details",
+      description: "A details component for displaying details",
+      render: (props) => {
+        return {
+          component: DetailsComponent,
+          props,
+        };
+      },
+    });
+    this.componentRegistry.register({
+      type: "DownloadData",
+      name: "Download Data",
+      description: "A download data component for displaying a download data",
+      render: (props) => {
+        return {
+          component: DownloadDataComponent,
+          props,
+        };
+      },
+    });
+    this.componentRegistry.register({
+      type:"Embed",
+      name:"Embed",
+      description:"An embed component for displaying an embed",
+      render: (props) => {
+        return {
+          component: EmbedComponent,
+          props,
+        };
+      },
+    });
+
+    this.componentRegistry.register({
+      type: "Image",
+      name: "Image",
+      description: "An image component for displaying an image",
+      render: (props) => {
+        return {
+          component: ImageComponent,
+          props,
+        };
+      },
+    });
+
+    this.componentRegistry.register({
+      type: "Info",
+      name: "Info",
+      description: "An info component for displaying an info",
+      render: (props) => {
+        return {
+          component: InfoComponent,
+          props,
+        };
+      },
+    });
+
+    this.componentRegistry.register({
+      type: "LastRefreshed",
+      name: "Last Refreshed",
+      description: "A last refreshed component for displaying a last refreshed",
+      render: (props) => {
+        return {
+          component: LastRefreshedComponent,
+          props,
+        };
+      },
+    });
+
+    this.componentRegistry.register({
+      type: "LineBreak",
+      name: "Line Break",
+      description: "A line break component for displaying a line break",
+      render: (props) => {
+        return {
+          component: LineBreakComponent,
+          props,
+        };
+      },
+    });
+
+    this.componentRegistry.register({
+      type: "Link",
+      name: "Link",
+      description: "A link component for displaying a link",
+      render: (props) => {
+        return {
+          component: LinkComponent,
+          props,
+        };
+      },
+    });
+
+    this.componentRegistry.register({
+      type: "LinkButton",
+      name: "Link Button",
+      description: "A link button component for displaying a link button",
+      render: (props) => {
+        return {
+          component: LinkButtonComponent,
+          props,
+        };
+      },
+    });
+
+    this.componentRegistry.register({
+      type: "Note",
+      name: "Note",
+      description: "A note component for displaying a note",
+      render: (props) => {
+        return {
+          component: NoteComponent,
+          props,
+        };
+      },
+    });
+
+    this.componentRegistry.register({
+      type: "PageBreak",
+      name: "Page Break",
+      description: "A page break component for displaying a page break",
+      render: (props) => {
+        return {
+          component: PageBreakComponent,
+          props,
+        };
+      },
+    });
     this.componentsRegistered = true;
   }
   private extractTabsContent(children: string): TabItem[] {

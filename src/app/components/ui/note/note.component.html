@@ -1,11 +1,10 @@
 <div
-  [class]="getContainerClasses()"
+  [class]="containerClasses"
   role="note"
-  [attr.aria-label]="getAriaLabel()"
->
+  [attr.aria-label]="ariaLabel">
   <strong 
-    *ngIf="props?.title"
-    [class]="getTitleClasses()"
-  >{{ props?.title }}</strong>
-  <p [class]="getTextClasses()">{{ props?.text }}</p>
+    *ngIf="title"
+    [class]="titleClasses"
+  >{{ title }}</strong>
+  <p [class]="textClasses">{{ text }}</p>
 </div> 

@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { BaseComponent } from '../../base-component';
 import { toBoolean } from '../accordion/util';
 
@@ -8,7 +9,7 @@ interface EmbedProps {
   width?: string;
   height?: string;
   align?: 'left' | 'center' | 'right';
-  border?: boolean;
+  border?: boolean | string;
   class?: string;
 }
 
@@ -18,53 +19,37 @@ interface EmbedProps {
   styleUrls: ['./embed.component.css']
 })
 export class EmbedComponent extends BaseComponent<EmbedProps> {
-  @Input() set url(value: string) {
-    this._url = value || '';
+  constructor(private sanitizer: DomSanitizer) {
+    super();
   }
+
   get url(): string {
-    return this._url;
+    return this.props?.url || '';
   }
-  private _url = '';
 
-  @Input() set title(value: string) {
-    this._title = value || '';
+  get safeUrl(): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
   }
+
   get title(): string {
-    return this._title;
+    return this.props?.title || '';
   }
-  private _title = '';
 
-  @Input() set width(value: string) {
-    this._width = this.processDimension(value || '100%');
-  }
   get width(): string {
-    return this._width;
+    return this.processDimension(this.props?.width || '100%');
   }
-  private _width = '100%';
 
-  @Input() set height(value: string) {
-    this._height = this.processDimension(value || '400');
-  }
   get height(): string {
-    return this._height;
+    return this.processDimension(this.props?.height || '400');
   }
-  private _height = '400';
 
-  @Input() set align(value: 'left' | 'center' | 'right') {
-    this._align = value || 'left';
-  }
   get align(): 'left' | 'center' | 'right' {
-    return this._align;
+    return this.props?.align || 'left';
   }
-  private _align: 'left' | 'center' | 'right' = 'left';
 
-  @Input() set border(value: string | boolean) {
-    this._border = toBoolean(value);
-  }
   get border(): boolean {
-    return this._border;
+    return toBoolean(this.props?.border ?? true);
   }
-  private _border = true;
 
   get wrapperClass(): string {
     const baseClass = 'embed-wrapper relative overflow-hidden rounded-md';

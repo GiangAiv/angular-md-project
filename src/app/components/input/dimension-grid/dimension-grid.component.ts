@@ -2,135 +2,160 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseComponent } from '../../../base-component';
 
-interface DimensionItem {
-  label: string;
-  value: string | number;
+interface GridColumn {
+  field: string;
+  header: string;
+  width?: string;
+}
+
+interface GridItem {
+  [key: string]: string | number;
 }
 
 interface DimensionGridProps {
-  items: DimensionItem[];
-  selected?: string[];
-  multiSelect?: boolean;
-  columns?: number;
+  columns: GridColumn[];
+  items: GridItem[];
+  sortField?: string;
+  sortDirection?: 'asc' | 'desc';
+  selectedItems?: string[];
   highlightOnSelect?: boolean;
-  disabledItems?: string[];
 }
 
 @Component({
   selector: 'app-dimension-grid',
   templateUrl: './dimension-grid.component.html',
   standalone: true,
-  imports: [
-    CommonModule
-  ]
+  imports: [CommonModule]
 })
 export class DimensionGridComponent extends BaseComponent<DimensionGridProps> {
+  @Output() sortChange = new EventEmitter<{ field: string; direction: 'asc' | 'desc' }>();
   @Output() selectionChange = new EventEmitter<string[]>();
 
   getContainerClasses(): string {
-    const columns = this.props?.columns || 3;
-    const baseClasses = [
-      'grid',
-      'gap-3',
-      'w-full'
-    ];
-
-    // Default responsive behavior if no columns specified
-    if (!this.props?.columns) {
-      return [...baseClasses, 'grid-cols-1', 'sm:grid-cols-2', 'md:grid-cols-3'].join(' ');
-    }
-
-    // Custom columns with responsive fallback
-    return [...baseClasses, 
-      `grid-cols-1`,
-      `sm:grid-cols-${Math.min(2, columns)}`,
-      `md:grid-cols-${columns}`
+    return [
+      'w-full',
+      'overflow-x-auto',
+      'shadow-sm',
+      'rounded-lg',
+      'border',
+      'border-gray-200'
     ].join(' ');
   }
 
-  getItemClasses(value: string | number): string {
-    const baseClasses = [
-      'cursor-pointer',
-      'rounded-lg',
-      'border',
+  getTableClasses(): string {
+    return [
+      'min-w-full',
+      'divide-y',
+      'divide-gray-200',
+      'bg-white'
+    ].join(' ');
+  }
+
+  getHeaderClasses(): string {
+    return [
+      'bg-gray-50',
+      'text-left',
+      'text-xs',
+      'font-medium',
+      'text-gray-500',
+      'uppercase',
+      'tracking-wider'
+    ].join(' ');
+  }
+
+  getHeaderCellClasses(column: GridColumn): string {
+    return [
       'px-4',
       'py-3',
-      'text-center',
-      'text-sm',
-      'font-medium',
+      'select-none',
+      'cursor-pointer',
+      'hover:bg-gray-100',
+      column.width || ''
+    ].filter(Boolean).join(' ');
+  }
+
+  getRowClasses(item: GridItem, index: number): string {
+    const isSelected = this.isItemSelected(item);
+    const baseClasses = [
+      'hover:bg-gray-50',
       'transition-colors',
       'duration-150'
     ];
 
-    const isSelected = this.isSelected(value);
-    const isDisabled = this.isDisabled(value);
-    const shouldHighlight = this.props?.highlightOnSelect !== false;
-
-    if (isDisabled) {
-      return [...baseClasses, 
-        'opacity-50',
-        'cursor-not-allowed',
-        'bg-gray-50',
-        'text-gray-500',
-        'border-gray-200'
-      ].join(' ');
+    if (isSelected && this.props?.highlightOnSelect) {
+      baseClasses.push('bg-blue-50');
     }
 
-    if (isSelected && shouldHighlight) {
-      return [...baseClasses,
-        'bg-blue-600',
-        'text-white',
-        'border-blue-700',
-        'hover:bg-blue-700'
-      ].join(' ');
-    }
+    return baseClasses.join(' ');
+  }
 
-    return [...baseClasses,
-      'bg-white',
-      'text-gray-700',
-      'border-gray-300',
-      'hover:bg-gray-50'
+  getCellClasses(): string {
+    return [
+      'px-4',
+      'py-3',
+      'whitespace-nowrap',
+      'text-sm',
+      'text-gray-900'
     ].join(' ');
   }
 
-  isSelected(value: string | number): boolean {
-    return this.props?.selected?.includes(String(value)) || false;
+  getValueClasses(): string {
+    return [
+      'font-medium'
+    ].join(' ');
   }
 
-  isDisabled(value: string | number): boolean {
-    return this.props?.disabledItems?.includes(String(value)) || false;
+  getSortIcon(field: string): string {
+    if (this.props?.sortField !== field) return '↕️';
+    return this.props?.sortDirection === 'asc' ? '↑' : '↓';
   }
 
-  handleItemClick(value: string | number): void {
-    if (!this.props?.items || this.isDisabled(value)) return;
-
-    const stringValue = String(value);
-    const currentSelected = this.props.selected || [];
-    let newSelected: string[];
-
-    if (this.props.multiSelect) {
-      // Toggle selection in multi-select mode
-      newSelected = this.isSelected(value)
-        ? currentSelected.filter((v: string) => v !== stringValue)
-        : [...currentSelected, stringValue];
-    } else {
-      // Single select mode
-      newSelected = this.isSelected(value) ? [] : [stringValue];
-    }
+  handleSort(field: string): void {
+    const direction: 'asc' | 'desc' = 
+      this.props?.sortField === field && this.props?.sortDirection === 'asc' 
+        ? 'desc' 
+        : 'asc';
 
     const updatedProps: DimensionGridProps = {
-      ...this.props,
-      items: [...this.props.items],
-      selected: newSelected
+      ...this.props!,
+      sortField: field,
+      sortDirection: direction
     };
 
     this.props = updatedProps;
     this.propsChange.emit(updatedProps);
-    this.selectionChange.emit(newSelected);
+    this.sortChange.emit({ field, direction });
   }
 
-  getAriaLabel(item: DimensionItem): string {
-    const state = this.isSelected(item.value) ? 'selected' : 'unselected';
-    return `${item.label} (${state})`;
+  handleRowClick(item: GridItem): void {
+    if (!this.props?.selectedItems) return;
+
+    const itemId = String(item['id'] || item['key'] || '');
+    if (!itemId) return;
+
+    const newSelection = this.isItemSelected(item)
+      ? this.props.selectedItems.filter(id => id !== itemId)
+      : [...this.props.selectedItems, itemId];
+
+    const updatedProps = {
+      ...this.props,
+      selectedItems: newSelection
+    };
+
+    this.props = updatedProps;
+    this.propsChange.emit(updatedProps);
+    this.selectionChange.emit(newSelection);
+  }
+
+  isItemSelected(item: GridItem): boolean {
+    const itemId = String(item['id'] || item['key'] || '');
+    return this.props?.selectedItems?.includes(itemId) || false;
+  }
+
+  formatValue(value: string | number): string {
+    if (typeof value === 'number') {
+      return value.toLocaleString();
+    }
+    return value;
   }
 } 

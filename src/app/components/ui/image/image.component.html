@@ -1,17 +1,17 @@
-<div [class]="getContainerClasses()">
+<div [class]="containerClasses">
   <img
-    [src]="props?.src"
-    [alt]="props?.alt"
-    [class]="getImageClasses()"
-    [style]="getImageStyles()"
-    [loading]="props?.loading || 'lazy'"
-    [attr.aria-label]="getAriaLabel()"
-    [attr.role]="props?.alt ? undefined : 'img'"
+    [src]="src"
+    [alt]="alt"
+    [class]="imageClasses"
+    [style]="imageStyles"
+    [loading]="loading"
+    [attr.aria-label]="ariaLabel"
+    [attr.role]="alt ? undefined : 'img'"
     (error)="onError($event)" />
   
   <p
-    *ngIf="shouldShowCaption()"
-    [class]="getCaptionClasses()">
-    {{ props?.caption }}
+    *ngIf="hasCaption"
+    [class]="captionClasses">
+    {{ caption }}
   </p>
 </div> 

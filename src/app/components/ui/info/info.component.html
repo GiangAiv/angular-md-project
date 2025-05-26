@@ -1,31 +1,30 @@
 <div
   *ngIf="visible"
-  [class]="getContainerClasses()"
-  [attr.role]="getRole()"
+  [class]="containerClasses"
+  [attr.role]="role"
   aria-live="polite">
   
   <!-- Icon -->
   <div
-    *ngIf="props?.icon || true"
-    [class]="getIconClasses()"
-    [innerHTML]="getIconSvg()">
+    [class]="iconClasses"
+    [innerHTML]="iconSvg">
   </div>
 
   <!-- Content -->
   <div class="flex-1">
     <div
-      *ngIf="props?.title"
-      [class]="getTitleClasses()">
-      {{ props?.title }}
+      *ngIf="title"
+      [class]="titleClasses">
+      {{ title }}
     </div>
-    <div>{{ props?.message }}</div>
+    <div>{{ message }}</div>
   </div>
 
   <!-- Dismiss Button -->
   <button
-    *ngIf="props?.dismissible"
+    *ngIf="dismissible"
     type="button"
-    [class]="getDismissButtonClasses()"
+    [class]="dismissButtonClasses"
     (click)="onDismiss()"
     aria-label="Dismiss">
     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">

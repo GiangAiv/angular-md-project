@@ -1,1 +1,53 @@
- 
+<div [class]="getContainerClasses()">
+  <!-- Dropdown Button -->
+  <button
+    type="button"
+    [class]="getButtonClasses()"
+    [attr.aria-expanded]="isOpen"
+    [attr.aria-haspopup]="true"
+    [disabled]="props?.disabled"
+    (click)="toggleDropdown()">
+    
+    <!-- Selected Value / Placeholder -->
+    <span class="flex-1 text-left truncate">{{ getSelectedLabel() }}</span>
+    
+    <!-- Chevron Icon -->
+    <svg
+      class="w-5 h-5 text-gray-400 transition-transform duration-150"
+      [class.rotate-180]="isOpen"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      fill="currentColor">
+      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+    </svg>
+  </button>
+
+  <!-- Options Menu -->
+  <div
+    *ngIf="isOpen"
+    class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none"
+    role="listbox"
+    [attr.aria-activedescendant]="highlightedIndex >= 0 ? 'option-' + highlightedIndex : undefined">
+    
+    <!-- Options List -->
+    <div class="py-1">
+      <div
+        *ngFor="let option of props?.options; let i = index"
+        [id]="'option-' + i"
+        role="option"
+        [class]="getOptionClasses(option, i)"
+        [attr.aria-selected]="option.value === props?.selected"
+        (click)="selectOption(option)"
+        (mouseenter)="highlightedIndex = i">
+        {{ option.label }}
+      </div>
+
+      <!-- Empty State -->
+      <div
+        *ngIf="!props?.options?.length"
+        class="px-4 py-2 text-sm text-gray-500 text-center">
+        No options available
+      </div>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,196 @@
+# Dropdown Component
+
+A versatile dropdown select component for Angular applications with keyboard navigation, search, and customizable styling.
+
+## Features
+
+- 📝 Customizable options
+- ⌨️ Full keyboard navigation
+- 🔍 Search functionality
+- 🎨 Flexible width options
+- ♿ Accessibility support
+- 🔒 Disabled state
+- 💅 Tailwind CSS styling
+- 🎯 Smart option highlighting
+
+## Usage
+
+```jsx
+import { Dropdown } from '@components/input/Dropdown';
+
+// Basic usage
+<Dropdown
+  options={[
+    { label: 'Option 1', value: '1' },
+    { label: 'Option 2', value: '2' }
+  ]}
+  onSelectionChange={handleChange}
+/>
+
+// With all options
+<Dropdown
+  options={options}
+  selected="value1"
+  placeholder="Select an item"
+  disabled={false}
+  width="full"
+  onSelectionChange={handleChange}
+/>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `options` | `DropdownOption[]` | `[]` | Array of options |
+| `selected` | `string` | `undefined` | Currently selected value |
+| `placeholder` | `string` | `'Select an option'` | Placeholder text |
+| `disabled` | `boolean` | `false` | Whether dropdown is disabled |
+| `width` | `'auto' \| 'full' \| 'fixed'` | `'auto'` | Width configuration |
+
+### DropdownOption Interface
+```typescript
+interface DropdownOption {
+  label: string;   // Display text
+  value: string;   // Unique identifier
+}
+```
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `selectionChange` | `EventEmitter<string>` | Emitted when selection changes |
+| `propsChange` | `EventEmitter<DropdownProps>` | Emitted when any prop changes |
+
+## Examples
+
+### Basic Dropdown
+```jsx
+<Dropdown
+  options={[
+    { label: 'Apple', value: 'apple' },
+    { label: 'Banana', value: 'banana' },
+    { label: 'Orange', value: 'orange' }
+  ]}
+/>
+```
+
+### Full Width with Placeholder
+```jsx
+<Dropdown
+  options={options}
+  placeholder="Choose a fruit"
+  width="full"
+/>
+```
+
+### Fixed Width with Selection
+```jsx
+<Dropdown
+  options={options}
+  selected="apple"
+  width="fixed"
+/>
+```
+
+### Disabled State
+```jsx
+<Dropdown
+  options={options}
+  disabled={true}
+/>
+```
+
+## Styling
+
+The component uses Tailwind CSS with carefully chosen defaults:
+
+### Container
+- Flexible width options
+- Proper positioning
+- Z-index management
+- Responsive design
+
+### Button
+- Clean border design
+- Proper padding
+- Focus ring styling
+- Clear hover states
+
+### Options Menu
+- Proper shadow depth
+- Max height with scroll
+- Smooth animations
+- Border radius matching
+
+### Option Items
+- Clear hover states
+- Selected state highlight
+- Proper spacing
+- Text alignment
+
+### States
+- **Default**
+  - White background
+  - Gray border
+  - Dark text
+
+- **Focus**
+  - Blue ring outline
+  - Increased prominence
+
+- **Disabled**
+  - Reduced opacity
+  - Not-allowed cursor
+  - Muted colors
+
+## Keyboard Navigation
+
+The component supports full keyboard interaction:
+
+- `Space/Enter`: Open/close dropdown, select option
+- `Escape`: Close dropdown
+- `Arrow Up/Down`: Navigate options
+- `Tab`: Move focus
+- `Home/End`: Jump to first/last option
+
+## Accessibility
+
+The component implements several accessibility features:
+
+- ARIA roles and attributes
+- Keyboard navigation
+- Focus management
+- Screen reader support
+- State announcements
+- Clear focus indicators
+
+## Best Practices
+
+1. Options Configuration:
+   - Use clear, concise labels
+   - Ensure unique values
+   - Order logically
+   - Consider grouping
+
+2. Width Selection:
+   - Use 'auto' for inline dropdowns
+   - Use 'full' for form fields
+   - Use 'fixed' for consistent sizing
+
+3. Interaction:
+   - Provide clear feedback
+   - Maintain keyboard support
+   - Handle empty states
+
+## Technical Details
+
+- Built for Angular applications
+- Extends BaseComponent
+- Uses CommonModule
+- Implements OnInit
+- Type-safe interfaces
+- Click outside detection
+- Keyboard event handling
+- Smart option highlighting 

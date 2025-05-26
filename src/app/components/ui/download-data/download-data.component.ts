@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { BaseComponent } from '../../base-component';
 
 interface DownloadDataProps {
@@ -17,37 +17,21 @@ interface DownloadDataProps {
 export class DownloadDataComponent extends BaseComponent<DownloadDataProps> {
   errors: string[] = [];
 
-  @Input() set data(value: any[]) {
-    this._data = value || [];
-  }
   get data(): any[] {
-    return this._data;
+    return this.props?.data || [];
   }
-  private _data: any[] = [];
 
-  @Input() set queryID(value: string) {
-    this._queryID = value || '';
-  }
   get queryID(): string {
-    return this._queryID;
+    return this.props?.queryID || '';
   }
-  private _queryID = '';
 
-  @Input() set text(value: string) {
-    this._text = value || 'Download Data';
-  }
   get text(): string {
-    return this._text;
+    return this.props?.text || 'Download Data';
   }
-  private _text = 'Download Data';
 
-  @Input() set display(value: 'inline' | 'block') {
-    this._display = value || 'inline';
-  }
   get display(): 'inline' | 'block' {
-    return this._display;
+    return this.props?.display || 'inline';
   }
-  private _display: 'inline' | 'block' = 'inline';
 
   get buttonClass(): string {
     const baseClass = 'download-button';

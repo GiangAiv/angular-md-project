@@ -1,3 +1,4 @@
 <div [class]="alertClass" role="alert">
-  <ng-content></ng-content>
+  <ng-container *ngIf="props?.children">{{ props?.children }}</ng-container>
+  <ng-content *ngIf="!props?.children"></ng-content>
 </div> 

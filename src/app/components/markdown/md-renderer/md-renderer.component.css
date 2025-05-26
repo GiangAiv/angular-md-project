@@ -39,10 +39,10 @@
   margin: 0.25rem 0;
 }
 
-:host ::ng-deep a {
+/* :host ::ng-deep a {
   color: #0066cc;
   text-decoration: none;
-}
+} */
 
 :host ::ng-deep a:hover {
   text-decoration: underline;

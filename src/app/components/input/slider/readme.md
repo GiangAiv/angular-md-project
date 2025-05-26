@@ -1,0 +1,174 @@
+# Slider Component
+
+A customizable range slider component for Angular applications with support for min/max values, step sizes, and value display.
+
+## Features
+
+- 🎚️ Smooth sliding interaction
+- 📊 Configurable range and steps
+- 🔢 Optional value display
+- ♿ Accessibility support
+- 🔒 Disabled state support
+- 💅 Tailwind CSS styling
+- 🎯 Precise value control
+- 🔄 Two-way binding support
+
+## Usage
+
+```jsx
+import { Slider } from '@components/input/Slider';
+
+// Basic usage
+<Slider
+  min={0}
+  max={100}
+  value={50}
+  onValueChange={handleChange}
+/>
+
+// With all options
+<Slider
+  min={0}
+  max={10}
+  step={0.5}
+  value={5}
+  showValue={true}
+  disabled={false}
+  onValueChange={handleChange}
+/>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `min` | `number` | `0` | Minimum value |
+| `max` | `number` | `100` | Maximum value |
+| `step` | `number` | `1` | Step increment |
+| `value` | `number` | `undefined` | Current value |
+| `disabled` | `boolean` | `false` | Whether the slider is disabled |
+| `showValue` | `boolean` | `true` | Show current value display |
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `valueChange` | `EventEmitter<number>` | Emitted when value changes |
+| `propsChange` | `EventEmitter<SliderProps>` | Emitted when any prop changes |
+
+## Examples
+
+### Basic Slider
+```jsx
+<Slider
+  min={0}
+  max={100}
+  value={50}
+/>
+```
+
+### Decimal Steps
+```jsx
+<Slider
+  min={0}
+  max={1}
+  step={0.1}
+  value={0.5}
+/>
+```
+
+### Without Value Display
+```jsx
+<Slider
+  min={0}
+  max={10}
+  value={5}
+  showValue={false}
+/>
+```
+
+### Disabled State
+```jsx
+<Slider
+  min={0}
+  max={100}
+  value={75}
+  disabled={true}
+/>
+```
+
+## Styling
+
+The component uses Tailwind CSS with carefully chosen defaults:
+
+### Container
+- Flex layout with centered items
+- Consistent gap spacing
+- Full width by default
+- Proper disabled state styling
+
+### Slider Track
+- Clean, modern appearance
+- Rounded corners
+- Proper height for easy interaction
+- Focus ring for keyboard navigation
+
+### Value Display
+- Clear, readable font
+- Proper spacing from slider
+- Automatic decimal formatting
+- Disabled state styling
+
+### States
+- **Default**
+  - Gray track
+  - Blue accent color
+  - Smooth transitions
+
+- **Focus**
+  - Blue ring outline
+  - Increased prominence
+
+- **Disabled**
+  - Reduced opacity
+  - Not-allowed cursor
+  - Muted colors
+
+## Accessibility
+
+The component implements several accessibility features:
+
+- ARIA attributes for value and range
+- Keyboard navigation support
+- Clear focus indicators
+- Screen reader support
+- Proper disabled state handling
+- Value announcements
+
+## Best Practices
+
+1. Range Configuration:
+   - Choose appropriate min/max values
+   - Set logical step increments
+   - Consider decimal precision
+
+2. Value Display:
+   - Show value when precision matters
+   - Format decimals appropriately
+   - Consider unit display
+
+3. Interaction:
+   - Provide smooth sliding
+   - Maintain responsive feedback
+   - Handle edge cases
+
+## Technical Details
+
+- Built for Angular applications
+- Extends BaseComponent
+- Uses CommonModule
+- Implements OnInit
+- Type-safe props interface
+- Value normalization
+- Step rounding
+- Efficient change detection 

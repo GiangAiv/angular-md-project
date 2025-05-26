@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { BaseComponent } from '../../base-component';
 
 interface NoteProps {
   title?: string;
@@ -10,14 +11,25 @@ interface NoteProps {
 @Component({
   selector: 'app-note',
   templateUrl: './note.component.html',
+  standalone: true,
   imports: [
     CommonModule
   ]
 })
-export class NoteComponent {
-  @Input() props?: NoteProps;
+export class NoteComponent extends BaseComponent<NoteProps> {
+  get title(): string {
+    return this.props?.title || '';
+  }
 
-  getContainerClasses(): string {
+  get text(): string {
+    return this.props?.text || '';
+  }
+
+  get variant(): 'default' | 'muted' | 'highlight' {
+    return this.props?.variant || 'default';
+  }
+
+  get containerClasses(): string {
     const baseClasses = [
       'rounded-lg',
       'border',
@@ -28,7 +40,7 @@ export class NoteComponent {
     ];
 
     // Add variant-specific classes
-    switch (this.props?.variant || 'default') {
+    switch (this.variant) {
       case 'muted':
         baseClasses.push(
           'bg-white',
@@ -55,7 +67,7 @@ export class NoteComponent {
     return baseClasses.join(' ');
   }
 
-  getTitleClasses(): string {
+  get titleClasses(): string {
     return [
       'font-semibold',
       'mb-1',
@@ -63,17 +75,17 @@ export class NoteComponent {
     ].join(' ');
   }
 
-  getTextClasses(): string {
+  get textClasses(): string {
     return [
       'leading-relaxed',
-      this.props?.title ? '' : 'block' // Only add block if no title (for spacing)
+      this.title ? '' : 'block' // Only add block if no title (for spacing)
     ].filter(Boolean).join(' ');
   }
 
-  getAriaLabel(): string {
-    if (this.props?.title) {
-      return `${this.props.title}: ${this.props.text}`;
+  get ariaLabel(): string {
+    if (this.title) {
+      return `${this.title}: ${this.text}`;
     }
-    return this.props?.text || '';
+    return this.text;
   }
 } 

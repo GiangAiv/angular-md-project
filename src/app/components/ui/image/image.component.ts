@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { BaseComponent } from '../../base-component';
 
 interface ImageProps {
   src: string;
@@ -15,13 +16,12 @@ interface ImageProps {
 @Component({
   selector: 'app-image',
   templateUrl: './image.component.html',
+  standalone: true,
   imports: [
     CommonModule
   ]
 })
-export class ImageComponent {
-  @Input() props?: ImageProps;
-
+export class ImageComponent extends BaseComponent<ImageProps> {
   onError(event: ErrorEvent): void {
     console.error('Image failed to load:', this.props?.src);
     const imgElement = event.target as HTMLImageElement;
@@ -29,7 +29,39 @@ export class ImageComponent {
     // You could set a fallback image here if desired
   }
 
-  getContainerClasses(): string {
+  get src(): string {
+    return this.props?.src || '';
+  }
+
+  get alt(): string {
+    return this.props?.alt || '';
+  }
+
+  get caption(): string {
+    return this.props?.caption || '';
+  }
+
+  get width(): string {
+    return this.processDimension(this.props?.width);
+  }
+
+  get height(): string {
+    return this.processDimension(this.props?.height);
+  }
+
+  get rounded(): boolean {
+    return this.props?.rounded ?? false;
+  }
+
+  get objectFit(): string {
+    return this.props?.objectFit || 'cover';
+  }
+
+  get loading(): 'lazy' | 'eager' {
+    return this.props?.loading || 'lazy';
+  }
+
+  get containerClasses(): string {
     return [
       'flex',
       'flex-col',
@@ -39,42 +71,32 @@ export class ImageComponent {
     ].join(' ');
   }
 
-  getImageClasses(): string {
+  get imageClasses(): string {
     const baseClasses = [
       'max-w-full',
       'h-auto',
-      this.props?.rounded ? 'rounded-lg' : ''
+      this.rounded ? 'rounded-lg' : '',
+      `object-${this.objectFit}`
     ];
-
-    // Add object-fit class if specified
-    if (this.props?.objectFit) {
-      baseClasses.push(`object-${this.props.objectFit}`);
-    } else {
-      baseClasses.push('object-cover');
-    }
 
     return baseClasses.filter(Boolean).join(' ');
   }
 
-  getImageStyles(): { [key: string]: string } {
+  get imageStyles(): { [key: string]: string } {
     const styles: { [key: string]: string } = {};
 
-    if (this.props?.width) {
-      styles['width'] = typeof this.props.width === 'number' 
-        ? `${this.props.width}px` 
-        : this.props.width;
+    if (this.width) {
+      styles['width'] = this.width;
     }
 
-    if (this.props?.height) {
-      styles['height'] = typeof this.props.height === 'number'
-        ? `${this.props.height}px`
-        : this.props.height;
+    if (this.height) {
+      styles['height'] = this.height;
     }
 
     return styles;
   }
 
-  getCaptionClasses(): string {
+  get captionClasses(): string {
     return [
       'text-sm',
       'text-gray-500',
@@ -83,11 +105,25 @@ export class ImageComponent {
     ].join(' ');
   }
 
-  getAriaLabel(): string | undefined {
-    return this.props?.alt || this.props?.caption;
+  get ariaLabel(): string {
+    return this.alt || this.caption || '';
   }
 
-  shouldShowCaption(): boolean {
-    return !!this.props?.caption;
+  get hasCaption(): boolean {
+    return !!this.caption;
+  }
+
+  private processDimension(dimension?: string | number): string {
+    if (!dimension) return '';
+    
+    if (typeof dimension === 'number') {
+      return `${dimension}px`;
+    }
+
+    if (dimension.endsWith('%') || dimension.endsWith('px')) {
+      return dimension;
+    }
+
+    return `${dimension}px`;
   }
 } 

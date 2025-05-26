@@ -1,0 +1,184 @@
+# TextInput Component
+
+A versatile and accessible text input component for Angular applications with support for various states, types, and styling options.
+
+## Features
+
+- 🎨 Clean, modern design
+- ♿ Full accessibility support
+- 🏷️ Optional label support
+- 🔒 Readonly and disabled states
+- 🎯 Customizable input types
+- 🌐 Autocomplete support
+- 💅 Tailwind CSS styling
+- 🔄 Two-way binding support
+
+## Usage
+
+```jsx
+import { TextInput } from '@components/input/TextInput';
+
+// Basic usage
+<TextInput
+  value="Initial value"
+  label="Username"
+  placeholder="Enter username"
+  onValueChange={handleChange}
+/>
+
+// With all options
+<TextInput
+  value="readonly@example.com"
+  label="Email Address"
+  type="email"
+  name="email"
+  placeholder="Enter email"
+  readonly={true}
+  disabled={false}
+  autocomplete="email"
+  onValueChange={handleChange}
+/>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | `''` | The input value |
+| `label` | `string` | `undefined` | Optional label text |
+| `placeholder` | `string` | `''` | Placeholder text |
+| `disabled` | `boolean` | `false` | Whether the input is disabled |
+| `readonly` | `boolean` | `false` | Whether the input is readonly |
+| `type` | `string` | `'text'` | HTML input type |
+| `name` | `string` | `undefined` | Input name attribute |
+| `autocomplete` | `string` | `undefined` | HTML autocomplete attribute |
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `valueChange` | `EventEmitter<string>` | Emitted when input value changes |
+| `propsChange` | `EventEmitter<TextInputProps>` | Emitted when any prop changes |
+
+## Examples
+
+### Basic Text Input
+```jsx
+<TextInput
+  label="Full Name"
+  placeholder="Enter your full name"
+/>
+```
+
+### Email Input with Autocomplete
+```jsx
+<TextInput
+  label="Email"
+  type="email"
+  placeholder="Enter your email"
+  autocomplete="email"
+/>
+```
+
+### Disabled Input
+```jsx
+<TextInput
+  label="Username"
+  value="current-user"
+  disabled={true}
+/>
+```
+
+### Readonly Input
+```jsx
+<TextInput
+  label="API Key"
+  value="api-key-123"
+  readonly={true}
+/>
+```
+
+## Styling
+
+The component uses Tailwind CSS with carefully chosen defaults:
+
+### Container
+- Full width layout
+- Flex column structure
+- Consistent gap spacing
+
+### Label
+- Medium font weight
+- Proper text color
+- Reduced opacity when disabled
+- Semantic HTML structure
+
+### Input
+- Clean border design
+- Rounded corners
+- Consistent padding
+- Shadow for depth
+- Smooth transitions
+- Focus ring styling
+
+### States
+- **Default**
+  - Gray border
+  - White background
+  - Dark text
+
+- **Focus**
+  - Blue ring and border
+  - Increased prominence
+
+- **Disabled**
+  - Reduced opacity
+  - Not-allowed cursor
+  - Light gray background
+
+- **Readonly**
+  - Gray background
+  - Muted text color
+  - Maintained readability
+
+## Accessibility
+
+The component implements several accessibility features:
+
+- Unique ID generation for input-label association
+- Proper ARIA attributes for states
+- Clear focus indicators
+- Semantic HTML structure
+- Screen reader support
+- Keyboard navigation
+- State announcements
+
+## Best Practices
+
+1. Input Usage:
+   - Always provide meaningful labels
+   - Use clear placeholder text
+   - Choose appropriate input types
+   - Consider autocomplete options
+
+2. State Management:
+   - Use disabled for unavailable inputs
+   - Use readonly for display-only values
+   - Maintain clear visual feedback
+
+3. Accessibility:
+   - Keep labels descriptive
+   - Maintain proper contrast
+   - Test with screen readers
+   - Ensure keyboard navigation
+
+## Technical Details
+
+- Built for Angular applications
+- Extends BaseComponent
+- Uses CommonModule
+- Implements OnInit
+- Type-safe props interface
+- Efficient change detection
+- Clean component structure
+- Event-driven updates 

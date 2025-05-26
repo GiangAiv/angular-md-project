@@ -1,6 +1,7 @@
 <ng-container *ngIf="showContent; else printView">
   <div class="mb-4 mt-2">
     <button
+      type="button"
       class="text-sm text-base-content-muted cursor-pointer inline-flex gap-2"
       (click)="toggleOpen()"
     >
@@ -13,7 +14,8 @@
       class="pl-[calc(0.5rem+10px)] pt-3 mb-6 text-sm"
       [@slideAnimation]
     >
-      <ng-content></ng-content>
+      <ng-container *ngIf="props?.children" class="props.class">{{ props?.children }}</ng-container>
+      <ng-content *ngIf="!props?.children"></ng-content>
     </div>
   </div>
 </ng-container>

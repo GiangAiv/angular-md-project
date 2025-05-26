@@ -1,13 +1,14 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, HostListener, Input } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { BaseComponent } from '../../base-component';
 import { toBoolean } from '../accordion/util';
 
 interface DetailsProps {
   title?: string;
-  open?: boolean;
-  printShowAll?: boolean;
+  open?: boolean | string;
+  printShowAll?: boolean | string;
   class?: string;
+  children?: string;
 }
 
 @Component({
@@ -28,29 +29,17 @@ interface DetailsProps {
   ]
 })
 export class DetailsComponent extends BaseComponent<DetailsProps> {
-  @Input() set title(value: string) {
-    this._title = value || 'Details';
-  }
   get title(): string {
-    return this._title;
+    return this.props?.title || 'Details';
   }
-  private _title = 'Details';
 
-  @Input() set open(value: string | boolean) {
-    this._open = toBoolean(value);
-  }
   get open(): boolean {
-    return this._open;
+    return toBoolean(this.props?.open || false);
   }
-  private _open = false;
 
-  @Input() set printShowAll(value: string | boolean) {
-    this._printShowAll = toBoolean(value);
-  }
   get printShowAll(): boolean {
-    return this._printShowAll;
+    return toBoolean(this.props?.printShowAll ?? true);
   }
-  private _printShowAll = true;
 
   printing = false;
 
@@ -75,7 +64,8 @@ export class DetailsComponent extends BaseComponent<DetailsProps> {
   }
 
   toggleOpen(): void {
-    this._open = !this._open;
+    this.props = { ...this.props, open: !this.open };
+    // this.propsChange.emit(this.props);
   }
 
   get markerClass(): string {

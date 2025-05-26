@@ -6,6 +6,7 @@ export type AlertStatus = 'base' | 'info' | 'positive' | 'warning' | 'negative';
 interface AlertProps {
   status?: AlertStatus;
   class?: string;
+  children?: string;
 }
 
 const DEPRECATED_STATUS_MAP = {
@@ -28,11 +29,11 @@ const checkDeprecatedStatus = (input: string): AlertStatus => {
 };
 
 const classMap: Record<AlertStatus, string> = {
-  base: 'border-base-content/50 bg-base-content/10',
-  info: 'border-info/50 bg-info/10 text-info',
-  negative: 'border-negative/50 bg-negative/10 text-negative',
-  positive: 'border-positive/50 bg-positive/10 text-positive',
-  warning: 'border-warning/50 bg-warning/10 text-warning'
+  base: 'border-gray-200 bg-gray-50 text-gray-600',
+  info: 'border-blue-200 bg-blue-50 text-blue-600',
+  negative: 'border-red-200 bg-red-50 text-red-600',
+  positive: 'border-green-200 bg-green-50 text-green-600',
+  warning: 'border-yellow-200 bg-yellow-50 text-yellow-600'
 };
 
 @Component({
@@ -41,13 +42,10 @@ const classMap: Record<AlertStatus, string> = {
   styleUrls: ['./alert.component.css']
 })
 export class AlertComponent extends BaseComponent<AlertProps> {
-  @Input() set status(value: string) {
-    this._status = checkDeprecatedStatus(value || 'base');
-  }
   get status(): AlertStatus {
-    return this._status;
+    const value = this.props?.status || 'base';
+    return checkDeprecatedStatus(value);
   }
-  private _status: AlertStatus = 'base';
 
   get alertClass(): string {
     return `alert ${classMap[this.status]} border px-3 py-2 mb-4 rounded-sm ${this.props?.class || ''}`;

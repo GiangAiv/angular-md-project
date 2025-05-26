@@ -1,5 +1,6 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { BaseComponent } from '../../base-component';
 
 interface LastRefreshedProps {
   lastUpdated: Date | string;
@@ -11,21 +12,16 @@ interface LastRefreshedProps {
 @Component({
   selector: 'app-last-refreshed',
   templateUrl: './last-refreshed.component.html',
-  imports: [
-    CommonModule
-  ]
+  standalone: true,
+  imports: [CommonModule]
 })
-export class LastRefreshedComponent implements OnInit, OnDestroy {
-  @Input() props?: LastRefreshedProps;
-
+export class LastRefreshedComponent extends BaseComponent<LastRefreshedProps> implements OnInit, OnDestroy {
   private updateInterval?: number;
   private readonly defaultLabel = 'Last updated';
 
   ngOnInit(): void {
-    // Start interval to update relative time display
-    if (this.isRelativeFormat()) {
+    if (this.isRelativeFormat) {
       this.updateInterval = window.setInterval(() => {
-        // Force view update
         this.props = { ...this.props! };
       }, 60000); // Update every minute
     }
@@ -37,7 +33,27 @@ export class LastRefreshedComponent implements OnInit, OnDestroy {
     }
   }
 
-  getContainerClasses(): string {
+  get label(): string {
+    return this.props?.label || this.defaultLabel;
+  }
+
+  get lastUpdated(): Date {
+    const input = this.props?.lastUpdated;
+  
+    const result = input instanceof Date ? input : new Date(input || '');
+    console.log('result', input, result);
+    return result;
+  }
+
+  get isRelativeFormat(): boolean {
+    return this.props?.format !== 'absolute';
+  }
+
+  get showIcon(): boolean {
+    return this.props?.icon !== false;
+  }
+
+  get containerClasses(): string {
     return [
       'flex',
       'items-center',
@@ -47,7 +63,7 @@ export class LastRefreshedComponent implements OnInit, OnDestroy {
     ].join(' ');
   }
 
-  getIconClasses(): string {
+  get iconClasses(): string {
     return [
       'w-4',
       'h-4',
@@ -55,40 +71,30 @@ export class LastRefreshedComponent implements OnInit, OnDestroy {
     ].join(' ');
   }
 
-  getTimeClasses(): string {
+  get timeClasses(): string {
     return [
-      this.isRelativeFormat() ? 'text-gray-500' : 'text-gray-700',
+      this.isRelativeFormat ? 'text-gray-500' : 'text-gray-700',
       'font-medium'
     ].join(' ');
   }
 
-  getFormattedTime(): string {
-    const date = this.getDateObject();
-    
-    if (this.isRelativeFormat()) {
-      return this.getRelativeTimeString(date);
-    }
-    
-    return this.getAbsoluteTimeString(date);
+  get formattedTime(): string {
+    return this.isRelativeFormat ? this.relativeTimeString : this.absoluteTimeString;
   }
 
-  getAriaLabel(): string {
-    const label = this.props?.label || this.defaultLabel;
-    return `${label}: ${this.getAbsoluteTimeString(this.getDateObject())}`;
+  get ariaLabel(): string {
+    return `${this.label}: ${this.absoluteTimeString}`;
   }
 
-  private isRelativeFormat(): boolean {
-    return this.props?.format !== 'absolute';
+  get clockIcon(): string {
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" />
+    </svg>`;
   }
 
-  private getDateObject(): Date {
-    const input = this.props?.lastUpdated;
-    return input instanceof Date ? input : new Date(input || '');
-  }
-
-  private getRelativeTimeString(date: Date): string {
+  private get relativeTimeString(): string {
     const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    const diffInSeconds = Math.floor((now.getTime() - this.lastUpdated.getTime()) / 1000);
 
     if (diffInSeconds < 60) {
       return 'just now';
@@ -109,10 +115,10 @@ export class LastRefreshedComponent implements OnInit, OnDestroy {
       return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`;
     }
 
-    return this.getAbsoluteTimeString(date);
+    return this.absoluteTimeString;
   }
 
-  private getAbsoluteTimeString(date: Date): string {
+  private get absoluteTimeString(): string {
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
       month: 'short',
@@ -120,16 +126,6 @@ export class LastRefreshedComponent implements OnInit, OnDestroy {
       hour: 'numeric',
       minute: 'numeric',
       hour12: true
-    }).format(date);
-  }
-
-  getClockIcon(): string {
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" />
-    </svg>`;
-  }
-
-  shouldShowIcon(): boolean {
-    return this.props?.icon !== false;
+    }).format(this.lastUpdated);
   }
 } 

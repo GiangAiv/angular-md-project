@@ -1,14 +1,41 @@
 <div [class]="getContainerClasses()">
-  <button
-    *ngFor="let item of props?.items"
-    [class]="getItemClasses(item.value)"
-    [attr.aria-pressed]="isSelected(item.value)"
-    [attr.aria-disabled]="isDisabled(item.value)"
-    [attr.aria-label]="getAriaLabel(item)"
-    [disabled]="isDisabled(item.value)"
-    (click)="handleItemClick(item.value)"
-    type="button"
-    role="button">
-    {{ item.label }}
-  </button>
+  <table [class]="getTableClasses()">
+    <!-- Header -->
+    <thead [class]="getHeaderClasses()">
+      <tr>
+        <th
+          *ngFor="let column of props?.columns"
+          [class]="getHeaderCellClasses(column)"
+          (click)="handleSort(column.field)">
+          {{ column.header }}
+          <span class="ml-1">{{ getSortIcon(column.field) }}</span>
+        </th>
+      </tr>
+    </thead>
+
+    <!-- Body -->
+    <tbody class="divide-y divide-gray-200">
+      <tr
+        *ngFor="let item of props?.items; let i = index"
+        [class]="getRowClasses(item, i)"
+        (click)="handleRowClick(item)">
+        <td
+          *ngFor="let column of props?.columns"
+          [class]="getCellClasses()">
+          <span [class]="getValueClasses()">
+            {{ formatValue(item[column.field]) }}
+          </span>
+        </td>
+      </tr>
+
+      <!-- Empty State -->
+      <tr *ngIf="!props?.items?.length">
+        <td
+          [attr.colspan]="props?.columns?.length"
+          class="px-4 py-8 text-sm text-gray-500 text-center">
+          No data available
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div> 

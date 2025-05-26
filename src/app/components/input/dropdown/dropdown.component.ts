@@ -164,6 +164,9 @@ export class DropdownComponent extends BaseComponent<DropdownProps> implements O
 
   getButtonClasses(): string {
     return [
+      'flex',
+      "items-center",
+      "gap-2",
       'w-full',
       'bg-white',
       'border',
