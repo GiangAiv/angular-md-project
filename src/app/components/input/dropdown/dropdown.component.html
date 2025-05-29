@@ -7,10 +7,10 @@
     [attr.aria-haspopup]="true"
     [disabled]="props?.disabled"
     (click)="toggleDropdown()">
-    
+
     <!-- Selected Value / Placeholder -->
     <span class="flex-1 text-left truncate">{{ getSelectedLabel() }}</span>
-    
+
     <!-- Chevron Icon -->
     <svg
       class="w-5 h-5 text-gray-400 transition-transform duration-150"
@@ -22,23 +22,24 @@
     </svg>
   </button>
 
+
+
   <!-- Options Menu -->
   <div
     *ngIf="isOpen"
-    class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none"
+    class="absolute z-10 w-full mt-1 bg-white border border-gray-100 rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none"
     role="listbox"
     [attr.aria-activedescendant]="highlightedIndex >= 0 ? 'option-' + highlightedIndex : undefined">
-    
+
     <!-- Options List -->
     <div class="py-1">
       <div
         *ngFor="let option of props?.options; let i = index"
-        [id]="'option-' + i"
         role="option"
         [class]="getOptionClasses(option, i)"
         [attr.aria-selected]="option.value === props?.selected"
         (click)="selectOption(option)"
-        (mouseenter)="highlightedIndex = i">
+        onmouseenter="highlightedIndex = i">
         {{ option.label }}
       </div>
 
@@ -50,4 +51,4 @@
       </div>
     </div>
   </div>
-</div> 
+</div>

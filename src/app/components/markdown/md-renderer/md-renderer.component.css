@@ -88,7 +88,6 @@
 :host ::ng-deep th,
 :host ::ng-deep td {
   border: 1px solid #ddd;
-  padding: 0.5rem;
 }
 
 :host ::ng-deep th {

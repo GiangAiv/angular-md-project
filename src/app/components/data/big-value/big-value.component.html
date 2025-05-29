@@ -1,17 +1,23 @@
 <div [class]="getContainerClasses()" [attr.data-big-value]="formatValue(props?.value)">
-  <!-- Main Value -->
-  <div class="text-5xl font-bold tracking-tight md:text-6xl" role="text" [attr.aria-label]="'Value: ' + formatValue(props?.value)">
-    {{ formatValue(props?.value) }}
-  </div>
-
-  <!-- Label -->
+    <!-- Label -->
   <div *ngIf="props?.label" class="text-sm font-medium text-gray-600" role="text" [attr.aria-label]="'Label: ' + props?.label">
     {{ props?.label }}
   </div>
+  <!-- Main Value -->
+   <a [href]="props?.link || '#'">
+     <div class="text-xl font-semibold tracking-tight md:text-3xl" role="text" [attr.aria-label]="'Value: ' + formatValue(props?.value)">
+        {{ formatValue(props?.value) }}
+     </div>
+   </a>
+
 
  
   <!-- Delta -->
   <div *ngIf="props?.delta" [class]="getDeltaClasses()" role="text" [attr.aria-label]="'Change: ' + props?.delta">
-    {{ props?.delta }}
+    <div [class]="getArrowClasses()"></div>
+    {{ props?.delta }} {{ props?.comparisonTitle }}
+  </div>
+  <div *ngIf="props?.comparisonDelta" class="text-xs font-light flex items-center gap-1" role="text" [attr.aria-label]="'Change: ' + props?.comparisonDelta">
+    {{ props?.comparisonDelta }} {{ props?.comparisonTitle }}
   </div>
 </div> 

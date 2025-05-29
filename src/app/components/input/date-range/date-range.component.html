@@ -1,20 +1,26 @@
-<div [class]="getContainerClasses()">
-  <mat-form-field class="w-full">
-    <mat-label *ngIf="props?.label">{{ props?.label }}</mat-label>
+<div>
+<label *ngIf="props?.label" class="block text-xs font-medium text-gray-700 mb-1">
+  {{props?.label}}
+</label>
+
+<div class="flex flex-row gap-2 w-max items-center">
+
+  <!-- Date Range Picker -->
+  <mat-form-field>
     <mat-date-range-input
       [rangePicker]="picker"
       [min]="props?.minDate"
       [max]="props?.maxDate"
       [disabled]="!!props?.disabled"
     >
-      <input 
+      <input
         matStartDate
         [id]="getId() + '-start'"
         [placeholder]="'Start date'"
         [(ngModel)]="selected.start"
         (dateChange)="handleDateRangeChange($event.value, selected.end)"
       >
-      <input 
+      <input
         matEndDate
         [id]="getId() + '-end'"
         [placeholder]="'End date'"
@@ -26,4 +32,13 @@
     <mat-date-range-picker #picker></mat-date-range-picker>
     <mat-hint *ngIf="props?.placeholder">{{ props?.placeholder }}</mat-hint>
   </mat-form-field>
-</div> 
+
+    <!-- Preset Dropdown -->
+  <div *ngIf="props?.showPresets !== false">
+    <app-dropdown
+      [props]="getDropDownProps()"
+      (selectionChange)="handlePresetChange($event)"
+    ></app-dropdown>
+  </div>
+</div>
+</div>

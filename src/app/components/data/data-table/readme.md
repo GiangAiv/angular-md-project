@@ -1,24 +1,38 @@
+
 # DataTable Component
 
-A flexible and accessible data table component with sorting capabilities, customizable styling, and responsive design. Perfect for displaying structured data with a clean, modern interface.
+A flexible and feature-rich data table component with sorting, styling options, and custom column formatting.
 
 ## Features
 
-- Sortable columns with tri-state sorting (ascending, descending, none)
-- Striped rows for better readability
-- Hover effects on rows
-- Optional borders
-- Responsive design with horizontal scrolling
-- Accessibility support with ARIA attributes
-- Empty state handling
-- Modern styling with Tailwind CSS
+- ✅ Sortable columns
+- 🎨 Customizable styling (striped, hover, bordered)
+- 📊 Custom column formatting (percent, currency, date)
+- 🌍 Internationalization support for currency and dates
+- ♿ Accessibility support
+- 📱 Responsive design
 
 ## Props
 
 ```tsx
+interface ColumnFormat {
+  type: 'percent' | 'currency' | 'date';
+  options?: {
+    // For currency
+    locale?: string;
+    currency?: string;
+    // For date
+    format?: string; // moment format string
+    // For percent
+    minimumFractionDigits?: number;
+    maximumFractionDigits?: number;
+  };
+}
+
 interface Column {
-  label: string;     // Display label for the column
-  key: string;       // Unique identifier and data key for the column
+  label: string;
+  key: string;
+  format?: ColumnFormat;
 }
 
 interface DataTableProps {
@@ -33,129 +47,205 @@ interface DataTableProps {
 
 ## Usage Examples
 
-### Basic Table
-
-```jsx
-const columns = [
+### Displaying All Columns
+<DataTable
+  columns={ [
   { label: 'Name', key: 'name' },
   { label: 'Email', key: 'email' },
   { label: 'Role', key: 'role' }
-];
-
-const rows = [
+]}
+  rows={ [
   { name: 'John Doe', email: 'john@example.com', role: 'Admin' },
   { name: 'Jane Smith', email: 'jane@example.com', role: 'User' }
-];
-
-<DataTable 
-  columns={columns}
-  rows={rows}
+]}
 />
-```
 
-### Sortable Table with Custom Styling
 
-```jsx
-const columns = [
-  { label: 'Product', key: 'product' },
-  { label: 'Price', key: 'price' },
-  { label: 'Stock', key: 'stock' }
-];
+### Selecting Specific Columns
 
-const rows = [
-  { product: 'Laptop', price: 999.99, stock: 45 },
-  { product: 'Mouse', price: 29.99, stock: 120 },
-  { product: 'Keyboard', price: 59.99, stock: 84 }
-];
 
-<DataTable 
-  columns={columns}
-  rows={rows}
+<DataTable
+  columns={[
+  { label: 'Name', key: 'name' },
+  { label: 'Email', key: 'email' }
+]}
+  rows={[
+  { name: 'John Doe', email: 'john@example.com', role: 'Admin' },
+  { name: 'Jane Smith', email: 'jane@example.com', role: 'User' }
+]}
   sortable={true}
   striped={true}
   hover={true}
   bordered={true}
 />
-```
 
-### Minimal Style Table
 
-```jsx
-<DataTable 
-  columns={columns}
-  rows={rows}
-  striped={false}
-  hover={false}
-  bordered={false}
+### Formatting Column
+
+<DataTable
+    columns={[
+      { label: 'Product Name', key: 'name' },
+      {
+        label: 'Price',
+        key: 'price',
+        format: {
+          type: 'currency',
+          options: { locale: 'en-US', currency: 'USD' }
+        }
+      },
+      {
+        label: 'Success Rate',
+        key: 'successRate',
+        format: {
+          type: 'percent',
+          options: { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+        }
+      },
+      {
+        label: 'Launch Date',
+        key: 'launchDate',
+        format: {
+          type: 'date',
+          options: { format: 'MMM D, YYYY' }
+        }
+      }
+    ]}
+    rows={[
+      {
+        name: 'Premium Widget',
+        price: 299.99,
+        successRate: 0.856,
+        launchDate: '2024-01-15'
+      },
+      {
+        name: 'Standard Widget',
+        price: 149.50,
+        successRate: 0.742,
+        launchDate: '2024-02-20'
+      },
+      {
+        name: 'Basic Widget',
+        price: 49.99,
+        successRate: 0.923,
+        launchDate: '2024-03-10'
+      }
+    ]}
+    sortable={true}
+    striped={true}
+    hover={true}
+    bordered={true}
+  
 />
-```
 
-## Styling
 
-The component includes comprehensive built-in styling:
 
-### Container
-- Full width with horizontal scroll (`w-full overflow-x-auto`)
-- Automatic table layout (`table-auto`)
-- Minimum full width (`min-w-full`)
+### Paginate
 
-### Header
-- Light gray background (`bg-gray-100`)
-- Left-aligned text
-- Semi-bold font
-- Gray text color (`text-gray-700`)
-- Optional borders
-- Sort indicators when sortable
 
-### Rows
-- Alternating background colors when striped
-- Hover effect (configurable)
-- Smooth transition effects
-- Optional borders
+<DataTable
+  columns={[
+  { label: 'Name', key: 'name' },
+  { label: 'Email', key: 'email' }
+]}
+  rows={[
+  { name: 'John Doe', email: 'john@example.com', role: 'Admin' },
+  { name: 'Jane Smith', email: 'jane@example.com', role: 'User' },
+  { name: 'John Doe 1', email: 'john@example.com1', role: 'Admin' },
+  { name: 'Jane Smith1', email: 'jane@example.com1', role: 'User' }
+]}
+  sortable={true}
+  striped={true}
+  hover={true}
+  bordered={true}
+  paginated={true}
+  pageSize={2}
+/>
 
-### Cells
-- Consistent padding (`px-4 py-2`)
-- Optional borders
-- Proper text alignment
 
-## Sorting
 
-The component supports tri-state sorting:
-1. No sort (default state)
-2. Ascending sort (↑)
-3. Descending sort (↓)
 
-Sorting features:
-- Click column headers to sort
-- Visual indicators show sort direction
-- Proper ARIA labels for accessibility
-- Handles null/undefined values
-- Maintains sort state
 
-## Accessibility
 
-The component implements several accessibility features:
-- Semantic table structure with proper roles
-- ARIA sort attributes for sortable columns
-- Proper scope attributes for headers
-- Clear visual hierarchy
-- Keyboard navigation support
-- Descriptive ARIA labels for sort status
+### Deltas
 
-## Empty State
 
-The table handles empty data gracefully:
-- Shows "No data available" message
-- Spans across all columns
-- Properly styled placeholder
-- Maintains table structure
+<DataTable
+  columns={[
+  { label: 'Name', key: 'name' },
+  { label: 'Email', key: 'email' },
+  {
+    label: 'Launch Date',
+    key: 'revenue',
+    format: {
+      type: 'delta'
+    },
+    align: 'right'
+  }
+]}
+  rows={[
+  { name: 'John Doe', email: 'john@example.com', revenue: '-10%' },
+  { name: 'Jane Smith', email: 'jane@example.com', revenue: '+200%' }
+]}
+  sortable={true}
+  striped={true}
+  hover={true}
+  bordered={true}
+/>
 
-## Notes
 
-- The table is horizontally scrollable for responsive design
-- Sort icons are visible only when sorting is enabled
-- All styling is customizable through props
-- The component extends BaseComponent for consistent behavior
-- Sorting handles various data types appropriately
-- The table maintains a clean look even with missing data
-- All features can be enabled/disabled independently
+
+
+
+
+
+### Search
+
+
+<DataTable
+  columns={[
+  { label: 'Name', key: 'name' },
+  { label: 'Email', key: 'email' },
+  {
+    label: 'Launch Date',
+    key: 'revenue',
+    format: {
+      type: 'delta'
+    },
+    align: 'right'
+  }
+]}
+  rows={[
+  { name: 'John Doe', email: 'john@example.com', revenue: '-10%' },
+  { name: 'Jane Smith', email: 'jane@example.com', revenue: '+200%' }
+]}
+  sortable={true}
+  searchable={true}
+/>
+
+
+
+
+
+### Total Row
+
+
+<DataTable
+  columns={[
+  { label: 'Name', key: 'name' },
+  { label: 'Email', key: 'email' },
+  {
+    label: 'Launch Date',
+    key: 'revenue',
+    format: {
+      type: 'delta'
+    },
+    align: 'right'
+  }
+]}
+  rows={[
+  { name: 'John Doe', email: 'john@example.com', revenue: '-10%' },
+  { name: 'Jane Smith', email: 'jane@example.com', revenue: '+200%' }
+]}
+  sortable={true}
+  totalRow={true}
+/>

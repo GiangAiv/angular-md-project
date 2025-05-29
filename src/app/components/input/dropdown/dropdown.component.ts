@@ -1,5 +1,5 @@
-import { Component, ElementRef, EventEmitter, HostListener, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, ElementRef, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
 import { BaseComponent } from '../../../base-component';
 
 interface DropdownOption {
@@ -7,7 +7,7 @@ interface DropdownOption {
   value: string;
 }
 
-interface DropdownProps {
+export interface DropdownProps {
   options: DropdownOption[];
   selected?: string;
   placeholder: string;
@@ -35,7 +35,6 @@ export class DropdownComponent extends BaseComponent<DropdownProps> implements O
 
   isOpen = false;
   highlightedIndex = -1;
-  public override props: DropdownProps = DEFAULT_PROPS;
 
   constructor(private elementRef: ElementRef) {
     super();
@@ -47,7 +46,7 @@ export class DropdownComponent extends BaseComponent<DropdownProps> implements O
       ...DEFAULT_PROPS,
       ...this.props,
       // Ensure options is always an array
-      options: this.props.options || []
+      options: this.props?.options || []
     };
   }
 
@@ -60,7 +59,8 @@ export class DropdownComponent extends BaseComponent<DropdownProps> implements O
 
   @HostListener('keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
-    if (this.props.disabled) return;
+    if (!this.props) return;
+    if (this.props?.disabled) return;
 
     switch (event.key) {
       case 'Enter':
@@ -98,17 +98,19 @@ export class DropdownComponent extends BaseComponent<DropdownProps> implements O
   }
 
   toggleDropdown() {
+    if (!this.props) return;
     if (this.props.disabled) return;
     this.isOpen ? this.closeDropdown() : this.openDropdown();
   }
 
   openDropdown() {
+    if (!this.props) return;
     if (this.props.disabled) return;
     this.isOpen = true;
-    
+
     // Safely find the index of the selected option
     if (this.props.selected !== undefined) {
-      this.highlightedIndex = this.props.options.findIndex(opt => opt.value === this.props.selected);
+      this.highlightedIndex = this.props.options.findIndex(opt => opt.value === this.props?.selected);
     } else {
       this.highlightedIndex = -1;
     }
@@ -120,14 +122,19 @@ export class DropdownComponent extends BaseComponent<DropdownProps> implements O
   }
 
   selectOption(option: DropdownOption) {
+
+
+    if (!this.props) return;
     if (this.props.disabled) return;
-    
+    if (this.props.selected === option.value) return;
+
+
     const updatedProps: DropdownProps = {
       ...this.props,
       options: [...this.props.options],
       selected: option.value
     };
-    
+
     this.props = updatedProps;
     this.propsChange.emit(updatedProps);
     this.selectionChange.emit(option.value);
@@ -135,18 +142,20 @@ export class DropdownComponent extends BaseComponent<DropdownProps> implements O
   }
 
   getSelectedLabel(): string {
+    if (!this.props) return '';
     if (this.props.selected === undefined) {
       return this.props.placeholder;
     }
-    
+
     // Find the selected option
-    const selectedOption = this.props.options.find(opt => opt.value === this.props.selected);
+    const selectedOption = this.props.options.find(opt => opt.value === this.props?.selected);
     return selectedOption?.label ?? this.props.placeholder;
   }
 
   getContainerClasses(): string {
-    const baseClasses = ['relative'];
-    
+    if (!this.props) return '';
+    const baseClasses = ['relative', 'text-xs'];
+
     switch (this.props.width) {
       case 'full':
         baseClasses.push('w-full');
@@ -163,6 +172,7 @@ export class DropdownComponent extends BaseComponent<DropdownProps> implements O
   }
 
   getButtonClasses(): string {
+    if (!this.props) return '';
     return [
       'flex',
       "items-center",
@@ -185,20 +195,22 @@ export class DropdownComponent extends BaseComponent<DropdownProps> implements O
   }
 
   getOptionClasses(option: DropdownOption, index: number): string {
+    if (!this.props) return '';
     return [
+      'text-xs',
       'cursor-pointer',
       'px-4',
       'py-2',
       'text-sm',
       'hover:bg-blue-50',
-      option.value === this.props.selected ? 'font-semibold text-blue-600' : 'text-gray-900',
+      option.value === this.props.selected ? 'font-semibold text-blue-600' : 'text-gray-700',
       index === this.highlightedIndex ? 'bg-blue-50' : ''
     ].join(' ');
   }
 
   private scrollToHighlighted() {
     if (this.highlightedIndex < 0) return;
-    
+
     requestAnimationFrame(() => {
       const optionElements = this.elementRef.nativeElement.querySelectorAll('[role="option"]');
       const highlightedElement = optionElements[this.highlightedIndex];
@@ -207,4 +219,4 @@ export class DropdownComponent extends BaseComponent<DropdownProps> implements O
       }
     });
   }
-} 
+}

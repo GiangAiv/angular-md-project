@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { BaseComponent } from '../../base-component';
 
 type AlignmentType = 'left' | 'center' | 'right';
@@ -9,6 +9,9 @@ interface BigValueProps {
   label?: string;
   delta?: string;
   alignment?: AlignmentType;
+  comparisonTitle?: string;
+  comparisonDelta?: string;
+  link: string
 }
 
 @Component({
@@ -30,7 +33,6 @@ export class BigValueComponent extends BaseComponent<BigValueProps> {
   }
 
   formatValue(value: string | number | undefined): string {
-    console.log('formatValue', this.props);
     if (value === undefined) return '';
     if (typeof value === 'number') {
       // Format numbers with commas for thousands
@@ -50,7 +52,7 @@ export class BigValueComponent extends BaseComponent<BigValueProps> {
   }
 
   getDeltaClasses(): string {
-    const baseClasses = 'text-xs font-medium';
+    const baseClasses = 'text-xs font-medium flex items-center gap-1';
     if (this.isDeltaPositive()) {
       return `${baseClasses} text-green-600`;
     }
@@ -59,4 +61,15 @@ export class BigValueComponent extends BaseComponent<BigValueProps> {
     }
     return `${baseClasses} text-gray-500`;
   }
-} 
+
+  getArrowClasses(): string {
+    const baseClasses = 'w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent';
+    if (this.isDeltaPositive()) {
+      return `${baseClasses} border-t-green-600 rotate-180`;
+    }
+    if (this.isDeltaNegative()) {
+      return `${baseClasses} border-t-red-600`;
+    }
+    return `${baseClasses} border-t-gray-500`;
+  }
+}

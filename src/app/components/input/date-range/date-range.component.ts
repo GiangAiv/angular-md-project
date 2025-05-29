@@ -1,11 +1,17 @@
-import { Component } from '@angular/core';
-import { BaseComponent } from '../../base-component';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { BaseComponent } from '../../base-component';
+import { DropdownComponent, DropdownProps } from '../dropdown/dropdown.component';
+
+interface DateRangePresetOption {
+  label: string;
+  value: string;
+}
 
 interface DateRangeProps {
   startDate?: Date | string;
@@ -15,6 +21,10 @@ interface DateRangeProps {
   placeholder?: string;
   disabled?: boolean;
   label?: string;
+  showPresets?: boolean;
+  presetLabel?: string;
+  defaultPreset?: string;
+  presetRanges?: DateRangePresetOption[];
 }
 
 @Component({
@@ -27,15 +37,20 @@ interface DateRangeProps {
     MatDatepickerModule,
     MatInputModule,
     MatFormFieldModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    DropdownComponent
   ]
 })
 export class DateRangeComponent extends BaseComponent<DateRangeProps> {
-  private generatedId = `date-range-${Math.random().toString(36).substr(2, 9)}`;
+  private generatedId = `date-range-${Math.random().toString(36).substring(2, 11)}`;
   selected: { start?: Date; end?: Date } = {};
+  selectedPreset?: string;
 
   ngOnInit() {
-    if (this.props?.startDate || this.props?.endDate) {
+    // Handle default preset if provided and no dates are set
+    if (this.props?.defaultPreset && !this.props?.startDate && !this.props?.endDate) {
+      this.handlePresetChange(this.props.defaultPreset);
+    } else if (this.props?.startDate || this.props?.endDate) {
       this.selected = {
         start: this.props.startDate ? new Date(this.props.startDate) : undefined,
         end: this.props.endDate ? new Date(this.props.endDate) : undefined
@@ -44,12 +59,28 @@ export class DateRangeComponent extends BaseComponent<DateRangeProps> {
   }
 
   ngOnChanges() {
-    if (this.props?.startDate || this.props?.endDate) {
+    // Handle default preset if provided and no dates are set
+    if (this.props?.defaultPreset && !this.props?.startDate && !this.props?.endDate) {
+      this.handlePresetChange(this.props.defaultPreset);
+    } else if (this.props?.startDate || this.props?.endDate) {
       this.selected = {
         start: this.props.startDate ? new Date(this.props.startDate) : undefined,
         end: this.props.endDate ? new Date(this.props.endDate) : undefined
       };
+      // Clear preset selection when dates are set externally
+      this.selectedPreset = undefined;
     }
+  }
+
+
+  getDropDownProps(): DropdownProps {
+    return {
+      options: this.getPresetOptions(),
+      selected: this.selectedPreset,
+      placeholder: this.props?.presetLabel || 'Select a Range',
+      disabled: !!this.props?.disabled,
+      width: 'auto',
+    };
   }
 
   getId(): string {
@@ -57,7 +88,7 @@ export class DateRangeComponent extends BaseComponent<DateRangeProps> {
   }
 
   getContainerClasses(): string {
-    return 'flex flex-col gap-2 w-max';
+    return '';
   }
 
   getLabelClasses(): string {
@@ -117,5 +148,185 @@ export class DateRangeComponent extends BaseComponent<DateRangeProps> {
       startDate: start || undefined,
       endDate: end || undefined
     };
+    // Clear preset selection when manually changing dates
+    this.selectedPreset = undefined;
   }
-} 
+
+  getPresetOptions() {
+    // Use custom preset ranges if provided, otherwise use default ones
+    if (this.props?.presetRanges && this.props.presetRanges.length > 0) {
+      return this.props.presetRanges;
+    }
+
+    // Default preset options
+    return [
+      {
+        label: 'Last 7 days',
+        value: 'last-7-days'
+      },
+      {
+        label: 'Last 30 days',
+        value: 'last-30-days'
+      },
+      {
+        label: 'Last 90 days',
+        value: 'last-90-days'
+      },
+      {
+        label: 'Last 365 days',
+        value: 'last-365-days'
+      },
+      {
+        label: 'Last 3 months',
+        value: 'last-3-months'
+      },
+      {
+        label: 'Last 6 months',
+        value: 'last-6-months'
+      },
+      {
+        label: 'Last 9 months',
+        value: 'last-9-months'
+      },
+      {
+        label: 'Last month',
+        value: 'last-month'
+      },
+      {
+        label: 'Last year',
+        value: 'last-year'
+      },
+      {
+        label: 'Month to date',
+        value: 'month-to-date'
+      },
+      {
+        label: 'Month to today',
+        value: 'month-to-today'
+      },
+      {
+        label: 'Year to date',
+        value: 'year-to-date'
+      },
+      {
+        label: 'Year to today',
+        value: 'year-to-today'
+      },
+      {
+        label: 'All time',
+        value: 'all-time'
+      }
+    ];
+  }
+
+  calculatePresetDates(presetValue: string): { start: Date; end: Date } {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    switch (presetValue) {
+      case 'last-7-days':
+        return {
+          start: new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000),
+          end: today
+        };
+
+      case 'last-30-days':
+        return {
+          start: new Date(today.getTime() - 29 * 24 * 60 * 60 * 1000),
+          end: today
+        };
+
+      case 'last-90-days':
+        return {
+          start: new Date(today.getTime() - 89 * 24 * 60 * 60 * 1000),
+          end: today
+        };
+
+      case 'last-365-days':
+        return {
+          start: new Date(today.getTime() - 364 * 24 * 60 * 60 * 1000),
+          end: today
+        };
+
+      case 'last-3-months':
+        return {
+          start: new Date(now.getFullYear(), now.getMonth() - 3, now.getDate()),
+          end: today
+        };
+
+      case 'last-6-months':
+        return {
+          start: new Date(now.getFullYear(), now.getMonth() - 6, now.getDate()),
+          end: today
+        };
+
+      case 'last-9-months':
+        return {
+          start: new Date(now.getFullYear(), now.getMonth() - 9, now.getDate()),
+          end: today
+        };
+
+      case 'last-month':
+        const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+        return {
+          start: lastMonth,
+          end: lastMonthEnd
+        };
+
+      case 'last-year':
+        return {
+          start: new Date(now.getFullYear() - 1, 0, 1),
+          end: new Date(now.getFullYear() - 1, 11, 31)
+        };
+
+      case 'month-to-date':
+      case 'month-to-today':
+        return {
+          start: new Date(now.getFullYear(), now.getMonth(), 1),
+          end: today
+        };
+
+      case 'year-to-date':
+      case 'year-to-today':
+        return {
+          start: new Date(now.getFullYear(), 0, 1),
+          end: today
+        };
+
+      case 'all-time':
+        return {
+          start: new Date(1970, 0, 1),
+          end: today
+        };
+
+      default:
+        return {
+          start: today,
+          end: today
+        };
+    }
+  }
+
+  handlePresetChange(presetValue: string): void {
+
+    if (!presetValue) return;
+
+    const { start, end } = this.calculatePresetDates(presetValue);
+
+    this.selectedPreset = presetValue;
+
+    // Update the selected object that's bound to the date picker inputs
+    this.selected = {
+      start: start,
+      end: end
+    };
+
+    // Update props to reflect the change
+    this.props = {
+      ...this.props,
+      startDate: start,
+      endDate: end
+    };
+  }
+}
