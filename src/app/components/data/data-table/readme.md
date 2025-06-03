@@ -8,6 +8,10 @@ A flexible and feature-rich data table component with sorting, styling options, 
 - ✅ Sortable columns
 - 🎨 Customizable styling (striped, hover, bordered)
 - 📊 Custom column formatting (percent, currency, date)
+- 🌈 Color-coded cells with background colors (positive/negative/info scales)
+- 🔍 Search functionality
+- 📄 Pagination support
+- 📈 Total row calculations
 - 🌍 Internationalization support for currency and dates
 - ♿ Accessibility support
 - 📱 Responsive design
@@ -27,6 +31,9 @@ interface ColumnFormat {
     minimumFractionDigits?: number;
     maximumFractionDigits?: number;
   };
+  showArrow?: boolean;                    // Show delta arrows for positive/negative values
+  colorScale?: 'positive' | 'negative' | 'info' | 'custom' | string;  // Color-code cells with background colors
+  customColor?: string;                   // Hex color for 'custom' colorScale (e.g., '#ff6b35')
 }
 
 interface Column {
@@ -177,14 +184,15 @@ interface DataTableProps {
     label: 'Launch Date',
     key: 'revenue',
     format: {
-      type: 'delta'
+      type: 'percent',
+      showArrow: true
     },
     align: 'right'
   }
 ]}
   rows={[
-  { name: 'John Doe', email: 'john@example.com', revenue: '-10%' },
-  { name: 'Jane Smith', email: 'jane@example.com', revenue: '+200%' }
+  { name: 'John Doe', email: 'john@example.com', revenue: -10 },
+  { name: 'Jane Smith', email: 'jane@example.com', revenue: 200 }
 ]}
   sortable={true}
   striped={true}
@@ -209,14 +217,15 @@ interface DataTableProps {
     label: 'Launch Date',
     key: 'revenue',
     format: {
-      type: 'delta'
+      type: 'percent',
+      showArrow: true
     },
     align: 'right'
   }
 ]}
   rows={[
-  { name: 'John Doe', email: 'john@example.com', revenue: '-10%' },
-  { name: 'Jane Smith', email: 'jane@example.com', revenue: '+200%' }
+  { name: 'John Doe', email: 'john@example.com', revenue: -10 },
+  { name: 'Jane Smith', email: 'jane@example.com', revenue: 200 }
 ]}
   sortable={true}
   searchable={true}
@@ -237,15 +246,114 @@ interface DataTableProps {
     label: 'Launch Date',
     key: 'revenue',
     format: {
-      type: 'delta'
+      type: 'currency',
+      showArrow: true
     },
     align: 'right'
   }
 ]}
   rows={[
-  { name: 'John Doe', email: 'john@example.com', revenue: '-10%' },
-  { name: 'Jane Smith', email: 'jane@example.com', revenue: '+200%' }
+  { name: 'John Doe', email: 'john@example.com', revenue: 10 },
+  { name: 'Jane Smith', email: 'jane@example.com', revenue: 200 }
 ]}
   sortable={true}
   totalRow={true}
+/>
+
+
+### Color Scale
+
+Color-code cells with background colors based on values. Automatically sorts by value in descending order.
+
+**Color Options:**
+- **Preset colors**: `'positive'` (green), `'negative'` (red), `'info'` (blue)
+- **Custom colors**: Use `colorScale: 'custom'` with `customColor: '#hexcode'`
+- **Direct hex**: Use `colorScale: '#hexcode'` directly
+
+#### Preset Colors
+
+<DataTable
+  columns={[
+    { label: 'Product', key: 'product' },
+    { label: 'Region', key: 'region' },
+    {
+      label: 'Performance Score',
+      key: 'score',
+      format: {
+        type: 'percent',
+        colorScale: 'positive'  // Green background, higher values = darker
+      },
+      align: 'right'
+    },
+    {
+      label: 'Risk Level',
+      key: 'risk',
+      format: {
+        colorScale: 'negative'  // Red background, higher values = darker
+      },
+      align: 'center'
+    },
+    {
+      label: 'Info Rating',
+      key: 'info',
+      format: {
+        colorScale: 'info'      // Blue background, higher values = darker
+      },
+      align: 'center'
+    }
+  ]}
+  rows={[
+    { product: 'Widget A', region: 'North', score: 0.85, risk: 2.1, info: 7.5 },
+    { product: 'Widget B', region: 'South', score: 0.92, risk: 1.3, info: 8.2 },
+    { product: 'Widget C', region: 'East', score: 0.78, risk: 3.7, info: 6.1 },
+    { product: 'Widget D', region: 'West', score: 0.96, risk: 0.8, info: 9.3 }
+  ]}
+  sortable={true}
+  striped={true}
+  hover={true}
+  bordered={true}
+/>
+
+#### Custom Colors
+
+<DataTable
+  columns={[
+    { label: 'Product', key: 'product' },
+    {
+      label: 'Temperature',
+      key: 'temperature',
+      format: {
+        colorScale: 'custom',
+        customColor: '#ff6b35'  // Orange background
+      },
+      align: 'center'
+    },
+    {
+      label: 'Humidity',
+      key: 'humidity',
+      format: {
+        colorScale: '#9333ea'   // Purple background (direct hex)
+      },
+      align: 'center'
+    },
+    {
+      label: 'Pressure',
+      key: 'pressure',
+      format: {
+        colorScale: 'custom',
+        customColor: '#06b6d4'  // Cyan background
+      },
+      align: 'center'
+    }
+  ]}
+  rows={[
+    { product: 'Sensor A', temperature: 72, humidity: 45, pressure: 1013 },
+    { product: 'Sensor B', temperature: 68, humidity: 52, pressure: 1015 },
+    { product: 'Sensor C', temperature: 75, humidity: 38, pressure: 1011 },
+    { product: 'Sensor D', temperature: 70, humidity: 48, pressure: 1014 }
+  ]}
+  sortable={true}
+  striped={true}
+  hover={true}
+  bordered={true}
 />

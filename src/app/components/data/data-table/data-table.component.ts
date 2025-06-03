@@ -18,7 +18,8 @@ interface ColumnFormat {
     // delta
   };
   showArrow?: boolean;
-
+  colorScale?: 'positive'|'negative'|'info'|'custom'|string; // Preset values or custom hex color
+  customColor?: string; // hex color for 'custom' colorScale
 }
 
 interface Column {
@@ -95,10 +96,104 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
     return `${baseClasses} ${stripedClasses} ${hoverClasses} ${borderClasses}`.trim();
   }
 
-  getCellClasses(): string {
-    const baseClasses = 'px-2 py-1 text-xs font-light';
+  getCellClasses(value: any, column: Column): string {
+    const baseClasses = 'px-2 py-1 text-xs font-light relative';
     const borderClasses = this.props?.bordered ? '' : '!border-none';
-    return `${baseClasses} ${borderClasses} `.trim();
+    const backgroundClasses = this.getCellBackgroundClasses(value, column);
+    return `${baseClasses} ${borderClasses} ${backgroundClasses}`.trim();
+  }
+
+  getCellBackgroundClasses(_value: any, _column: Column): string {
+    // Return empty string since we'll use inline styles instead
+    return '';
+  }
+
+  getCellBackgroundStyle(value: any, column: Column): { [key: string]: string } {
+    if (!column.format?.colorScale) return {};
+
+    const numValue = this.parseNumericValue(value);
+    if (isNaN(Number(numValue))) return {};
+
+    const intensity = this.calculateColorIntensity(numValue as number, column);
+    const colorScale = column.format.colorScale;
+
+    // Handle custom color via customColor property
+    if (colorScale === 'custom' && column.format.customColor) {
+      const rgbColor = this.hexToRgb(column.format.customColor);
+      if (rgbColor) {
+        return {
+          'background-color': `rgba(${rgbColor}, ${intensity})`
+        };
+      }
+    }
+
+    // Base colors for preset scale types
+    const baseColors: { [key: string]: string } = {
+      'positive': '34, 197, 94', // green-500 RGB values
+      'negative': '239, 68, 68', // red-500 RGB values
+      'info': '59, 130, 246'     // blue-500 RGB values
+    };
+
+    // Check if colorScale is a preset value
+    let rgbColor: string | null = baseColors[colorScale];
+
+    // If not a preset value, try to parse as hex color
+    if (!rgbColor) {
+      rgbColor = this.hexToRgb(colorScale);
+    }
+
+    if (!rgbColor) return {};
+
+    return {
+      'background-color': `rgba(${rgbColor}, ${intensity})`
+    };
+  }
+
+  private hexToRgb(hex: string): string | null {
+    // Remove # if present
+    hex = hex.replace('#', '');
+
+    // Handle 3-digit hex codes
+    if (hex.length === 3) {
+      hex = hex.split('').map(char => char + char).join('');
+    }
+
+    // Validate hex format
+    if (hex.length !== 6 || !/^[0-9A-Fa-f]{6}$/.test(hex)) {
+      return null;
+    }
+
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    return `${r}, ${g}, ${b}`;
+  }
+
+  private calculateColorIntensity(value: number, column: Column): number {
+    if (!this.originalRows.length) return 0.3;
+
+    // Get all numeric values for this column
+    const columnValues = this.originalRows
+      .map(row => this.parseNumericValue(row[column.key]))
+      .filter(val => !isNaN(Number(val)))
+      .map(val => Number(val));
+
+    if (columnValues.length === 0) return 0.3;
+
+    const minValue = Math.min(...columnValues);
+    const maxValue = Math.max(...columnValues);
+
+    // If all values are the same, return medium intensity
+    if (minValue === maxValue) return 0.3;
+
+    // Calculate relative position (0-1)
+    const normalizedValue = (value - minValue) / (maxValue - minValue);
+
+    // Map to opacity values (0.1 to 0.8 for light to dark)
+    const minOpacity = 0.1;
+    const maxOpacity = 0.8;
+    return minOpacity + (normalizedValue * (maxOpacity - minOpacity));
   }
   getCellContentClasses(value: number, column: Column): string {
     const alignClasses = {
@@ -294,7 +389,24 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
   ngOnInit(): void {
     if (this.props?.rows) {
       this.originalRows = [...this.props.rows];
+
+      // Auto-sort by colorScale columns in descending order
+      this.autoSortByColorScale();
+
       this.applyFiltersAndPagination();
+    }
+  }
+
+  private autoSortByColorScale(): void {
+    if (!this.props?.columns || !this.props?.rows) return;
+
+    // Find the first column with colorScale
+    const colorScaleColumn = this.props.columns.find(col => col.format?.colorScale);
+
+    if (colorScaleColumn) {
+      this.currentSortColumn = colorScaleColumn.key;
+      this.currentSortDirection = 'desc'; // Sort descending by default for colorScale
+      this.sortData();
     }
   }
 

@@ -1,41 +1,51 @@
 <div [class]="getContainerClasses()">
-  <table [class]="getTableClasses()">
-    <!-- Header -->
-    <thead [class]="getHeaderClasses()">
-      <tr>
-        <th
-          *ngFor="let column of props?.columns"
-          [class]="getHeaderCellClasses(column)"
-          (click)="handleSort(column.field)">
-          {{ column.header }}
-          <span class="ml-1">{{ getSortIcon(column.field) }}</span>
-        </th>
-      </tr>
-    </thead>
+  <div [class]="getGridClasses()" [style.grid-template-columns]="'repeat(' + (props?.dimensions?.length || 1) + ', 1fr)'">
+    <!-- Column for each dimension -->
+    <div
+      *ngFor="let columnData of columnsData"
+      [class]="getColumnClasses()">
 
-    <!-- Body -->
-    <tbody class="divide-y divide-gray-200">
-      <tr
-        *ngFor="let item of props?.items; let i = index"
-        [class]="getRowClasses(item, i)"
-        (click)="handleRowClick(item)">
-        <td
-          *ngFor="let column of props?.columns"
-          [class]="getCellClasses()">
-          <span [class]="getValueClasses()">
-            {{ formatValue(item[column.field]) }}
+      <!-- Column Header -->
+      <h3 [class]="getColumnHeaderClasses()">
+        {{ columnData.dimension }}
+      </h3>
+
+      <!-- Rows for this dimension -->
+      <div
+        *ngFor="let rowData of columnData.data"
+        [class]="getRowClasses()">
+
+        <!-- Progress Bar Background -->
+        <div
+          [class]="getProgressBarClasses()"
+          [style.width.%]="rowData.percentage">
+        </div>
+
+        <!-- Row Content -->
+        <div [class]="getRowContentClasses()">
+          <span [class]="getValueLabelClasses()" [title]="rowData.value">
+            {{ rowData.value }}
           </span>
-        </td>
-      </tr>
+          <span [class]="getTotalClasses()">
+            {{ formatValue(rowData.total) }}
+          </span>
+        </div>
+      </div>
 
-      <!-- Empty State -->
-      <tr *ngIf="!props?.items?.length">
-        <td
-          [attr.colspan]="props?.columns?.length"
-          class="px-4 py-8 text-sm text-gray-500 text-center">
-          No data available
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div> 
+      <!-- Empty state for this column -->
+      <div
+        *ngIf="!columnData.data?.length"
+        class="text-center py-8 text-gray-500 text-sm">
+        No data available
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state for entire component -->
+  <div
+    *ngIf="!columnsData?.length"
+    class="text-center py-12 text-gray-500">
+    <p class="text-lg font-medium">No data available</p>
+    <p class="text-sm mt-1">Please provide rows, metrics, and dimensions to display data.</p>
+  </div>
+</div>

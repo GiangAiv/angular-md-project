@@ -1,24 +1,23 @@
-import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { BaseComponent } from '../../../base-component';
 
-interface GridColumn {
-  field: string;
-  header: string;
-  width?: string;
-}
-
-interface GridItem {
-  [key: string]: string | number;
-}
-
 interface DimensionGridProps {
-  columns: GridColumn[];
-  items: GridItem[];
-  sortField?: string;
-  sortDirection?: 'asc' | 'desc';
-  selectedItems?: string[];
-  highlightOnSelect?: boolean;
+  rows: Array<Record<string, any>>;
+  metrics: string;
+  dimensions: string[];
+}
+
+interface DimensionData {
+  value: string;
+  total: number;
+  percentage: number;
+}
+
+interface ColumnData {
+  dimension: string;
+  data: DimensionData[];
+  maxValue: number;
 }
 
 @Component({
@@ -28,134 +27,133 @@ interface DimensionGridProps {
   imports: [CommonModule]
 })
 export class DimensionGridComponent extends BaseComponent<DimensionGridProps> {
-  @Output() sortChange = new EventEmitter<{ field: string; direction: 'asc' | 'desc' }>();
-  @Output() selectionChange = new EventEmitter<string[]>();
+
+  get columnsData(): ColumnData[] {
+    if (!this.props?.rows || !this.props?.dimensions || !this.props?.metrics) {
+      return [];
+    }
+
+    return this.props.dimensions.map(dimension => {
+      // Group data by dimension value and calculate totals
+      const groupedData = this.props!.rows.reduce((acc, row) => {
+        const dimensionValue = String(row[dimension] || 'Unknown');
+        const metricValue = Number(row[this.props!.metrics]) || 0;
+
+        if (!acc[dimensionValue]) {
+          acc[dimensionValue] = 0;
+        }
+        acc[dimensionValue] += metricValue;
+
+        return acc;
+      }, {} as Record<string, number>);
+
+      // Convert to array and sort by total descending
+      const sortedData = Object.entries(groupedData)
+        .map(([value, total]) => ({ value, total }))
+        .sort((a, b) => b.total - a.total);
+
+      // Calculate max value for this dimension
+      const maxValue = Math.max(...sortedData.map(item => item.total));
+
+      // Add percentage calculation
+      const dataWithPercentage = sortedData.map(item => ({
+        ...item,
+        percentage: maxValue > 0 ? (item.total / maxValue) * 100 : 0
+      }));
+
+      return {
+        dimension,
+        data: dataWithPercentage,
+        maxValue
+      };
+    });
+  }
 
   getContainerClasses(): string {
     return [
       'w-full',
       'overflow-x-auto',
+      'bg-white',
       'shadow-sm',
-      'rounded-lg',
-      'border',
+    ].join(' ');
+  }
+
+  getGridClasses(): string {
+    return [
+      'grid',
+      'gap-4',
+      'min-w-max'
+    ].join(' ');
+  }
+
+  getColumnClasses(): string {
+    const numColumns = this.props?.dimensions?.length || 1;
+    const maxWidth = Math.floor(100 / numColumns);
+
+    return [
+      'text-xs',
+      'flex',
+      'flex-col',
+      'min-w-[200px]',
+      `max-w-[${maxWidth}%]`
+    ].join(' ');
+  }
+
+  getColumnHeaderClasses(): string {
+    return [
+      '!text-sm',
+      'text-gray-900',
+      'border-b',
       'border-gray-200'
     ].join(' ');
   }
 
-  getTableClasses(): string {
+  getRowClasses(): string {
     return [
-      'min-w-full',
-      'divide-y',
-      'divide-gray-200',
-      'bg-white'
-    ].join(' ');
-  }
-
-  getHeaderClasses(): string {
-    return [
-      'bg-gray-50',
-      'text-left',
-      'text-xs',
-      'font-medium',
-      'text-gray-500',
-      'uppercase',
-      'tracking-wider'
-    ].join(' ');
-  }
-
-  getHeaderCellClasses(column: GridColumn): string {
-    return [
-      'px-4',
-      'py-3',
-      'select-none',
-      'cursor-pointer',
-      'hover:bg-gray-100',
-      column.width || ''
-    ].filter(Boolean).join(' ');
-  }
-
-  getRowClasses(item: GridItem, index: number): string {
-    const isSelected = this.isItemSelected(item);
-    const baseClasses = [
-      'hover:bg-gray-50',
+      'relative',
+      'p-1',
+      'border',
+      'border-none',
       'transition-colors',
       'duration-150'
-    ];
-
-    if (isSelected && this.props?.highlightOnSelect) {
-      baseClasses.push('bg-blue-50');
-    }
-
-    return baseClasses.join(' ');
-  }
-
-  getCellClasses(): string {
-    return [
-      'px-4',
-      'py-3',
-      'whitespace-nowrap',
-      'text-sm',
-      'text-gray-900'
     ].join(' ');
   }
 
-  getValueClasses(): string {
+  getProgressBarClasses(): string {
     return [
-      'font-medium'
+      'absolute',
+      'inset-0',
+      'bg-blue-50',
+      'transition-all',
+      'duration-300'
     ].join(' ');
   }
 
-  getSortIcon(field: string): string {
-    if (this.props?.sortField !== field) return '↕️';
-    return this.props?.sortDirection === 'asc' ? '↑' : '↓';
+  getRowContentClasses(): string {
+    return [
+      'relative',
+      'z-10',
+      'flex',
+      'justify-between',
+      'items-center'
+    ].join(' ');
   }
 
-  handleSort(field: string): void {
-    const direction: 'asc' | 'desc' = 
-      this.props?.sortField === field && this.props?.sortDirection === 'asc' 
-        ? 'desc' 
-        : 'asc';
-
-    const updatedProps: DimensionGridProps = {
-      ...this.props!,
-      sortField: field,
-      sortDirection: direction
-    };
-
-    this.props = updatedProps;
-    this.propsChange.emit(updatedProps);
-    this.sortChange.emit({ field, direction });
+  getValueLabelClasses(): string {
+    return [
+      'text-gray-900',
+      'truncate'
+    ].join(' ');
   }
 
-  handleRowClick(item: GridItem): void {
-    if (!this.props?.selectedItems) return;
-
-    const itemId = String(item['id'] || item['key'] || '');
-    if (!itemId) return;
-
-    const newSelection = this.isItemSelected(item)
-      ? this.props.selectedItems.filter(id => id !== itemId)
-      : [...this.props.selectedItems, itemId];
-
-    const updatedProps = {
-      ...this.props,
-      selectedItems: newSelection
-    };
-
-    this.props = updatedProps;
-    this.propsChange.emit(updatedProps);
-    this.selectionChange.emit(newSelection);
+  getTotalClasses(): string {
+    return [
+      'text-gray-700',
+      'text-sm'
+    ].join(' ');
   }
 
-  isItemSelected(item: GridItem): boolean {
-    const itemId = String(item['id'] || item['key'] || '');
-    return this.props?.selectedItems?.includes(itemId) || false;
+  formatValue(value: number): string {
+    return value.toLocaleString();
   }
-
-  formatValue(value: string | number): string {
-    if (typeof value === 'number') {
-      return value.toLocaleString();
-    }
-    return value;
-  }
-} 
+}

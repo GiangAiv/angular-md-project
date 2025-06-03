@@ -47,7 +47,8 @@
       >
         <td
           *ngFor="let column of props?.columns"
-          [class]="getCellClasses()"
+          [class]="getCellClasses(row[column.key], column)"
+          [ngStyle]="getCellBackgroundStyle(row[column.key], column)"
         >
         <div [class]="getCellContentClasses(row[column.key], column)">
           {{ formatCellValue(row[column.key], column) }}
@@ -72,7 +73,8 @@
       <tr [class]="getTotalRowClasses()">
         <td
           *ngFor="let column of props?.columns"
-          [class]="getCellClasses()"
+          [class]="getCellClasses(calculateColumnTotal(column), column)"
+          [ngStyle]="getCellBackgroundStyle(calculateColumnTotal(column), column)"
         >
         <div [class]="getTotalCellContentClasses(calculateColumnTotal(column), column)">
           {{ formatCellValue(calculateColumnTotal(column), column) }}
