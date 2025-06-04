@@ -41,59 +41,160 @@
 
     <!-- Table Body -->
     <tbody>
-      <tr
-        *ngFor="let row of props?.rows; let i = index"
-        [class]="getRowClasses(i)"
-      >
-        <td
-          *ngFor="let column of props?.columns"
-          [class]="getCellClasses(row[column.key], column)"
-          [ngStyle]="getCellBackgroundStyle(row[column.key], column)"
+      <!-- Grouped Display -->
+      <ng-container *ngIf="isGrouped">
+        <ng-container *ngFor="let group of displayGroupedData">
+          <!-- Group Header Row -->
+          <tr class="bg-gray-100">
+            <!-- Group header with subtotals -->
+            <ng-container *ngIf="hasSubtotals()">
+              <td
+                *ngFor="let column of props?.columns; let colIndex = index"
+                [class]="getCellClasses('', column)"
+                class="px-1 py-1 font-semibold text-gray-800 cursor-pointer hover:bg-gray-200 !border-none"
+                (click)="toggleGroup(group.groupValue)"
+              >
+                <div class="flex items-center gap-2 text-xs">
+                  <!-- Show expand/collapse icon and group label only in first column -->
+                  <ng-container *ngIf="colIndex === 0">
+                    <span>{{ group.expanded ? '▼' : '▶' }}</span>
+                    <span>{{ group.groupLabel }} ({{ group.rows.length }} items)</span>
+                  </ng-container>
+                  <!-- Show subtotal for this column if it has one -->
+                  <ng-container *ngIf="colIndex > 0">
+                    <span class="text-xs font-medium">{{ getGroupSubtotal(group, column.key) }}</span>
+                  </ng-container>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Group header without subtotals (original layout) -->
+            <ng-container *ngIf="!hasSubtotals()">
+              <td
+                [attr.colspan]="props?.columns?.length"
+                class="px-1 py-1 font-semibold text-gray-800 cursor-pointer hover:bg-gray-200 !border-none"
+                (click)="toggleGroup(group.groupValue)"
+              >
+                <div class="flex items-center gap-2 text-xs">
+                  <span>{{ group.expanded ? '▼' : '▶' }}</span>
+                  <span>{{ group.groupLabel }} ({{ group.rows.length }} items)</span>
+                </div>
+              </td>
+            </ng-container>
+          </tr>
+
+          <!-- Group Rows -->
+          <ng-container *ngIf="group.expanded">
+            <tr
+              *ngFor="let row of group.rows; let i = index"
+              [class]="getRowClasses(i)"
+            >
+              <td
+                *ngFor="let column of props?.columns"
+                [class]="getCellClasses(row[column.key], column)"
+                [ngStyle]="getCellBackgroundStyle(row[column.key], column)"
+              >
+              <div [class]="getCellContentClasses(row[column.key], column)">
+                <!-- Bar column -->
+                <div
+                  *ngIf="isBarColumn(column)"
+                  class="w-full h-6 rounded-sm relative"
+                  [ngStyle]="getBarStyles(row[column.key], column)"
+                >
+                  <span class="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-800 z-10">
+                    {{ formatCellValue(row[column.key], column) }}
+                  </span>
+                </div>
+                <!-- Image column -->
+                <img
+                  *ngIf="isImageColumn(column)"
+                  [src]="formatCellValue(row[column.key], column)"
+                  [alt]="getImageAltText(row[column.key], column)"
+                  [ngStyle]="getImageStyles(column)"
+                  class="object-cover"
+                />
+                <!-- Link column -->
+                <a
+                  *ngIf="isLinkColumn(column)"
+                  [href]="getLinkUrl(row[column.key])"
+                  [target]="getLinkTarget(column)"
+                  class="text-blue-600 hover:text-blue-800 underline"
+                >
+                  {{ getLinkText(row[column.key], column, row) }}
+                </a>
+                <!-- HTML column -->
+                <div
+                  *ngIf="isHtmlColumn(column)"
+                  [innerHTML]="getHtmlContent(row[column.key], column)"
+                ></div>
+                <!-- Non-image, non-link, non-html, non-bar column -->
+                <span [class]="redNegativeClasses(row[column.key], column)" *ngIf="!isImageColumn(column) && !isLinkColumn(column) && !isHtmlColumn(column) && !isBarColumn(column)">
+                  {{ formatCellValue(row[column.key], column) }}
+                </span>
+                <span  *ngIf="column.format?.showArrow" [class]="getArrowClasses(row[column.key])"></span>
+              </div>
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+
+      <!-- Non-Grouped Display -->
+      <ng-container *ngIf="!isGrouped">
+        <tr
+          *ngFor="let row of props?.rows; let i = index"
+          [class]="getRowClasses(i)"
         >
-        <div [class]="getCellContentClasses(row[column.key], column)">
-          <!-- Bar column -->
-          <div
-            *ngIf="isBarColumn(column)"
-            class="w-full h-6 rounded-sm relative"
-            [ngStyle]="getBarStyles(row[column.key], column)"
+          <td
+            *ngFor="let column of props?.columns"
+            [class]="getCellClasses(row[column.key], column)"
+            [ngStyle]="getCellBackgroundStyle(row[column.key], column)"
           >
-            <span class="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-800 z-10">
+          <div [class]="getCellContentClasses(row[column.key], column)">
+            <!-- Bar column -->
+            <div
+              *ngIf="isBarColumn(column)"
+              class="w-full h-6 rounded-sm relative"
+              [ngStyle]="getBarStyles(row[column.key], column)"
+            >
+              <span class="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-800 z-10">
+                {{ formatCellValue(row[column.key], column) }}
+              </span>
+            </div>
+            <!-- Image column -->
+            <img
+              *ngIf="isImageColumn(column)"
+              [src]="formatCellValue(row[column.key], column)"
+              [alt]="getImageAltText(row[column.key], column)"
+              [ngStyle]="getImageStyles(column)"
+              class="object-cover"
+            />
+            <!-- Link column -->
+            <a
+              *ngIf="isLinkColumn(column)"
+              [href]="getLinkUrl(row[column.key])"
+              [target]="getLinkTarget(column)"
+              class="text-blue-600 hover:text-blue-800 underline"
+            >
+              {{ getLinkText(row[column.key], column, row) }}
+            </a>
+            <!-- HTML column -->
+            <div
+              *ngIf="isHtmlColumn(column)"
+              [innerHTML]="getHtmlContent(row[column.key], column)"
+            ></div>
+            <!-- Non-image, non-link, non-html, non-bar column -->
+            <span [class]="redNegativeClasses(row[column.key], column)" *ngIf="!isImageColumn(column) && !isLinkColumn(column) && !isHtmlColumn(column) && !isBarColumn(column)">
               {{ formatCellValue(row[column.key], column) }}
             </span>
+            <span  *ngIf="column.format?.showArrow" [class]="getArrowClasses(row[column.key])"></span>
           </div>
-          <!-- Image column -->
-          <img
-            *ngIf="isImageColumn(column)"
-            [src]="formatCellValue(row[column.key], column)"
-            [alt]="getImageAltText(row[column.key], column)"
-            [ngStyle]="getImageStyles(column)"
-            class="object-cover"
-          />
-          <!-- Link column -->
-          <a
-            *ngIf="isLinkColumn(column)"
-            [href]="getLinkUrl(row[column.key])"
-            [target]="getLinkTarget(column)"
-            class="text-blue-600 hover:text-blue-800 underline"
-          >
-            {{ getLinkText(row[column.key], column, row) }}
-          </a>
-          <!-- HTML column -->
-          <div
-            *ngIf="isHtmlColumn(column)"
-            [innerHTML]="getHtmlContent(row[column.key], column)"
-          ></div>
-          <!-- Non-image, non-link, non-html, non-bar column -->
-          <span [class]="redNegativeClasses(row[column.key], column)" *ngIf="!isImageColumn(column) && !isLinkColumn(column) && !isHtmlColumn(column) && !isBarColumn(column)">
-            {{ formatCellValue(row[column.key], column) }}
-          </span>
-          <span  *ngIf="column.format?.showArrow" [class]="getArrowClasses(row[column.key])"></span>
-        </div>
-        </td>
-      </tr>
+          </td>
+        </tr>
+      </ng-container>
 
       <!-- Empty State -->
-      <tr *ngIf="!props?.rows?.length">
+      <tr *ngIf="(!isGrouped && !props?.rows?.length) || (isGrouped && !displayGroupedData?.length)">
         <td
           [attr.colspan]="props?.columns?.length"
           class="px-4 py-8 text-center text-gray-500"
@@ -139,7 +240,7 @@
 </div>
 
 <!-- Pagination -->
-<div *ngIf="props?.paginated && totalPages > 1" class="mt-4 flex items-center justify-between">
+<div *ngIf="props?.paginated && totalPages > 1 && !isGrouped" class="mt-4 flex items-center justify-between">
   <!-- Items info -->
   <div class="text-sm text-gray-700">
     Showing {{ startItem }} to {{ endItem }} of {{ totalItems }} results

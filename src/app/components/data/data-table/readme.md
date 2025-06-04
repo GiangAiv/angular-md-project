@@ -61,6 +61,14 @@ interface DataTableProps {
   hover?: boolean;                  // Optional: Enable row hover effect (default: true)
   bordered?: boolean;               // Optional: Show borders (default: true)
   sortable?: boolean;               // Optional: Enable column sorting (default: false)
+  searchable?: boolean;             // Optional: Enable search functionality (default: false)
+  paginated?: boolean;              // Optional: Enable pagination (default: false)
+  pageSize?: number;                // Optional: Number of rows per page (default: 10)
+  searchPlaceholder?: string;       // Optional: Placeholder text for search input
+  totalRow?: boolean;               // Optional: Show total row at bottom (default: false)
+  groupBy?: string;                 // Optional: Column key to group data by
+  subtotals?: string[];             // Optional: Array of column keys to calculate subtotals for
+  groupOpen?: boolean;              // Optional: Whether groups are open by default (default: true)
 }
 ```
 
@@ -270,6 +278,69 @@ interface DataTableProps {
 ]}
   sortable={true}
   totalRow={true}
+/>
+
+
+### Group By
+
+The `groupBy` feature allows you to group table rows by a specific column value. When enabled:
+
+- Data is grouped by the specified column
+- Group headers show the group value and item count
+- Groups can be expanded/collapsed by clicking the header
+- Sorting works within each group
+- Search filters data and regroups results
+- Pagination is disabled (all groups are shown)
+- Use `groupOpen` to control whether groups are expanded by default (default: true)
+
+### Subtotals with GroupBy
+
+When using `subtotals` with `groupBy`, you can display calculated subtotals for numeric columns in the group headers:
+
+- Specify column keys in the `subtotals` array to calculate subtotals
+- Subtotals are displayed in the group header row, aligned with their respective columns
+- Only numeric columns (currency, percent, number) show subtotals
+- Subtotals respect the column's formatting (currency, number formatting, etc.)
+
+### Group Open/Closed State
+
+The `groupOpen` option controls the default expanded state of groups:
+
+- `groupOpen: true` (default): All groups are expanded by default
+- `groupOpen: false`: All groups are collapsed by default
+- Users can still manually expand/collapse individual groups by clicking the group headers
+- The expanded/collapsed state is maintained when searching or sorting
+
+<DataTable
+  columns={[
+  { label: 'Product Name', key: 'name' },
+  { label: 'Category', key: 'category' },
+  {
+    label: 'Price',
+    key: 'price',
+    format: {
+      type: 'currency',
+      options: { locale: 'en-US', currency: 'USD' }
+    }
+  },
+  {
+    label: 'Stock',
+    key: 'stock',
+    format: { type: 'number' }
+  }
+]}
+  rows={[
+  { name: 'iPhone 15', category: 'Electronics', price: 999, stock: 50 },
+  { name: 'MacBook Pro', category: 'Electronics', price: 2499, stock: 25 },
+  { name: 'Office Chair', category: 'Furniture', price: 299, stock: 100 },
+  { name: 'Standing Desk', category: 'Furniture', price: 599, stock: 30 },
+  { name: 'iPad Air', category: 'Electronics', price: 599, stock: 75 }
+]}
+  groupBy="category"
+  subtotals={["price", "stock"]}
+  groupOpen={false}
+  sortable={true}
+  searchable={true}
 />
 
 

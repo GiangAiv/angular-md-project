@@ -65,6 +65,19 @@ interface DataTableProps {
   pageSize?: number;
   searchPlaceholder?: string;
   totalRow?: boolean;
+
+  groupBy?: string; // column key to group by
+  groupType?: 'section'| 'accordion'; // how to display groups, default is  accordion
+  subtotals?: string[]; // show subtotal of list cols for each group
+  groupOpen?: boolean; // whether groups are open by default
+}
+
+interface GroupedData {
+  groupValue: any;
+  groupLabel: string;
+  rows: Record<string, any>[];
+  expanded: boolean;
+  subtotals?: Record<string, number | string>; // subtotals for each column
 }
 
 type SortDirection = 'asc' | 'desc' | null;
@@ -90,6 +103,10 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
   // Pagination functionality
   currentPage: number = 1;
   private filteredRows: Record<string, any>[] = [];
+
+  // GroupBy functionality
+  private groupedData: GroupedData[] = [];
+  private groupExpandedState: Map<string, boolean> = new Map();
 
   getTableClasses(): string {
     const baseClasses = 'min-w-full table-auto';
@@ -402,21 +419,24 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
   }
 
   private sortData(): void {
-    if (!this.currentSortColumn || !this.currentSortDirection || !this.props?.rows) return;
+    if (!this.currentSortColumn || !this.currentSortDirection) return;
 
-    const sortedRows = [...this.props.rows].sort((a, b) => {
-      const aVal = a[this.currentSortColumn!];
-      const bVal = b[this.currentSortColumn!];
-
-      if (aVal === bVal) return 0;
-      if (aVal === null || aVal === undefined) return 1;
-      if (bVal === null || bVal === undefined) return -1;
-
-      const comparison = aVal < bVal ? -1 : 1;
-      return this.currentSortDirection === 'asc' ? comparison : -comparison;
+    // Sort the original rows for consistent behavior
+    this.originalRows = [...this.originalRows].sort((a, b) => {
+      return this.compareValues(a[this.currentSortColumn!], b[this.currentSortColumn!]);
     });
 
-    this.props.rows = sortedRows;
+    // Re-apply filters and pagination to get sorted results
+    this.applyFiltersAndPagination();
+  }
+
+  private compareValues(aVal: any, bVal: any): number {
+    if (aVal === bVal) return 0;
+    if (aVal === null || aVal === undefined) return 1;
+    if (bVal === null || bVal === undefined) return -1;
+
+    const comparison = aVal < bVal ? -1 : 1;
+    return this.currentSortDirection === 'asc' ? comparison : -comparison;
   }
 
   getSortIcon(columnKey: string): string {
@@ -636,6 +656,149 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
     }
   }
 
+  // GroupBy functionality
+  get isGrouped(): boolean {
+    return !!this.props?.groupBy;
+  }
+
+  get displayGroupedData(): GroupedData[] {
+    return this.groupedData;
+  }
+
+  toggleGroup(groupValue: any): void {
+    const groupKey = String(groupValue);
+    const defaultExpanded = this.props?.groupOpen ?? true;
+    const currentState = this.groupExpandedState.get(groupKey) ?? defaultExpanded;
+    this.groupExpandedState.set(groupKey, !currentState);
+
+    // Update the grouped data
+    this.groupedData = this.groupedData.map(group => ({
+      ...group,
+      expanded: group.groupValue === groupValue ? !currentState : group.expanded
+    }));
+  }
+
+  private createGroupedData(): void {
+    if (!this.props?.groupBy || !this.filteredRows.length) {
+      this.groupedData = [];
+      return;
+    }
+
+    const groupKey = this.props.groupBy;
+    const groups = new Map<any, Record<string, any>[]>();
+
+    // Group the filtered rows
+    this.filteredRows.forEach(row => {
+      const groupValue = row[groupKey];
+      if (!groups.has(groupValue)) {
+        groups.set(groupValue, []);
+      }
+      groups.get(groupValue)!.push(row);
+    });
+
+    // Convert to GroupedData array and sort rows within each group
+    this.groupedData = Array.from(groups.entries()).map(([groupValue, rows]) => {
+      const groupKey = String(groupValue);
+      const defaultExpanded = this.props?.groupOpen ?? true; // Use groupOpen option, default to true
+      const expanded = this.groupExpandedState.get(groupKey) ?? defaultExpanded;
+
+      // Sort rows within the group if sorting is active
+      let sortedRows = rows;
+      if (this.currentSortColumn && this.currentSortDirection) {
+        sortedRows = [...rows].sort((a, b) => {
+          return this.compareValues(a[this.currentSortColumn!], b[this.currentSortColumn!]);
+        });
+      }
+
+      return {
+        groupValue,
+        groupLabel: this.formatGroupLabel(groupValue),
+        rows: sortedRows,
+        expanded,
+        subtotals: this.calculateGroupSubtotals(sortedRows)
+      };
+    });
+
+    // Sort groups by their group value (always ascending for consistency)
+    this.groupedData.sort((a, b) => {
+      const aVal = a.groupValue;
+      const bVal = b.groupValue;
+
+      if (aVal === bVal) return 0;
+      if (aVal === null || aVal === undefined) return 1;
+      if (bVal === null || bVal === undefined) return -1;
+
+      return aVal < bVal ? -1 : 1;
+    });
+  }
+
+  private formatGroupLabel(groupValue: any): string {
+    if (groupValue === null || groupValue === undefined) {
+      return 'No Group';
+    }
+
+    // Find the column to get formatting info
+    const column = this.props?.columns.find(col => col.key === this.props?.groupBy);
+    if (column) {
+      return this.formatCellValue(groupValue, column);
+    }
+
+    return String(groupValue);
+  }
+
+  private calculateGroupSubtotals(rows: Record<string, any>[]): Record<string, number | string> {
+    if (!this.props?.subtotals || !rows.length) {
+      return {};
+    }
+
+    const subtotals: Record<string, number | string> = {};
+
+    this.props.subtotals.forEach(columnKey => {
+      const column = this.props?.columns.find(col => col.key === columnKey);
+      if (!column) return;
+
+      // Only calculate subtotals for numeric columns
+      const isNumericColumn = this.isNumericColumn(column);
+      if (!isNumericColumn) {
+        subtotals[columnKey] = '';
+        return;
+      }
+
+      const total = rows.reduce((sum, row) => {
+        const value = row[columnKey];
+        const numValue = this.parseNumericValue(value) as number;
+        return sum + (isNaN(Number(numValue)) ? 0 : numValue);
+      }, 0);
+
+      subtotals[columnKey] = total;
+    });
+
+    return subtotals;
+  }
+
+  getGroupSubtotal(group: GroupedData, columnKey: string): string {
+    if (!group.subtotals || !this.props?.subtotals?.includes(columnKey)) {
+      return '';
+    }
+
+    const subtotalValue = group.subtotals[columnKey];
+    if (subtotalValue === '' || subtotalValue === undefined) {
+      return '';
+    }
+
+    // Format the subtotal value using the column's format
+    const column = this.props?.columns.find(col => col.key === columnKey);
+    if (column) {
+      return this.formatCellValue(subtotalValue, column);
+    }
+
+    return String(subtotalValue);
+  }
+
+  hasSubtotals(): boolean {
+    return !!(this.props?.subtotals && this.props.subtotals.length > 0);
+  }
+
   private autoSortByColorScale(): void {
     if (!this.props?.columns || !this.props?.rows) return;
 
@@ -671,11 +834,23 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
         })
       );
 
+    // Create grouped data if groupBy is enabled
+    if (this.props?.groupBy) {
+      this.createGroupedData();
+    }
+
     // Update props.rows for display (will be further filtered by pagination)
     this.updateDisplayedRows();
   }
 
   private updateDisplayedRows(): void {
+    // For grouped data, we don't paginate the individual rows
+    // Instead, we show all groups and let users expand/collapse them
+    if (this.props?.groupBy) {
+      this.props!.rows = [...this.filteredRows];
+      return;
+    }
+
     if (!this.props?.paginated) {
       this.props!.rows = [...this.filteredRows];
       return;
