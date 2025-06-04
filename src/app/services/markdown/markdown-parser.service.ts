@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 
-import { ComponentRegistryService } from './component-registry.service';
-import { parse as parseYaml } from 'yaml';
 import {
   ComponentReference,
   ParsedContent,
 } from 'src/app/models/markdown/markdown-types';
+import { parse as parseYaml } from 'yaml';
+import { ComponentRegistryService } from './component-registry.service';
 
 @Injectable({
   providedIn: 'root',
@@ -385,7 +385,7 @@ export class MarkdownParserService {
       if (component.type && component.props) {
         // Try to find the matching component in the content
         const jsonPattern = new RegExp(
-          `\`\`\`component\\s*\\n[\\s\\S]*?\\n\`\`\``,
+          `(\w+)=\{([\s\S]*?)}|(\w+)=(".*?"|true|false)|(\w+)`,
           'g',
         );
         const jsxPattern = new RegExp(

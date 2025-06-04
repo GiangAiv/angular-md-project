@@ -1,12 +1,31 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import * as moment from 'moment';
 import { BaseComponent } from '../../base-component';
 
 interface ColumnFormat {
-  type: 'percent' | 'currency' | 'date';
+  type: 'percent' | 'currency' | 'date' | 'image' | 'link' | 'html' | 'bar';
   options?: {
+    // for image
+    width?: string | number;
+    height?: string | number;
+    rounded?: boolean;
+    objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
+    alt?: string; // Alt text for accessibility
+
+    // for link
+    linkLabel?: string; // Text to display for the link (if not provided, uses the URL)
+    target?: '_blank' | '_self' | '_parent' | '_top'; // Link target attribute
+
+    // for html
+    sanitize?: boolean; // Whether to sanitize HTML content (default: true for security)
+
+
+    // for bar
+    barColor?: string;
+
     // For currency
     locale?: string;
     currency?: string;
@@ -18,8 +37,13 @@ interface ColumnFormat {
     // delta
   };
   showArrow?: boolean;
-  colorScale?: 'positive'|'negative'|'info'|'custom'|string; // Preset values or custom hex color
+  colorScale?: 'positive' | 'negative' | 'info' | 'custom' | string; // Preset values or custom hex color
   customColor?: string; // hex color for 'custom' colorScale
+
+  colorMid?: number; // value to consider as mid point for color scaling
+  colorRange?: string[]; // hex colors for color scaling
+  scaleColumn?: string; // other column to use for current column's color scaling
+  redNegative?: boolean; // for positive/negative color scaling, whether to consider negative values as red or green
 }
 
 interface Column {
@@ -55,6 +79,10 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
   private currentSortColumn: string | null = null;
   private currentSortDirection: SortDirection = null;
 
+  constructor(private sanitizer: DomSanitizer) {
+    super();
+  }
+
   // Search functionality
   searchTerm: string = '';
   private originalRows: Record<string, any>[] = [];
@@ -65,7 +93,7 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
 
   getTableClasses(): string {
     const baseClasses = 'min-w-full table-auto';
-    const borderClasses = this.props?.bordered  ? '' : '!border-none';
+    const borderClasses = this.props?.bordered ? '' : '!border-none';
 
     return `${baseClasses} ${borderClasses}`.trim();
   }
@@ -114,25 +142,42 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
     const numValue = this.parseNumericValue(value);
     if (isNaN(Number(numValue))) return {};
 
-    const intensity = this.calculateColorIntensity(numValue as number, column);
-    const colorScale = column.format.colorScale;
+    const colorResult = this.calculateCellColor(numValue as number, column);
+    if (!colorResult) return {};
+
+    return {
+      'background-color': colorResult
+    };
+  }
+
+  redNegativeClasses(cellValue: any, column: Column): string {
+    if(Number.isNaN(cellValue)) return ''
+    return column.format?.redNegative&& cellValue < 0 ? 'text-red-600' : '';
+  }
+
+  private calculateCellColor(value: number, column: Column): string | null {
+    const format = column.format!;
+
+    // Handle colorRange (gradient colors)
+    if (format.colorRange && format.colorRange.length > 0) {
+      return this.calculateGradientColor(value, column);
+    }
+
+    // Calculate intensity for single color scaling
+    const intensity = this.calculateColorIntensity(value, column);
+    const colorScale = format.colorScale!;
 
     // Handle custom color via customColor property
-    if (colorScale === 'custom' && column.format.customColor) {
-      const rgbColor = this.hexToRgb(column.format.customColor);
+    if (colorScale === 'custom' && format.customColor) {
+      const rgbColor = this.hexToRgb(format.customColor);
       if (rgbColor) {
-        return {
-          'background-color': `rgba(${rgbColor}, ${intensity})`
-        };
+        return `rgba(${rgbColor}, ${intensity})`;
       }
     }
 
-    // Base colors for preset scale types
-    const baseColors: { [key: string]: string } = {
-      'positive': '34, 197, 94', // green-500 RGB values
-      'negative': '239, 68, 68', // red-500 RGB values
-      'info': '59, 130, 246'     // blue-500 RGB values
-    };
+    // Base colors for preset scale types with redNegative support
+    const baseColors = this.getBaseColors(format.redNegative);
+
 
     // Check if colorScale is a preset value
     let rgbColor: string | null = baseColors[colorScale];
@@ -142,14 +187,69 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
       rgbColor = this.hexToRgb(colorScale);
     }
 
-    if (!rgbColor) return {};
+    if (!rgbColor) return null;
+
+    return `rgba(${rgbColor}, ${intensity})`;
+  }
+
+  private getBaseColors(redNegative?: boolean): { [key: string]: string } {
+    // Default behavior: positive = green, negative = red
+    // If redNegative is false: positive = green, negative = green (inverted intensity)
+    // If redNegative is true: positive = red, negative = red (default behavior)
+
+    if (redNegative === false) {
+      return {
+        'positive': '34, 197, 94', // green-500 RGB values
+        'negative': '34, 197, 94', // green-500 RGB values (same as positive)
+        'info': '59, 130, 246'     // blue-500 RGB values
+      };
+    }
 
     return {
-      'background-color': `rgba(${rgbColor}, ${intensity})`
+      'positive': '34, 197, 94', // green-500 RGB values
+      'negative': '239, 68, 68', // red-500 RGB values
+      'info': '59, 130, 246'     // blue-500 RGB values
     };
   }
 
+  private calculateGradientColor(value: number, column: Column): string | null {
+    const format = column.format!;
+    const colorRange = format.colorRange!;
+
+    if (colorRange.length < 2) return null;
+
+    // Get the scaling values (from scaleColumn if specified, otherwise current column)
+    const scalingValues = this.getScalingValues(column);
+    if (scalingValues.length === 0) return null;
+
+    const minValue = Math.min(...scalingValues);
+    const maxValue = Math.max(...scalingValues);
+
+    // Handle colorMid if specified
+    let normalizedValue: number;
+    if (format.colorMid !== undefined) {
+      normalizedValue = this.calculateMidpointNormalization(value, minValue, maxValue, format.colorMid);
+    } else {
+      // Standard normalization (0-1)
+      if (minValue === maxValue) {
+        normalizedValue = 0.5;
+      } else {
+        normalizedValue = (value - minValue) / (maxValue - minValue);
+      }
+    }
+
+    // Clamp to [0, 1]
+    normalizedValue = Math.max(0, Math.min(1, normalizedValue));
+
+    return this.interpolateColors(colorRange, normalizedValue);
+  }
+
   private hexToRgb(hex: string): string | null {
+    const [r, g, b] = this.hexToRgbV2(hex) || [0, 0, 0];
+    return `${r}, ${g}, ${b}`;
+  }
+
+  private hexToRgbV2(hex: string): [number, number, number] | null {
     // Remove # if present
     hex = hex.replace('#', '');
 
@@ -167,28 +267,35 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
 
-    return `${r}, ${g}, ${b}`;
+    return [r, g, b];
   }
 
   private calculateColorIntensity(value: number, column: Column): number {
     if (!this.originalRows.length) return 0.3;
 
-    // Get all numeric values for this column
-    const columnValues = this.originalRows
-      .map(row => this.parseNumericValue(row[column.key]))
-      .filter(val => !isNaN(Number(val)))
-      .map(val => Number(val));
+    // Get the scaling values (from scaleColumn if specified, otherwise current column)
+    const scalingValues = this.getScalingValues(column);
+    if (scalingValues.length === 0) return 0.3;
 
-    if (columnValues.length === 0) return 0.3;
-
-    const minValue = Math.min(...columnValues);
-    const maxValue = Math.max(...columnValues);
+    const minValue = Math.min(...scalingValues);
+    const maxValue = Math.max(...scalingValues);
 
     // If all values are the same, return medium intensity
     if (minValue === maxValue) return 0.3;
 
-    // Calculate relative position (0-1)
-    const normalizedValue = (value - minValue) / (maxValue - minValue);
+    const format = column.format;
+    let normalizedValue: number;
+
+    // Handle colorMid if specified
+    if (format?.colorMid !== undefined) {
+      normalizedValue = this.calculateMidpointNormalization(value, minValue, maxValue, format.colorMid);
+    } else {
+      // Standard normalization (0-1)
+      normalizedValue = (value - minValue) / (maxValue - minValue);
+    }
+
+    // Clamp to [0, 1]
+    normalizedValue = Math.max(0, Math.min(1, normalizedValue));
 
     // Map to opacity values (0.1 to 0.8 for light to dark)
     const minOpacity = 0.1;
@@ -206,28 +313,28 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
 
     if (!column.format?.showArrow) return baseClasses;
 
-    if (Number(value)>0 || String(value).startsWith('+')) {
+    if (Number(value) > 0 || String(value).startsWith('+')) {
       return `${baseClasses} text-green-600`;
     }
-    if (value<0 || String(value).startsWith('-')) {
+    if (value < 0 || String(value).startsWith('-')) {
       return `${baseClasses} text-red-600`;
     }
     return `${baseClasses} text-gray-500`;
   }
 
-  getArrowClasses(value: number| string): string {
+  getArrowClasses(value: number | string): string {
     const baseClasses = 'w-0 h-0 border-l-4 border-r-4 border-t-8 border-transparent';
-    if (Number(value)>0 || String(value).startsWith('+')) {
+    if (Number(value) > 0 || String(value).startsWith('+')) {
       return `${baseClasses} border-t-green-600 rotate-180`;
     }
-    if (Number(value)<0 || String(value).startsWith('-')) {
+    if (Number(value) < 0 || String(value).startsWith('-')) {
       return `${baseClasses} border-t-red-600`;
     }
     return `${baseClasses} border-t-gray-500`;
   }
 
 
-  getTotalCellContentClasses(value: number| string, column: Column): string {
+  getTotalCellContentClasses(value: number | string, column: Column): string {
     const alignClasses = {
       'left': '',
       'right': 'justify-end',
@@ -238,10 +345,10 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
 
     if (!column.format?.showArrow) return baseClasses;
 
-    if (Number(value)>0 || String(value).startsWith('+')) {
+    if (Number(value) > 0 || String(value).startsWith('+')) {
       return `${baseClasses} text-green-600`;
     }
-    if (Number(value)<0 || String(value).startsWith('-')) {
+    if (Number(value) < 0 || String(value).startsWith('-')) {
       return `${baseClasses} text-red-600`;
     }
     return `${baseClasses} text-gray-500`;
@@ -249,10 +356,10 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
 
   getTotalArrowClasses(value: number): string {
     const baseClasses = 'w-0 h-0 border-l-4 border-r-4 border-t-8 border-transparent';
-    if (Number(value)>0 || String(value).startsWith('+')) {
+    if (Number(value) > 0 || String(value).startsWith('+')) {
       return `${baseClasses} border-t-green-600 rotate-180`;
     }
-    if (value<0 || String(value).startsWith('-')) {
+    if (value < 0 || String(value).startsWith('-')) {
       return `${baseClasses} border-t-red-600`;
     }
     return `${baseClasses} border-t-gray-500`;
@@ -334,6 +441,14 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
         return this.formatCurrency(value, column.format.options);
       case 'date':
         return this.formatDate(value, column.format.options);
+      case 'image':
+        return decodeURIComponent(String(value)); // For images, we return the URL as-is
+      case 'link':
+        return decodeURIComponent(String(value)); // For links, we return the URL as-is
+      case 'html':
+        return String(value); // For HTML, we return the HTML content as-is
+      case 'bar':
+        return String(value); // For bars, we return the value as-is for display
       default:
         return String(value);
     }
@@ -351,7 +466,7 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
       maximumFractionDigits: options?.maximumFractionDigits ?? 2,
     });
 
-    return formatter.format(numValue/100);
+    return formatter.format(numValue / 100);
   }
 
   private formatCurrency(value: any, options?: ColumnFormat['options']): string {
@@ -385,6 +500,130 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
     return momentDate.format(format);
   }
 
+  // Image formatting methods
+  isImageColumn(column: Column): boolean {
+    return column.format?.type === 'image';
+  }
+
+  getImageStyles(column: Column): { [key: string]: string } {
+    if (!this.isImageColumn(column)) return {};
+
+    const options = column.format?.options;
+    const styles: { [key: string]: string } = {};
+
+    if (options?.width) {
+      styles['width'] = typeof options.width === 'number' ? `${options.width}px` : options.width;
+    } else {
+      styles['width'] = '50px'; // Default width
+    }
+
+    if (options?.height) {
+      styles['height'] = typeof options.height === 'number' ? `${options.height}px` : options.height;
+    } else {
+      styles['height'] = 'auto'; // Default height
+    }
+
+    if (options?.objectFit) {
+      styles['object-fit'] = options.objectFit;
+    } else {
+      styles['object-fit'] = 'cover'; // Default object-fit
+    }
+
+    if (options?.rounded) {
+      styles['border-radius'] = '50%';
+    }
+
+    return styles;
+  }
+
+  getImageAltText(_value: any, column: Column): string {
+    const options = column.format?.options;
+    if (options?.alt) {
+      return options.alt;
+    }
+    return `Image for ${column.label}`;
+  }
+
+  // Link formatting methods
+  isLinkColumn(column: Column): boolean {
+    return column.format?.type === 'link';
+  }
+
+  getLinkText(value: any, column: Column, row: any): string {
+    const options = column.format?.options;
+    if (options?.linkLabel) {
+      return row[options.linkLabel] || options.linkLabel;
+    }
+    return String(value); // Use the URL as the link text if no label provided
+  }
+
+  getLinkTarget(column: Column): string {
+    const options = column.format?.options;
+    return options?.target || '_self'; // Default to _self if no target specified
+  }
+
+  getLinkUrl(value: any): string {
+    return String(value);
+  }
+
+  // HTML formatting methods
+  isHtmlColumn(column: Column): boolean {
+    return column.format?.type === 'html';
+  }
+
+  getHtmlContent(value: any, column: Column): any {
+    const options = column.format?.options;
+    const htmlContent = String(value);
+
+    // Check if sanitization is disabled (default is true for security)
+    const shouldSanitize = options?.sanitize !== false;
+
+    if (shouldSanitize) {
+      // Sanitize the HTML content for security
+      return this.sanitizer.sanitize(1, htmlContent) || '';
+    } else {
+      // Return trusted HTML (use with caution!)
+      return this.sanitizer.bypassSecurityTrustHtml(htmlContent);
+    }
+  }
+
+  // Bar formatting methods
+  isBarColumn(column: Column): boolean {
+    return column.format?.type === 'bar';
+  }
+
+  getBarPercentage(value: any, column: Column): number {
+    const numValue = this.parseNumericValue(value);
+    if (isNaN(Number(numValue))) return 0;
+
+    // Get all values in this column to find the maximum
+    const columnValues = this.originalRows
+      .map(row => this.parseNumericValue(row[column.key]))
+      .filter(val => !isNaN(Number(val)))
+      .map(val => Number(val));
+
+    if (columnValues.length === 0) return 0;
+
+    const maxValue = Math.max(...columnValues);
+    if (maxValue === 0) return 0;
+
+    // Calculate percentage relative to max value (max = 100%)
+    const percentage = (Number(numValue) / maxValue) * 100;
+    return Math.max(0, Math.min(100, percentage)); // Clamp between 0 and 100
+  }
+
+  getBarStyles(value: any, column: Column): { [key: string]: string } {
+    if (!this.isBarColumn(column)) return {};
+
+    const percentage = this.getBarPercentage(value, column);
+    const barColor = column.format?.options?.barColor || '#3b82f6'; // Default to blue-500
+
+    return {
+      'background': `linear-gradient(to right, ${barColor} ${percentage}%, transparent ${percentage}%)`,
+      'position': 'relative'
+    };
+  }
+
   // Initialize data
   ngOnInit(): void {
     if (this.props?.rows) {
@@ -400,12 +639,14 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
   private autoSortByColorScale(): void {
     if (!this.props?.columns || !this.props?.rows) return;
 
-    // Find the first column with colorScale
-    const colorScaleColumn = this.props.columns.find(col => col.format?.colorScale);
+    // Find the first column with colorScale or colorRange
+    const colorColumn = this.props.columns.find(col =>
+      col.format?.colorScale || col.format?.colorRange
+    );
 
-    if (colorScaleColumn) {
-      this.currentSortColumn = colorScaleColumn.key;
-      this.currentSortDirection = 'desc'; // Sort descending by default for colorScale
+    if (colorColumn) {
+      this.currentSortColumn = colorColumn.key;
+      this.currentSortDirection = 'desc'; // Sort descending by default for color columns
       this.sortData();
     }
   }
@@ -423,12 +664,12 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
     this.filteredRows = this.searchTerm.trim() === ''
       ? [...this.originalRows]
       : this.originalRows.filter(row =>
-          this.props!.columns.some(column => {
-            const value = row[column.key];
-            if (value === null || value === undefined) return false;
-            return String(value).toLowerCase().includes(this.searchTerm.toLowerCase());
-          })
-        );
+        this.props!.columns.some(column => {
+          const value = row[column.key];
+          if (value === null || value === undefined) return false;
+          return String(value).toLowerCase().includes(this.searchTerm.toLowerCase());
+        })
+      );
 
     // Update props.rows for display (will be further filtered by pagination)
     this.updateDisplayedRows();
@@ -563,7 +804,7 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
   }
 
   private isNumericColumn(column: Column): boolean {
-    if (column.format?.type === 'currency' || column.format?.type === 'percent') {
+    if (column.format?.type === 'currency' || column.format?.type === 'percent' || column.format?.type === 'bar') {
       return true;
     }
 
@@ -590,5 +831,73 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
     }
 
     return 0;
+  }
+
+  // Helper methods for new color scaling options
+
+  private getScalingValues(column: Column): number[] {
+    if (!this.originalRows.length) return [];
+
+    // Use scaleColumn if specified, otherwise use the current column
+    const sourceColumnKey = column.format?.scaleColumn || column.key;
+
+    return this.originalRows
+      .map(row => this.parseNumericValue(row[sourceColumnKey]))
+      .filter(val => !isNaN(Number(val)))
+      .map(val => Number(val));
+  }
+
+  private calculateMidpointNormalization(value: number, minValue: number, maxValue: number, colorMid: number): number {
+    // Normalize around the midpoint
+    // Values below colorMid map to [0, 0.5], values above map to [0.5, 1]
+    if (value <= colorMid) {
+      // Map from [minValue, colorMid] to [0, 0.5]
+      if (colorMid === minValue) return 0.5;
+      return 0.5 * (value - minValue) / (colorMid - minValue);
+    } else {
+      // Map from [colorMid, maxValue] to [0.5, 1]
+      if (maxValue === colorMid) return 0.5;
+      return 0.5 + 0.5 * (value - colorMid) / (maxValue - colorMid);
+    }
+  }
+
+  interpolateColors(colorRange: string[], normalizedValue: number): string {
+    const n = colorRange.length;
+
+    if (n === 0) return '#000000';
+
+    if (n === 1) {
+      const rgb = this.hexToRgbV2(colorRange[0]);
+      return rgb ? `rgb(${rgb.join(', ')})` : colorRange[0];
+    }
+
+
+    // // Clamp normalizedValue between 0 and 1
+    const clampedValue = Math.min(Math.max(normalizedValue, 0), 1);
+    const segmentSize = 1 / (n - 1);
+    const segmentIndex = Math.floor(clampedValue / segmentSize);
+
+
+    if (segmentIndex >= n - 1) {
+      const rgb = this.hexToRgbV2(colorRange[n-1]);
+      return rgb ? `rgb(${rgb.join(', ')})` : colorRange[n-1];
+    }
+
+
+
+    const localT = (clampedValue - segmentIndex * segmentSize) / segmentSize;
+    const fromColor = this.hexToRgbV2(colorRange[segmentIndex]);
+    const toColor = this.hexToRgbV2(colorRange[segmentIndex + 1]);
+
+
+    if (!fromColor || !toColor) return colorRange[0];
+
+    const interpolatedRgb = fromColor.map((from, i) => {
+      const to = toColor[i];
+      return Math.round(from + (to - from) * localT);
+    });
+
+
+    return `rgb(${interpolatedRgb.join(', ')})`;
   }
 }

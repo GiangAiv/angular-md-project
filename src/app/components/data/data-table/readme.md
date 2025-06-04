@@ -1,27 +1,31 @@
 
+
 # DataTable Component
-
-A flexible and feature-rich data table component with sorting, styling options, and custom column formatting.
-
-## Features
-
-- ✅ Sortable columns
-- 🎨 Customizable styling (striped, hover, bordered)
-- 📊 Custom column formatting (percent, currency, date)
-- 🌈 Color-coded cells with background colors (positive/negative/info scales)
-- 🔍 Search functionality
-- 📄 Pagination support
-- 📈 Total row calculations
-- 🌍 Internationalization support for currency and dates
-- ♿ Accessibility support
-- 📱 Responsive design
 
 ## Props
 
 ```tsx
 interface ColumnFormat {
-  type: 'percent' | 'currency' | 'date';
+  type: 'percent' | 'currency' | 'date' | 'image' | 'link' | 'html' | 'bar';
   options?: {
+    // for image
+    width?: string | number;
+    height?: string | number;
+    rounded?: boolean;
+    objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
+    alt?: string; // Alt text for accessibility
+
+    // for link
+    linkLabel?: string; // Text to display for the link (if not provided, uses the URL)
+    target?: '_blank' | '_self' | '_parent' | '_top'; // Link target attribute
+
+    // for html
+    sanitize?: boolean; // Whether to sanitize HTML content (default: true for security)
+
+
+    // for bar
+    barColor?: string;
+    
     // For currency
     locale?: string;
     currency?: string;
@@ -30,11 +34,19 @@ interface ColumnFormat {
     // For percent
     minimumFractionDigits?: number;
     maximumFractionDigits?: number;
+    // delta
   };
-  showArrow?: boolean;                    // Show delta arrows for positive/negative values
-  colorScale?: 'positive' | 'negative' | 'info' | 'custom' | string;  // Color-code cells with background colors
-  customColor?: string;                   // Hex color for 'custom' colorScale (e.g., '#ff6b35')
+  showArrow?: boolean;
+  colorScale?: 'positive'|'negative'|'info'|'custom'|string; // Preset values or custom hex color
+  customColor?: string; // hex color for 'custom' colorScale
+
+  colorMid?: number; // value to consider as mid point for color scaling
+  colorRange?: string[]; // hex colors for color scaling
+  scaleColumn?: string; // other column to use for current column's color scaling
+  redNegative?: boolean; // for positive/negative color scaling, whether to consider negative values as red or green
 }
+
+
 
 interface Column {
   label: string;
@@ -261,99 +273,1188 @@ interface DataTableProps {
 />
 
 
-### Color Scale
 
-Color-code cells with background colors based on values. Automatically sorts by value in descending order.
 
-**Color Options:**
-- **Preset colors**: `'positive'` (green), `'negative'` (red), `'info'` (blue)
-- **Custom colors**: Use `colorScale: 'custom'` with `customColor: '#hexcode'`
-- **Direct hex**: Use `colorScale: '#hexcode'` directly
 
-#### Preset Colors
 
+** info **
 <DataTable
   columns={[
-    { label: 'Product', key: 'product' },
-    { label: 'Region', key: 'region' },
+  { label: 'Region', key: 'region' },
+  { label: 'Category', key: 'category' },
+  {
+    label: 'Sales',
+    key: 'sales',
+    format: {
+      type: 'currency',
+      colorScale: 'info'
+    },
+    align: 'right'
+  }
+]}
+  rows={
+﻿
+[
     {
-      label: 'Performance Score',
-      key: 'score',
-      format: {
-        type: 'percent',
-        colorScale: 'positive'  // Green background, higher values = darker
-      },
-      align: 'right'
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 200
     },
     {
-      label: 'Risk Level',
-      key: 'risk',
-      format: {
-        colorScale: 'negative'  // Red background, higher values = darker
-      },
-      align: 'center'
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 100
     },
     {
-      label: 'Info Rating',
-      key: 'info',
-      format: {
-        colorScale: 'info'      // Blue background, higher values = darker
-      },
-      align: 'center'
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 250
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 180
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 220
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 90
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 110
+    },
+    {
+        "region": "Asia",
+        "category": "Books",
+        "channel": "Online",
+        "year": "2022",
+        "sales": 120
+    },
+    {
+        "region": "Asia",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 280
+    },
+    {
+        "region": "North America",
+        "category": "Books",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 140
+    },
+    {
+        "region": "North America",
+        "category": "Electronics",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 150
+    },
+    {
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 210
+    },
+    {
+        "region": "South America",
+        "category": "Clothing",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 160
+    },
+    {
+        "region": "Asia",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 200
+    },
+    {
+        "region": "Europe",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2021",
+        "sales": 190
+    },
+    {
+        "region": "Asia",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 130
+    },
+    {
+        "region": "North America",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2024",
+        "sales": 260
+    },
+    {
+        "region": "South America",
+        "category": "Books",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 170
     }
-  ]}
-  rows={[
-    { product: 'Widget A', region: 'North', score: 0.85, risk: 2.1, info: 7.5 },
-    { product: 'Widget B', region: 'South', score: 0.92, risk: 1.3, info: 8.2 },
-    { product: 'Widget C', region: 'East', score: 0.78, risk: 3.7, info: 6.1 },
-    { product: 'Widget D', region: 'West', score: 0.96, risk: 0.8, info: 9.3 }
-  ]}
-  sortable={true}
-  striped={true}
-  hover={true}
-  bordered={true}
+]}
 />
 
-#### Custom Colors
 
+
+
+
+
+
+
+** positive **
 <DataTable
   columns={[
-    { label: 'Product', key: 'product' },
+  { label: 'Region', key: 'region' },
+  { label: 'Category', key: 'category' },
+  {
+    label: 'Sales',
+    key: 'sales',
+    format: {
+      type: 'currency',
+      colorScale: 'positive'
+    },
+    align: 'right'
+  }
+]}
+  rows={
+﻿
+[
     {
-      label: 'Temperature',
-      key: 'temperature',
-      format: {
-        colorScale: 'custom',
-        customColor: '#ff6b35'  // Orange background
-      },
-      align: 'center'
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 200
     },
     {
-      label: 'Humidity',
-      key: 'humidity',
-      format: {
-        colorScale: '#9333ea'   // Purple background (direct hex)
-      },
-      align: 'center'
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 100
     },
     {
-      label: 'Pressure',
-      key: 'pressure',
-      format: {
-        colorScale: 'custom',
-        customColor: '#06b6d4'  // Cyan background
-      },
-      align: 'center'
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 250
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 180
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 220
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 90
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 110
+    },
+    {
+        "region": "Asia",
+        "category": "Books",
+        "channel": "Online",
+        "year": "2022",
+        "sales": 120
+    },
+    {
+        "region": "Asia",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 280
+    },
+    {
+        "region": "North America",
+        "category": "Books",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 140
+    },
+    {
+        "region": "North America",
+        "category": "Electronics",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 150
+    },
+    {
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 210
+    },
+    {
+        "region": "South America",
+        "category": "Clothing",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 160
+    },
+    {
+        "region": "Asia",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 200
+    },
+    {
+        "region": "Europe",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2021",
+        "sales": 190
+    },
+    {
+        "region": "Asia",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 130
+    },
+    {
+        "region": "North America",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2024",
+        "sales": 260
+    },
+    {
+        "region": "South America",
+        "category": "Books",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 170
     }
-  ]}
-  rows={[
-    { product: 'Sensor A', temperature: 72, humidity: 45, pressure: 1013 },
-    { product: 'Sensor B', temperature: 68, humidity: 52, pressure: 1015 },
-    { product: 'Sensor C', temperature: 75, humidity: 38, pressure: 1011 },
-    { product: 'Sensor D', temperature: 70, humidity: 48, pressure: 1014 }
-  ]}
-  sortable={true}
-  striped={true}
-  hover={true}
-  bordered={true}
+]}
+/>
+
+
+
+
+
+
+
+** negative **
+<DataTable
+  columns={[
+  { label: 'Region', key: 'region' },
+  { label: 'Category', key: 'category' },
+  {
+    label: 'Sales',
+    key: 'sales',
+    format: {
+      type: 'currency',
+      colorScale: 'negative'
+    },
+    align: 'right'
+  }
+]}
+  rows={
+﻿
+[
+    {
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 200
+    },
+    {
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 100
+    },
+    {
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 250
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 180
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 220
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 90
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 110
+    },
+    {
+        "region": "Asia",
+        "category": "Books",
+        "channel": "Online",
+        "year": "2022",
+        "sales": 120
+    },
+    {
+        "region": "Asia",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 280
+    },
+    {
+        "region": "North America",
+        "category": "Books",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 140
+    },
+    {
+        "region": "North America",
+        "category": "Electronics",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 150
+    },
+    {
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 210
+    },
+    {
+        "region": "South America",
+        "category": "Clothing",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 160
+    },
+    {
+        "region": "Asia",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 200
+    },
+    {
+        "region": "Europe",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2021",
+        "sales": 190
+    },
+    {
+        "region": "Asia",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 130
+    },
+    {
+        "region": "North America",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2024",
+        "sales": 260
+    },
+    {
+        "region": "South America",
+        "category": "Books",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 170
+    }
+]}
+/>
+
+
+
+
+
+
+** custom color **
+<DataTable
+  columns={[
+  { label: 'Region', key: 'region' },
+  { label: 'Category', key: 'category' },
+  {
+    label: 'Sales',
+    key: 'sales',
+    format: {
+      type: 'currency',
+      colorScale: 'custom',
+      customColor: '#c12bd0'
+    },
+    align: 'right'
+  }
+]}
+  rows={
+﻿
+[
+    {
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 200
+    },
+    {
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 100
+    },
+    {
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 250
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 180
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 220
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 90
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 110
+    },
+    {
+        "region": "Asia",
+        "category": "Books",
+        "channel": "Online",
+        "year": "2022",
+        "sales": 120
+    },
+    {
+        "region": "Asia",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 280
+    },
+    {
+        "region": "North America",
+        "category": "Books",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 140
+    },
+    {
+        "region": "North America",
+        "category": "Electronics",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 150
+    },
+    {
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 210
+    },
+    {
+        "region": "South America",
+        "category": "Clothing",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 160
+    },
+    {
+        "region": "Asia",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 200
+    },
+    {
+        "region": "Europe",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2021",
+        "sales": 190
+    },
+    {
+        "region": "Asia",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 130
+    },
+    {
+        "region": "North America",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2024",
+        "sales": 260
+    },
+    {
+        "region": "South America",
+        "category": "Books",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 170
+    }
+]}
+/>
+
+
+
+
+
+
+### Custom Color Palettes
+
+** Diverging Scale **
+<DataTable
+  columns={[
+  { label: 'Region', key: 'region' },
+  { label: 'Category', key: 'category' },
+  {
+    label: 'Sales',
+    key: 'sales',
+    format: {
+      type: 'currency',
+      colorScale: 'custom',
+      colorRange: ['#6db678','#ffffff','#ce5050']
+    },
+    align: 'right'
+  }
+]}
+  rows={
+﻿
+[
+    {
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 200
+    },
+    {
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 100
+    },
+    {
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 250
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 180
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 220
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 90
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 110
+    },
+    {
+        "region": "Asia",
+        "category": "Books",
+        "channel": "Online",
+        "year": "2022",
+        "sales": 120
+    },
+    {
+        "region": "Asia",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 280
+    },
+    {
+        "region": "North America",
+        "category": "Books",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 140
+    },
+    {
+        "region": "North America",
+        "category": "Electronics",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 150
+    },
+    {
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 210
+    },
+    {
+        "region": "South America",
+        "category": "Clothing",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 160
+    },
+    {
+        "region": "Asia",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 200
+    },
+    {
+        "region": "Europe",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2021",
+        "sales": 190
+    },
+    {
+        "region": "Asia",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 130
+    },
+    {
+        "region": "North America",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2024",
+        "sales": 260
+    },
+    {
+        "region": "South America",
+        "category": "Books",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 170
+    }
+]}
+/>
+
+
+
+** Heatmap **
+<DataTable
+  columns={[
+  { label: 'Region', key: 'region' },
+  { label: 'Category', key: 'category' },
+  {
+    label: 'Sales',
+    key: 'sales',
+    format: {
+      type: 'currency',
+      colorScale: 'custom',
+      colorRange: ['#6db678','#ebbb38','#ce5050']
+    },
+    align: 'right'
+  }
+]}
+  rows={
+﻿
+[
+    {
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 200
+    },
+    {
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 100
+    },
+    {
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 250
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 180
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 220
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 90
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 110
+    },
+    {
+        "region": "Asia",
+        "category": "Books",
+        "channel": "Online",
+        "year": "2022",
+        "sales": 120
+    },
+    {
+        "region": "Asia",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 280
+    },
+    {
+        "region": "North America",
+        "category": "Books",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 140
+    },
+    {
+        "region": "North America",
+        "category": "Electronics",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 150
+    },
+    {
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 210
+    },
+    {
+        "region": "South America",
+        "category": "Clothing",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 160
+    },
+    {
+        "region": "Asia",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 200
+    },
+    {
+        "region": "Europe",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2021",
+        "sales": 190
+    },
+    {
+        "region": "Asia",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 130
+    },
+    {
+        "region": "North America",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2024",
+        "sales": 260
+    },
+    {
+        "region": "South America",
+        "category": "Books",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 170
+    }
+]}
+/>
+
+
+
+
+
+** Red Negatives **
+<DataTable
+  columns={[
+  { label: 'Name', key: 'name' },
+  {
+    label: 'Number',
+    key: 'number',
+    format: {
+      redNegative: true
+    }
+  }
+]}
+  rows={[{"name":"Alice Johnson","number":1200},{"name":"Bob Smith","number":-350},{"name":"Charlie Lee","number":0},{"name":"Dana White","number":875},{"name":"Evan Chen","number":-120}]}
+/>
+
+
+
+
+
+** Color Breakpoints **
+<DataTable
+  columns={[
+  { label: 'Region', key: 'region' },
+  { label: 'Category', key: 'category' },
+  {
+    label: 'Sales',
+    key: 'sales',
+    format: {
+      type: 'currency',
+      colorScale: 'custom',
+      colorRange: ['#6db678','#ebbb38','#ce5050'],
+      colorMid: 5
+    },
+    align: 'right'
+  }
+]}
+  rows={
+﻿
+[
+    {
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 200
+    },
+    {
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 100
+    },
+    {
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 250
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 180
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 220
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 90
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 110
+    },
+    {
+        "region": "Asia",
+        "category": "Books",
+        "channel": "Online",
+        "year": "2022",
+        "sales": 120
+    },
+    {
+        "region": "Asia",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 280
+    },
+    {
+        "region": "North America",
+        "category": "Books",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 140
+    },
+    {
+        "region": "North America",
+        "category": "Electronics",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 150
+    },
+    {
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 210
+    },
+    {
+        "region": "South America",
+        "category": "Clothing",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 160
+    },
+    {
+        "region": "Asia",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 200
+    },
+    {
+        "region": "Europe",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2021",
+        "sales": 190
+    },
+    {
+        "region": "Asia",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 130
+    },
+    {
+        "region": "North America",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2024",
+        "sales": 260
+    },
+    {
+        "region": "South America",
+        "category": "Books",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 170
+    }
+]}
 />

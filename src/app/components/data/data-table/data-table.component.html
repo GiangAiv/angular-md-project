@@ -51,7 +51,42 @@
           [ngStyle]="getCellBackgroundStyle(row[column.key], column)"
         >
         <div [class]="getCellContentClasses(row[column.key], column)">
-          {{ formatCellValue(row[column.key], column) }}
+          <!-- Bar column -->
+          <div
+            *ngIf="isBarColumn(column)"
+            class="w-full h-6 rounded-sm relative"
+            [ngStyle]="getBarStyles(row[column.key], column)"
+          >
+            <span class="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-800 z-10">
+              {{ formatCellValue(row[column.key], column) }}
+            </span>
+          </div>
+          <!-- Image column -->
+          <img
+            *ngIf="isImageColumn(column)"
+            [src]="formatCellValue(row[column.key], column)"
+            [alt]="getImageAltText(row[column.key], column)"
+            [ngStyle]="getImageStyles(column)"
+            class="object-cover"
+          />
+          <!-- Link column -->
+          <a
+            *ngIf="isLinkColumn(column)"
+            [href]="getLinkUrl(row[column.key])"
+            [target]="getLinkTarget(column)"
+            class="text-blue-600 hover:text-blue-800 underline"
+          >
+            {{ getLinkText(row[column.key], column, row) }}
+          </a>
+          <!-- HTML column -->
+          <div
+            *ngIf="isHtmlColumn(column)"
+            [innerHTML]="getHtmlContent(row[column.key], column)"
+          ></div>
+          <!-- Non-image, non-link, non-html, non-bar column -->
+          <span [class]="redNegativeClasses(row[column.key], column)" *ngIf="!isImageColumn(column) && !isLinkColumn(column) && !isHtmlColumn(column) && !isBarColumn(column)">
+            {{ formatCellValue(row[column.key], column) }}
+          </span>
           <span  *ngIf="column.format?.showArrow" [class]="getArrowClasses(row[column.key])"></span>
         </div>
         </td>
@@ -77,8 +112,25 @@
           [ngStyle]="getCellBackgroundStyle(calculateColumnTotal(column), column)"
         >
         <div [class]="getTotalCellContentClasses(calculateColumnTotal(column), column)">
-          {{ formatCellValue(calculateColumnTotal(column), column) }}
-          <span  *ngIf="column.format?.showArrow" [class]="getArrowClasses(calculateColumnTotal(column))"></span>
+          <!-- Bar column for totals -->
+          <div
+            *ngIf="isBarColumn(column) && calculateColumnTotal(column) !== '' && calculateColumnTotal(column) !== 'Total'"
+            class="w-full h-6 rounded-sm relative"
+            [ngStyle]="getBarStyles(calculateColumnTotal(column), column)"
+          >
+            <span class="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-800 z-10">
+              {{ formatCellValue(calculateColumnTotal(column), column) }}
+            </span>
+          </div>
+          <!-- Image, link, HTML, and bar columns don't show regular totals, just display empty or "Total" text -->
+          <span *ngIf="!isImageColumn(column) && !isLinkColumn(column) && !isHtmlColumn(column) && !isBarColumn(column)">
+            {{ formatCellValue(calculateColumnTotal(column), column) }}
+          </span>
+          <!-- For bar columns that show "Total" text -->
+          <span *ngIf="isBarColumn(column) && (calculateColumnTotal(column) === '' || calculateColumnTotal(column) === 'Total')">
+            {{ calculateColumnTotal(column) }}
+          </span>
+          <span  *ngIf="column.format?.showArrow && !isImageColumn(column) && !isLinkColumn(column) && !isHtmlColumn(column) && !isBarColumn(column)" [class]="getArrowClasses(calculateColumnTotal(column))"></span>
         </div>
         </td>
       </tr>
