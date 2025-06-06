@@ -1,4 +1,16 @@
 <div [class]="getContainerClasses()">
+  <!-- Filter Controls -->
+  <div *ngIf="hasActiveFilters()" class="mb-4 flex justify-between items-center bg-blue-50 p-3 rounded-lg border border-blue-200">
+    <span class="text-sm text-blue-800 font-medium">
+      {{ getActiveFilterCount() }} filter{{ getActiveFilterCount() === 1 ? '' : 's' }} active - Click cells to add/remove filters. Multiple selections allowed per column.
+    </span>
+    <button
+      (click)="clearAllFilters()"
+      class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+      Clear All Filters
+    </button>
+  </div>
+
   <div [class]="getGridClasses()" [style.grid-template-columns]="'repeat(' + (props?.dimensions?.length || 1) + ', 1fr)'">
     <!-- Column for each dimension -->
     <div
@@ -8,12 +20,18 @@
       <!-- Column Header -->
       <h3 [class]="getColumnHeaderClasses()">
         {{ columnData.dimension }}
+        <span *ngIf="getColumnFilterCount(columnData.dimension) > 0"
+              class="ml-2 px-2 py-1 text-xs bg-blue-600 text-white rounded-full">
+          {{ getColumnFilterCount(columnData.dimension) }}
+        </span>
       </h3>
 
       <!-- Rows for this dimension -->
       <div
         *ngFor="let rowData of columnData.data"
-        [class]="getRowClasses()">
+        [class]="getRowClasses(rowData.isFiltered)"
+        (click)="onCellClick(columnData.dimension, rowData.value)"
+        [title]="'Click to toggle filter for ' + rowData.value + (rowData.isFiltered ? ' (currently selected)' : '')">
 
         <!-- Progress Bar Background -->
         <div
@@ -25,6 +43,7 @@
         <div [class]="getRowContentClasses()">
           <span [class]="getValueLabelClasses()" [title]="rowData.value">
             {{ rowData.value }}
+            <span *ngIf="rowData.isFiltered" class="ml-1 text-blue-600 font-bold">●</span>
           </span>
           <span [class]="getTotalClasses()">
             {{ formatValue(rowData.total) }}

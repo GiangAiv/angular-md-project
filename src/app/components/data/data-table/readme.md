@@ -52,6 +52,8 @@ interface Column {
   label: string;
   key: string;
   format?: ColumnFormat;
+  align?: 'left' | 'right' | 'center'; // Optional: Text alignment (default: 'left')
+  groupTo?: string;                     // Optional: Group name for column header grouping
 }
 
 interface DataTableProps {
@@ -67,6 +69,7 @@ interface DataTableProps {
   searchPlaceholder?: string;       // Optional: Placeholder text for search input
   totalRow?: boolean;               // Optional: Show total row at bottom (default: false)
   groupBy?: string;                 // Optional: Column key to group data by
+  groupType?: 'accordion' | 'section'; // Optional: How to display groups (default: 'accordion')
   subtotals?: string[];             // Optional: Array of column keys to calculate subtotals for
   groupOpen?: boolean;              // Optional: Whether groups are open by default (default: true)
 }
@@ -287,11 +290,28 @@ The `groupBy` feature allows you to group table rows by a specific column value.
 
 - Data is grouped by the specified column
 - Group headers show the group value and item count
-- Groups can be expanded/collapsed by clicking the header
+- Groups can be expanded/collapsed by clicking the header (accordion type only)
 - Sorting works within each group
 - Search filters data and regroups results
 - Pagination is disabled (all groups are shown)
 - Use `groupOpen` to control whether groups are expanded by default (default: true)
+
+### Group Types
+
+The `groupType` option controls how grouped data is displayed:
+
+#### Accordion Type (Default)
+- `groupType: 'accordion'` or omitted
+- Groups are displayed with collapsible headers
+- Click headers to expand/collapse groups
+- Subtotals appear in the group headers when enabled
+
+#### Section Type
+- `groupType: 'section'`
+- Groups are displayed as merged sections
+- The group column cells are vertically merged for each group
+- Groups are always visible (no expand/collapse)
+- Subtotals appear as separate rows below each group when enabled
 
 ### Subtotals with GroupBy
 
@@ -341,6 +361,107 @@ The `groupOpen` option controls the default expanded state of groups:
   groupOpen={false}
   sortable={true}
   searchable={true}
+/>
+
+### Section Grouping Example
+
+<DataTable
+  columns={[
+  { label: 'Product Name', key: 'name' },
+  { label: 'Category', key: 'category' },
+  {
+    label: 'Price',
+    key: 'price',
+    format: {
+      type: 'currency',
+      options: { locale: 'en-US', currency: 'USD' }
+    }
+  },
+  {
+    label: 'Stock',
+    key: 'stock',
+    format: { type: 'number' }
+  }
+]}
+  rows={[
+  { name: 'iPhone 15', category: 'Electronics', price: 999, stock: 50 },
+  { name: 'MacBook Pro', category: 'Electronics', price: 2499, stock: 25 },
+  { name: 'Office Chair', category: 'Furniture', price: 299, stock: 100 },
+  { name: 'Standing Desk', category: 'Furniture', price: 599, stock: 30 },
+  { name: 'iPad Air', category: 'Electronics', price: 599, stock: 75 }
+]}
+  groupBy="category"
+  groupType="section"
+  subtotals={["price", "stock"]}
+  sortable={true}
+  searchable={true}
+/>
+
+### Column Header Grouping (groupTo)
+
+The `groupTo` feature allows you to group column headers under common group names. When columns have the same `groupTo` value, they are grouped together with a spanning header row above the regular column headers.
+
+Features:
+- Columns with the same `groupTo` value are grouped together
+- A group header row is added above the regular column headers
+- Group headers span across all columns in the group
+- Columns without `groupTo` are displayed individually
+- Works with all other table features (sorting, grouping, pagination, etc.)
+
+<DataTable
+  columns={[
+    { label: 'Product Name', key: 'name' },
+    {
+      label: 'Q1 Sales',
+      key: 'q1Sales',
+      groupTo: 'Sales Data',
+      format: { type: 'currency', options: { locale: 'en-US', currency: 'USD' } }
+    },
+    {
+      label: 'Q2 Sales',
+      key: 'q2Sales',
+      groupTo: 'Sales Data',
+      format: { type: 'currency', options: { locale: 'en-US', currency: 'USD' } }
+    },
+    {
+      label: 'Q1 Growth',
+      key: 'q1Growth',
+      groupTo: 'Growth Metrics',
+      format: { type: 'percent' }
+    },
+    {
+      label: 'Q2 Growth',
+      key: 'q2Growth',
+      groupTo: 'Growth Metrics',
+      format: { type: 'percent' }
+    }
+  ]}
+  rows={[
+    {
+      name: 'iPhone 15',
+      q1Sales: 50000,
+      q2Sales: 65000,
+      q1Growth: 0.15,
+      q2Growth: 0.30
+    },
+    {
+      name: 'MacBook Pro',
+      q1Sales: 30000,
+      q2Sales: 35000,
+      q1Growth: 0.10,
+      q2Growth: 0.17
+    },
+    {
+      name: 'iPad Air',
+      q1Sales: 25000,
+      q2Sales: 28000,
+      q1Growth: 0.08,
+      q2Growth: 0.12
+    }
+  ]}
+  sortable={true}
+  striped={true}
+  bordered={true}
 />
 
 

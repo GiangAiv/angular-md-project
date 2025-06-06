@@ -51,6 +51,13 @@ interface Column {
   key: string;
   format?: ColumnFormat;
   align?: 'left' | 'right' | 'center';
+  groupTo?: string; // name of column to group to
+}
+
+interface ColumnGroup {
+  groupName: string;
+  columns: Column[];
+  span: number;
 }
 
 interface DataTableProps {
@@ -78,6 +85,7 @@ interface GroupedData {
   rows: Record<string, any>[];
   expanded: boolean;
   subtotals?: Record<string, number | string>; // subtotals for each column
+  rowSpan?: number; // for section grouping - how many rows this group spans
 }
 
 type SortDirection = 'asc' | 'desc' | null;
@@ -107,6 +115,9 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
   // GroupBy functionality
   private groupedData: GroupedData[] = [];
   private groupExpandedState: Map<string, boolean> = new Map();
+
+  // Column grouping functionality
+  private columnGroups: ColumnGroup[] = [];
 
   getTableClasses(): string {
     const baseClasses = 'min-w-full table-auto';
@@ -648,6 +659,7 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
   ngOnInit(): void {
     if (this.props?.rows) {
       this.originalRows = [...this.props.rows];
+      this.processColumnGroups();
 
       // Auto-sort by colorScale columns in descending order
       this.autoSortByColorScale();
@@ -659,6 +671,14 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
   // GroupBy functionality
   get isGrouped(): boolean {
     return !!this.props?.groupBy;
+  }
+
+  get isAccordionGrouping(): boolean {
+    return this.isGrouped && (this.props?.groupType === 'accordion' || !this.props?.groupType);
+  }
+
+  get isSectionGrouping(): boolean {
+    return this.isGrouped && this.props?.groupType === 'section';
   }
 
   get displayGroupedData(): GroupedData[] {
@@ -715,7 +735,8 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
         groupLabel: this.formatGroupLabel(groupValue),
         rows: sortedRows,
         expanded,
-        subtotals: this.calculateGroupSubtotals(sortedRows)
+        subtotals: this.calculateGroupSubtotals(sortedRows),
+        rowSpan: this.isSectionGrouping ? sortedRows.length : undefined
       };
     });
 
@@ -797,6 +818,102 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
 
   hasSubtotals(): boolean {
     return !!(this.props?.subtotals && this.props.subtotals.length > 0);
+  }
+
+  // Section grouping helper methods
+  shouldShowGroupCell(rowIndex: number, columnKey: string): boolean {
+    if (!this.isSectionGrouping) return false;
+
+    // For the group column, show only in the first row of the group
+    if (columnKey === this.props?.groupBy) {
+      return rowIndex === 0;
+    }
+
+    return false;
+  }
+
+  getGroupCellRowSpan(group: GroupedData): number {
+    if (!this.isSectionGrouping) return 1;
+    // For section grouping, the group cell spans all rows in the group
+    // but not the subtotal row (subtotal row is separate)
+    return group.rows.length;
+  }
+
+  shouldShowSubtotalRow(rowIndex: number, group: GroupedData): boolean {
+    if (!this.isSectionGrouping || !this.hasSubtotals()) return false;
+
+    // Show subtotal row after the last row of the group
+    return rowIndex === group.rows.length - 1;
+  }
+
+  // Column grouping functionality
+  get hasColumnGroups(): boolean {
+    return this.columnGroups.length > 0;
+  }
+
+  get displayColumnGroups(): ColumnGroup[] {
+    return this.columnGroups;
+  }
+
+  private processColumnGroups(): void {
+    if (!this.props?.columns) {
+      this.columnGroups = [];
+      return;
+    }
+
+    const groups = new Map<string, Column[]>();
+
+    // Group columns by their groupTo property, preserving order
+    this.props.columns.forEach(column => {
+      if (column.groupTo) {
+        if (!groups.has(column.groupTo)) {
+          groups.set(column.groupTo, []);
+        }
+        groups.get(column.groupTo)!.push(column);
+      }
+    });
+
+    // Create column groups array in the order they appear in the original columns
+    this.columnGroups = [];
+
+    // Process columns in original order to maintain position
+    this.props.columns.forEach(column => {
+      if (column.groupTo) {
+        // Check if this is the first column of a new group
+        const groupName = column.groupTo;
+        const existingGroup = this.columnGroups.find(g => g.groupName === groupName);
+
+        if (!existingGroup) {
+          // Add the group for the first time
+          this.columnGroups.push({
+            groupName,
+            columns: groups.get(groupName)!,
+            span: groups.get(groupName)!.length
+          });
+        }
+      } else {
+        // Add ungrouped column as individual group
+        this.columnGroups.push({
+          groupName: '', // Empty group name for ungrouped columns
+          columns: [column],
+          span: 1
+        });
+      }
+    });
+
+    // Remove duplicates (since we might have added the same group multiple times)
+    const uniqueGroups: ColumnGroup[] = [];
+    const seenGroups = new Set<string>();
+
+    this.columnGroups.forEach(group => {
+      const key = group.groupName || `ungrouped_${group.columns[0].key}`;
+      if (!seenGroups.has(key)) {
+        seenGroups.add(key);
+        uniqueGroups.push(group);
+      }
+    });
+
+    this.columnGroups = uniqueGroups;
   }
 
   private autoSortByColorScale(): void {
