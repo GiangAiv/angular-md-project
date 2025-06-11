@@ -14,10 +14,8 @@ A versatile information alert component for Angular applications with support fo
 
 ## Usage
 
-```jsx
-import { Info } from '@components/ui/Info';
 
-// In your template:
+```jsx
 <Info
   title="Optional Title"
   message="Your message here"

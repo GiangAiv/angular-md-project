@@ -21,29 +21,39 @@ A flexible alert component that displays messages with different status types an
 ## Usage Examples
 
 ### Basic Alert
+```jsx
 <Alert status="info">
   This is an informational alert.
 </Alert>
+```
 
 ### Warning Alert
+```jsx
 <Alert status="warning">
-  <strong>Warning!</strong> This action cannot be undone.
+ Warning!This action cannot be undone.
 </Alert>
+```
 
 ### Success Alert
+```jsx
 <Alert status="positive">
   Your changes have been saved successfully.
 </Alert>
+```
 
 ### Error Alert
+```jsx
 <Alert status="negative">
   An error occurred while processing your request.
 </Alert>
+```
 
 ### With Custom Class
+```jsx
 <Alert status="info" class="my-custom-class">
   Custom styled alert.
 </Alert>
+```
 
 ## Important Notes
 

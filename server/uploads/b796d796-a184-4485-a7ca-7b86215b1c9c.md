@@ -64,6 +64,7 @@ A flexible bubble chart component that displays data points as bubbles, where th
 ## Usage Examples
 
 Basic Bubble Chart:
+```jsx
 <BubbleChart
   data={[
     { x: 10, y: 20, r: 5 },
@@ -75,8 +76,10 @@ Basic Bubble Chart:
   r="r"
   title="Basic Bubble Chart"
 />
+```
 
 Bubble Chart with Series:
+```jsx
 <BubbleChart
   data={[
     { x: 10, y: 20, r: 5, category: 'A' },
@@ -89,8 +92,10 @@ Bubble Chart with Series:
   series="category"
   title="Bubble Chart with Series"
 />
+```
 
 Logarithmic Bubble Chart:
+```jsx
 <BubbleChart
   data={[
     { x: 10, y: 20, r: 5 },
@@ -104,6 +109,7 @@ Logarithmic Bubble Chart:
   yLog={true}
   title="Logarithmic Bubble Chart"
 />
+```
 
 ## Notes
 

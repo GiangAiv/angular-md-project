@@ -43,64 +43,74 @@ interface DeltaProps {
 
 ### Basic Percentage Delta
 
-```jsx
-// Positive percentage change
-<Delta value={15.7} />  // Displays: "↑ +15.7%"
 
-// Negative percentage change
-<Delta value={-2.3} />  // Displays: "↓ -2.3%"
+Positive percentage change
+```jsx
+<Delta value={15.7} /> 
+```
+
+Negative percentage change
+```jsx
+<Delta value={-2.3} />  
 ```
 
 ### Numeric Delta
 
+
+Positive numeric change
 ```jsx
-// Positive numeric change
 <Delta 
   value={1234}
   format="number"
   bold={true}
-/>  // Displays: "↑ +1,234"
+/>
+```
 
-// Negative numeric change
+
+Negative numeric change
+```jsx
 <Delta 
   value="-500"
   format="number"
-/>  // Displays: "↓ -500"
+/>  
 ```
+
 
 ### Custom Direction
 
+
+Force upward direction
 ```jsx
-// Force upward direction
 <Delta 
   value={42}
   direction="up"
-/>  // Displays: "↑ +42%"
+/>  
+```
 
-// Force downward direction
+Force downward direction
+```jsx
 <Delta 
   value={42}
   direction="down"
-/>  // Displays: "↓ 42%"
+/>
 ```
 
 ### Without Arrow
-
 ```jsx
 <Delta 
   value={15}
   showArrow={false}
-/>  // Displays: "+15%"
+/>
 ```
 
 ### String Values
 
 ```jsx
-// Handles string values with symbols
-<Delta value="+15.7%" />  // Displays: "↑ +15.7%"
-<Delta value="$1,234" format="number" />  // Displays: "↑ +1,234"
+<Delta value="+15.7%" /> 
 ```
-
+```jsx 
+<Delta value="$1,234" format="number" /> 
+```
 ## Value Formatting
 
 ### Percentage Format (Default)

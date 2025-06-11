@@ -15,11 +15,8 @@ A dynamic timestamp component for Angular applications that displays when data w
 ## Usage
 
 ```jsx
-import { LastRefreshed } from '@components/ui/LastRefreshed';
-
-// In your template:
 <LastRefreshed
-  lastUpdated={new Date()}
+  lastUpdated='2025-05-26T06:19:18.779Z'
   label="Last updated"
   format="relative"
 />
@@ -51,13 +48,13 @@ import { LastRefreshed } from '@components/ui/LastRefreshed';
 
 ### Basic Usage with Relative Time
 ```jsx
-<LastRefreshed lastUpdated={new Date()} />
+<LastRefreshed lastUpdated='2025-05-26T06:19:18.779Z' />
 ```
 
 ### Absolute Time Format
 ```jsx
 <LastRefreshed
-  lastUpdated={new Date()}
+  lastUpdated='2025-05-26T06:19:18.779Z'
   format="absolute"
 />
 ```
@@ -65,7 +62,7 @@ import { LastRefreshed } from '@components/ui/LastRefreshed';
 ### Custom Label without Icon
 ```jsx
 <LastRefreshed
-  lastUpdated={new Date()}
+  lastUpdated='2025-05-26T06:19:18.779Z'
   label="Data refreshed"
   icon={false}
 />

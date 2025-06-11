@@ -1,13 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as moment from 'moment';
+import { Chart, registerables } from 'chart.js';
 import { BaseComponent } from '../../base-component';
 
+// Register all Chart.js components
+Chart.register(...registerables);
+
 interface ColumnFormat {
-  type: 'percent' | 'currency' | 'date' | 'image' | 'link' | 'html' | 'bar';
+  type: 'percent' | 'currency' | 'date' | 'image' | 'link' | 'html' | 'bar' | 'spark';
   options?: {
+    // for spark
+    sparkType?: 'line' | 'bar' | 'area'; // default is line
+    sparkColor?: string; // default is black
+    sparkX: string;
+    sparkY: string;
+    
     // for image
     width?: string | number;
     height?: string | number;
@@ -17,22 +27,24 @@ interface ColumnFormat {
 
     // for link
     linkLabel?: string; // Text to display for the link (if not provided, uses the URL)
+
     target?: '_blank' | '_self' | '_parent' | '_top'; // Link target attribute
 
     // for html
     sanitize?: boolean; // Whether to sanitize HTML content (default: true for security)
-
 
     // for bar
     barColor?: string;
 
     // For currency
     locale?: string;
+
     currency?: string;
     // For date
     format?: string; // moment format string
     // For percent
     minimumFractionDigits?: number;
+
     maximumFractionDigits?: number;
     // delta
   };
@@ -96,9 +108,12 @@ type SortDirection = 'asc' | 'desc' | null;
   standalone: true,
   imports: [CommonModule, FormsModule]
 })
-export class DataTableComponent extends BaseComponent<DataTableProps> implements OnInit {
+export class DataTableComponent extends BaseComponent<DataTableProps> implements OnInit, AfterViewInit, OnDestroy {
   private currentSortColumn: string | null = null;
   private currentSortDirection: SortDirection = null;
+
+  // Spark chart tracking
+  private sparkCharts: Map<string, Chart> = new Map();
 
   constructor(private sanitizer: DomSanitizer) {
     super();
@@ -668,6 +683,18 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
     }
   }
 
+  ngAfterViewInit(): void {
+    // Create spark charts after view is initialized
+    setTimeout(() => {
+      this.createAllSparkCharts();
+    }, 0);
+  }
+
+  ngOnDestroy(): void {
+    // Clean up all spark charts
+    this.destroyAllSparkCharts();
+  }
+
   // GroupBy functionality
   get isGrouped(): boolean {
     return !!this.props?.groupBy;
@@ -965,11 +992,13 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
     // Instead, we show all groups and let users expand/collapse them
     if (this.props?.groupBy) {
       this.props!.rows = [...this.filteredRows];
+      this.recreateSparkCharts();
       return;
     }
 
     if (!this.props?.paginated) {
       this.props!.rows = [...this.filteredRows];
+      this.recreateSparkCharts();
       return;
     }
 
@@ -978,6 +1007,7 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
     const endIndex = startIndex + pageSize;
 
     this.props!.rows = this.filteredRows.slice(startIndex, endIndex);
+    this.recreateSparkCharts();
   }
 
   // Pagination functionality
@@ -1191,5 +1221,129 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
 
 
     return `rgb(${interpolatedRgb.join(', ')})`;
+  }
+
+  // Spark chart methods
+  isSparkColumn(column: Column): boolean {
+    return column.format?.type === 'spark';
+  }
+
+  getSparkChartId(rowIndex: number, columnKey: string): string {
+    return `spark-chart-${rowIndex}-${columnKey}`;
+  }
+
+  createAllSparkCharts(): void {
+    if (!this.props?.columns || !this.props?.rows) return;
+
+    this.props.columns.forEach(column => {
+      if (this.isSparkColumn(column)) {
+        this.props!.rows.forEach((row, rowIndex) => {
+          const chartId = this.getSparkChartId(rowIndex, column.key);
+          const data = row[column.key];
+          if (Array.isArray(data) && data.length > 0) {
+            setTimeout(() => {
+              this.createSparkChart(data, column, chartId);
+            }, 100);
+          }
+        });
+      }
+    });
+  }
+
+  createSparkChart(data: any[], column: Column, elementId: string): void {
+    const canvas = document.getElementById(elementId) as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Destroy existing chart if it exists
+    this.destroySparkChart(elementId);
+
+    const options = column.format?.options;
+    const sparkType = options?.sparkType || 'line';
+    const sparkColor = options?.sparkColor || '#000000';
+    const sparkX = options?.sparkX || 'x';
+    const sparkY = options?.sparkY || 'y';
+
+    // Validate data format
+    if (!Array.isArray(data) || data.length === 0) return;
+
+    // Extract x and y values
+    const labels = data.map(item => item[sparkX]);
+    const values = data.map(item => item[sparkY]);
+
+    // Chart configuration
+    const chartConfig: any = {
+      type: sparkType === 'area' ? 'line' : sparkType,
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          borderColor: sparkColor,
+          backgroundColor: sparkType === 'area' ? sparkColor + '20' : sparkColor,
+          borderWidth: sparkType === 'line' || sparkType === 'area' ? 1 : 0,
+          fill: sparkType === 'area',
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            enabled: false
+          }
+        },
+        scales: {
+          x: {
+            display: false
+          },
+          y: {
+            display: false
+          }
+        },
+        elements: {
+          point: {
+            radius: 0
+          }
+        },
+        interaction: {
+          intersect: false
+        }
+      }
+    };
+
+    // Create the chart
+    const chart = new Chart(ctx, chartConfig);
+    this.sparkCharts.set(elementId, chart);
+  }
+
+  destroySparkChart(elementId: string): void {
+    const chart = this.sparkCharts.get(elementId);
+    if (chart) {
+      chart.destroy();
+      this.sparkCharts.delete(elementId);
+    }
+  }
+
+  destroyAllSparkCharts(): void {
+    this.sparkCharts.forEach(chart => chart.destroy());
+    this.sparkCharts.clear();
+  }
+
+  recreateSparkCharts(): void {
+    // Destroy existing charts first
+    this.destroyAllSparkCharts();
+
+    // Recreate charts after a short delay to ensure DOM is updated
+    setTimeout(() => {
+      this.createAllSparkCharts();
+    }, 50);
   }
 }

@@ -27,27 +27,19 @@ A component for embedding external content in an iframe with customizable dimens
 ## Usage Examples
 
 ### Basic Usage
-<Embed url="https://example.com/embed" />
+```jsx
+<Embed url="https://www.youtube.com/embed/4LBjMK_fTwY?si=lrtByGgJiVPY8f4w" />
+```
 
 ### Custom Dimensions
+```jsx
 <Embed 
-  url="https://example.com/embed"
+  url="https://www.youtube.com/embed/4LBjMK_fTwY?si=lrtByGgJiVPY8f4w"
   width="800"
   height="600"
 />
+```
 
-### Centered with Border
-<Embed 
-  url="https://example.com/embed"
-  align="center"
-  border={true}
-/>
-
-### Custom Styling
-<Embed 
-  url="https://example.com/embed"
-  class="my-custom-class"
-/>
 
 ## Important Notes
 

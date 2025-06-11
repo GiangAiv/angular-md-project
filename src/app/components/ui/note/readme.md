@@ -13,11 +13,7 @@ A versatile note component for Angular applications that supports multiple visua
 - 📖 Rich text formatting
 
 ## Usage
-
 ```jsx
-import { Note } from '@components/ui/Note';
-
-// In your template:
 <Note
   title="Optional Title"
   text="Your note content here"

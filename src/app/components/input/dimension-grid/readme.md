@@ -1,42 +1,4 @@
-
-## Usage
-
-```typescript
-import { DimensionGridComponent } from './dimension-grid.component';
-
-// Basic usage
-<app-dimension-grid
-  [props]="{
-    rows: [
-      { region: 'North', category: 'Electronics', sales: 15000 },
-      { region: 'South', category: 'Electronics', sales: 12000 },
-      { region: 'North', category: 'Clothing', sales: 8000 },
-      { region: 'South', category: 'Clothing', sales: 9500 }
-    ],
-    metrics: 'sales',
-    dimensions: ['region', 'category']
-  }">
-</app-dimension-grid>
-
-// With multiple dimensions
-<app-dimension-grid
-  [props]="{
-    rows: salesData,
-    metrics: 'revenue',
-    dimensions: ['region', 'product', 'quarter']
-  }">
-</app-dimension-grid>
-```
-
-## Props
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `rows` | `Array<Record<string, any>>` | Required | Array of data rows |
-| `metrics` | `string` | Required | Column name used to calculate totals |
-| `dimensions` | `string[]` | Required | Column names used as dimensions for grouping |
-
-### Interfaces
+### Props
 
 ```typescript
 interface DimensionGridProps {
@@ -49,7 +11,6 @@ interface DimensionData {
   value: string;
   total: number;
   percentage: number;
-  isFiltered?: boolean;
 }
 
 interface ColumnData {
@@ -59,117 +20,183 @@ interface ColumnData {
 }
 ```
 
-## Features
 
-### Interactive Filtering
-- **Click to Filter**: Click on any cell value to filter other columns based on that selection
-- **Toggle Filters**: Click the same cell again to remove the filter
-- **Multiple Filters**: Each column has its own independent filter
-- **Visual Feedback**: Filtered cells are highlighted with a blue background and indicator dot
-- **Clear All**: Use the "Clear All Filters" button to remove all active filters
-
-### Data Visualization
-- **Progress Bars**: Visual representation of values relative to the maximum in each column
-- **Percentage Calculation**: Automatic percentage calculation based on column maximum
-- **Responsive Grid**: Adapts to different screen sizes and number of dimensions
-
-## Features
-
-### Interactive Multi-Select Filtering
-- **Click to Filter**: Click on any cell value to add it to the filter for that column
-- **Multiple Selections**: Select multiple values within the same column for OR-based filtering
-- **Toggle Filters**: Click a selected cell again to remove it from the filter
-- **Independent Columns**: Each column has its own independent filter with multiple selections
-- **Visual Feedback**:
-  - Filtered cells are highlighted with blue background and indicator dot
-  - Column headers show filter count badges
-  - Filter status bar shows total active filter count
-- **Clear All**: Use the "Clear All Filters" button to remove all active filters
-
-### Data Visualization
-- **Progress Bars**: Visual representation of values relative to the maximum in each column
-- **Percentage Calculation**: Automatic percentage calculation based on column maximum
-- **Responsive Grid**: Adapts to different screen sizes and number of dimensions
-
-## Events
-
-| Event | Type | Description |
-|-------|------|-------------|
-| `propsChange` | `EventEmitter<DimensionGridProps>` | Emitted when props change (inherited from BaseComponent) |
-
-## Examples
-
-### Sales Data by Region and Category
-```typescript
-const salesData = [
-  { region: 'North', category: 'Electronics', sales: 15000 },
-  { region: 'South', category: 'Electronics', sales: 12000 },
-  { region: 'East', category: 'Electronics', sales: 18000 },
-  { region: 'North', category: 'Clothing', sales: 8000 },
-  { region: 'South', category: 'Clothing', sales: 9500 },
-  { region: 'East', category: 'Clothing', sales: 7200 }
-];
-
-<app-dimension-grid
-  [props]="{
-    rows: salesData,
-    metrics: 'sales',
-    dimensions: ['region', 'category']
-  }">
-</app-dimension-grid>
+### 1. Basic usage
+```jsx
+<DimensionGrid
+  rows={[
+    {
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 200
+    },
+    {
+        "region": "Asia",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2023",
+        "sales": 100
+    },
+    {
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2022",
+        "sales": 250
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 180
+    },
+    {
+        "region": "North America",
+        "category": "Toys",
+        "channel": "Online",
+        "year": "2021",
+        "sales": 220
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 90
+    },
+    {
+        "region": "South America",
+        "category": "Furniture",
+        "channel": "Wholesale",
+        "year": "2024",
+        "sales": 110
+    },
+    {
+        "region": "Asia",
+        "category": "Books",
+        "channel": "Online",
+        "year": "2022",
+        "sales": 120
+    },
+    {
+        "region": "Asia",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 300
+    },
+    {
+        "region": "Europe",
+        "category": "Clothing",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 280
+    },
+    {
+        "region": "North America",
+        "category": "Books",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 140
+    },
+    {
+        "region": "North America",
+        "category": "Electronics",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 150
+    },
+    {
+        "region": "Europe",
+        "category": "Electronics",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 210
+    },
+    {
+        "region": "South America",
+        "category": "Clothing",
+        "channel": "Online",
+        "year": "2024",
+        "sales": 160
+    },
+    {
+        "region": "Asia",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2021",
+        "sales": 200
+    },
+    {
+        "region": "Europe",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2021",
+        "sales": 190
+    },
+    {
+        "region": "Asia",
+        "category": "Toys",
+        "channel": "Wholesale",
+        "year": "2022",
+        "sales": 130
+    },
+    {
+        "region": "North America",
+        "category": "Furniture",
+        "channel": "Retail",
+        "year": "2024",
+        "sales": 260
+    },
+    {
+        "region": "South America",
+        "category": "Books",
+        "channel": "Retail",
+        "year": "2023",
+        "sales": 170
+    }
+]}
+  metrics='sales'
+dimensions={['region', 'category', 'channel', 'year']}
+/>
 ```
 
-### Revenue Analysis by Multiple Dimensions
-```typescript
-const revenueData = [
+
+### 2. Revenue Analysis by Multiple Dimensions
+```jsx
+<DimensionGrid
+  rows={[
   { quarter: 'Q1', product: 'Laptop', region: 'US', revenue: 50000 },
   { quarter: 'Q1', product: 'Phone', region: 'US', revenue: 30000 },
   { quarter: 'Q2', product: 'Laptop', region: 'US', revenue: 55000 },
   { quarter: 'Q2', product: 'Phone', region: 'US', revenue: 35000 }
-];
-
-<app-dimension-grid
-  [props]="{
-    rows: revenueData,
-    metrics: 'revenue',
-    dimensions: ['quarter', 'product', 'region']
-  }">
-</app-dimension-grid>
+]}
+    metrics='revenue'
+    dimensions={['quarter', 'product', 'region']}
+/>
 ```
+<br/>
 
-### Single Dimension Analysis
-```typescript
-<app-dimension-grid
-  [props]="{
-    rows: customerData,
-    metrics: 'orders',
-    dimensions: ['country']
-  }">
-</app-dimension-grid>
+### 3. Single Dimension Analysis
+```jsx
+<DimensionGrid
+  rows={[
+  { quarter: 'Q1', product: 'Laptop', region: 'US', revenue: 50000 },
+  { quarter: 'Q1', product: 'Phone', region: 'US', revenue: 30000 },
+  { quarter: 'Q2', product: 'Laptop', region: 'US', revenue: 55000 },
+  { quarter: 'Q2', product: 'Phone', region: 'US', revenue: 35000 }
+]}
+    metrics='revenue'
+    dimensions={['region']}
+/>
 ```
-
-## Filtering Behavior
-
-### Multi-Select Filtering Example
-When you have data like:
-```typescript
-const salesData = [
-  { region: 'North', category: 'Electronics', sales: 15000 },
-  { region: 'South', category: 'Electronics', sales: 12000 },
-  { region: 'East', category: 'Electronics', sales: 18000 },
-  { region: 'North', category: 'Clothing', sales: 8000 },
-  { region: 'South', category: 'Clothing', sales: 9500 },
-  { region: 'East', category: 'Clothing', sales: 7200 }
-];
-```
-
-**Filtering Actions:**
-1. Click "North" in the region column → Shows only North region data in other columns
-2. Click "South" in the region column → Shows North OR South region data in other columns
-3. Click "Electronics" in the category column → Shows (North OR South) AND Electronics data
-4. Click "North" again → Removes North from filter, shows only South AND Electronics data
-
-**Filter Logic:**
-- Within a column: OR logic (North OR South)
-- Between columns: AND logic (Region filter AND Category filter)
-- Each column maintains its own independent filter state

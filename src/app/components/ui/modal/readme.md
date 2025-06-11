@@ -17,15 +17,15 @@ A modal component for displaying modal content.
 
 ### Modal with HTML Content
 
-```markdown
+```jsx
 <Modal
   open={false}
   title="HTML Content"
   buttonText="Open Modal"
   innerText=""
 >
-  <RenderHtml
-    content={`<div class="custom-content">
+
+<div>
       <h3>Custom Content</h3>
       <p>You can add any HTML content here using RenderHtml component.</p>
       <ul>
@@ -33,8 +33,7 @@ A modal component for displaying modal content.
         <li>List item 2</li>
         <li>List item 3</li>
       </ul>
-    </div>`}
-  />
+    </div>
 </Modal>
 ```
 

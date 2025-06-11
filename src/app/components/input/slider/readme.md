@@ -14,19 +14,16 @@ A customizable range slider component for Angular applications with support for 
 - 🔄 Two-way binding support
 
 ## Usage
-
 ```jsx
-import { Slider } from '@components/input/Slider';
-
-// Basic usage
 <Slider
   min={0}
   max={100}
   value={50}
   onValueChange={handleChange}
 />
+```
 
-// With all options
+```jsx
 <Slider
   min={0}
   max={10}

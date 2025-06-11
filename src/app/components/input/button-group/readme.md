@@ -34,40 +34,30 @@ interface ButtonGroupProps {
 ## Usage Examples
 
 ### Basic String Options
-
 ```jsx
-const options = ['Daily', 'Weekly', 'Monthly'];
-
 <ButtonGroup 
-  options={options}
+  options={['Daily', 'Weekly', 'Monthly']}
   selected="Weekly"
-  onSelectionChange={(value) => console.log('Selected:', value)}
 />
 ```
 
 ### Complex Options with Labels
-
 ```jsx
-const options = [
+<ButtonGroup 
+  options={[
   { label: '24h', value: 'daily' },
   { label: '7d', value: 'weekly' },
   { label: '30d', value: 'monthly' }
-];
-
-<ButtonGroup 
-  options={options}
+]}
   selected="weekly"
   size="sm"
 />
 ```
 
 ### Full Width Layout
-
 ```jsx
-const options = ['Draft', 'In Review', 'Published', 'Archived'];
-
 <ButtonGroup 
-  options={options}
+  options={['Draft', 'In Review', 'Published', 'Archived']}
   fullWidth={true}
   rounded={false}
   size="lg"
@@ -75,16 +65,13 @@ const options = ['Draft', 'In Review', 'Published', 'Archived'];
 ```
 
 ### Mixed Option Types
-
 ```jsx
-const options = [
+<ButtonGroup 
+  options={[
   'Simple',
   { label: 'Complex', value: 'complex' },
   'Mixed'
-];
-
-<ButtonGroup 
-  options={options}
+]}
   selected="complex"
 />
 ```

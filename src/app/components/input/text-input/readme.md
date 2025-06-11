@@ -14,19 +14,16 @@ A versatile and accessible text input component for Angular applications with su
 - 🔄 Two-way binding support
 
 ## Usage
-
 ```jsx
-import { TextInput } from '@components/input/TextInput';
-
-// Basic usage
 <TextInput
   value="Initial value"
   label="Username"
   placeholder="Enter username"
   onValueChange={handleChange}
 />
+```
 
-// With all options
+```jsx
 <TextInput
   value="readonly@example.com"
   label="Email Address"

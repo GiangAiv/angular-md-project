@@ -19,33 +19,32 @@ interface ButtonGroupProps {
   selector: 'app-button-group',
   templateUrl: './button-group.component.html',
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule],
 })
 export class ButtonGroupComponent extends BaseComponent<ButtonGroupProps> {
   @Output() selectionChange = new EventEmitter<string>();
 
   getContainerClasses(): string {
     const baseClasses = [
-      'relative',
-      this.props?.fullWidth ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1' : 'inline-flex space-x-1'
+      'relative shadow rounded-md overflow-hidden border',
+      this.props?.fullWidth
+        ? 'grid grid-cols-1 md:grid-cols-4'
+        : 'inline-flex',
     ];
 
     return baseClasses.join(' ');
   }
 
-  getButtonClasses(value: string): string {
+  getButtonClasses(value: string, index?: number): string {
     const isSelected = this.isSelected(value);
     const baseClasses = [
       'relative',
       'font-medium',
       'transition-colors',
       'duration-150',
-      'focus:outline-none',
-      'focus:ring-2',
-      'focus:ring-blue-500',
-      'focus:ring-offset-2',
       this.props?.fullWidth ? 'w-full' : '',
       this.props?.rounded ? 'rounded-md' : '',
+      (index !== undefined && index !== 0) ? 'border-l border-t md:border-t-0' : '',
     ];
 
     // Size-specific classes
@@ -63,21 +62,9 @@ export class ButtonGroupComponent extends BaseComponent<ButtonGroupProps> {
 
     // Selection-specific classes
     if (isSelected) {
-      baseClasses.push(
-        'bg-blue-600',
-        'text-white',
-        'hover:bg-blue-700',
-        'border',
-        'border-blue-700'
-      );
+      baseClasses.push('bg-gray-100', 'text-blue-500', 'hover:bg-white');
     } else {
-      baseClasses.push(
-        'bg-white',
-        'text-gray-700',
-        'border',
-        'border-gray-300',
-        'hover:bg-gray-100'
-      );
+      baseClasses.push('bg-white', 'text-gray-700', 'hover:bg-gray-100');
     }
 
     return baseClasses.join(' ');
@@ -91,7 +78,7 @@ export class ButtonGroupComponent extends BaseComponent<ButtonGroupProps> {
     if (this.props?.selected !== value) {
       this.props = {
         ...this.props,
-        selected: value
+        selected: value,
       };
       this.selectionChange.emit(value);
     }
@@ -104,4 +91,4 @@ export class ButtonGroupComponent extends BaseComponent<ButtonGroupProps> {
   getOptionLabel(option: string | ButtonOption): string {
     return typeof option === 'string' ? option : option.label;
   }
-} 
+}

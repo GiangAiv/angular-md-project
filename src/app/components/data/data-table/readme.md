@@ -52,8 +52,6 @@ interface Column {
   label: string;
   key: string;
   format?: ColumnFormat;
-  align?: 'left' | 'right' | 'center'; // Optional: Text alignment (default: 'left')
-  groupTo?: string;                     // Optional: Group name for column header grouping
 }
 
 interface DataTableProps {
@@ -63,21 +61,137 @@ interface DataTableProps {
   hover?: boolean;                  // Optional: Enable row hover effect (default: true)
   bordered?: boolean;               // Optional: Show borders (default: true)
   sortable?: boolean;               // Optional: Enable column sorting (default: false)
-  searchable?: boolean;             // Optional: Enable search functionality (default: false)
-  paginated?: boolean;              // Optional: Enable pagination (default: false)
-  pageSize?: number;                // Optional: Number of rows per page (default: 10)
-  searchPlaceholder?: string;       // Optional: Placeholder text for search input
-  totalRow?: boolean;               // Optional: Show total row at bottom (default: false)
-  groupBy?: string;                 // Optional: Column key to group data by
-  groupType?: 'accordion' | 'section'; // Optional: How to display groups (default: 'accordion')
-  subtotals?: string[];             // Optional: Array of column keys to calculate subtotals for
-  groupOpen?: boolean;              // Optional: Whether groups are open by default (default: true)
 }
 ```
 
 ## Usage Examples
 
+
+### Sparklines
+```jsx
+<DataTable
+  columns={[
+      { label: 'Product', key: 'product' },
+      {
+        label: 'Sales Trend (Line)',
+        key: 'salesData',
+        format: {
+          type: 'spark',
+          options: {
+            sparkType: 'line',
+            sparkColor: '#3b82f6',
+            sparkX: 'month',
+            sparkY: 'sales'
+          }
+        }
+      },
+      {
+        label: 'Revenue Trend (Area)',
+        key: 'revenueData',
+        format: {
+          type: 'spark',
+          options: {
+            sparkType: 'area',
+            sparkColor: '#10b981',
+            sparkX: 'month',
+            sparkY: 'revenue'
+          }
+        }
+      },
+      {
+        label: 'Units Sold (Bar)',
+        key: 'unitsData',
+        format: {
+          type: 'spark',
+          options: {
+            sparkType: 'bar',
+            sparkColor: '#f59e0b',
+            sparkX: 'month',
+            sparkY: 'units'
+          }
+        }
+      }
+    ]}
+  rows={[
+      {
+        product: 'iPhone 15',
+        salesData: [
+          { month: 'Jan', sales: 1000 },
+          { month: 'Feb', sales: 1200 },
+          { month: 'Mar', sales: 1100 },
+          { month: 'Apr', sales: 1400 },
+          { month: 'May', sales: 1600 }
+        ],
+        revenueData: [
+          { month: 'Jan', revenue: 50000 },
+          { month: 'Feb', revenue: 60000 },
+          { month: 'Mar', revenue: 55000 },
+          { month: 'Apr', revenue: 70000 },
+          { month: 'May', revenue: 80000 }
+        ],
+        unitsData: [
+          { month: 'Jan', units: 100 },
+          { month: 'Feb', units: 120 },
+          { month: 'Mar', units: 110 },
+          { month: 'Apr', units: 140 },
+          { month: 'May', units: 160 }
+        ]
+      },
+      {
+        product: 'MacBook Pro',
+        salesData: [
+          { month: 'Jan', sales: 800 },
+          { month: 'Feb', sales: 900 },
+          { month: 'Mar', sales: 950 },
+          { month: 'Apr', sales: 1100 },
+          { month: 'May', sales: 1200 }
+        ],
+        revenueData: [
+          { month: 'Jan', revenue: 40000 },
+          { month: 'Feb', revenue: 45000 },
+          { month: 'Mar', revenue: 47500 },
+          { month: 'Apr', revenue: 55000 },
+          { month: 'May', revenue: 60000 }
+        ],
+        unitsData: [
+          { month: 'Jan', units: 80 },
+          { month: 'Feb', units: 90 },
+          { month: 'Mar', units: 95 },
+          { month: 'Apr', units: 110 },
+          { month: 'May', units: 120 }
+        ]
+      },
+      {
+        product: 'iPad Air',
+        salesData: [
+          { month: 'Jan', sales: 600 },
+          { month: 'Feb', sales: 700 },
+          { month: 'Mar', sales: 750 },
+          { month: 'Apr', sales: 800 },
+          { month: 'May', sales: 900 }
+        ],
+        revenueData: [
+          { month: 'Jan', revenue: 30000 },
+          { month: 'Feb', revenue: 35000 },
+          { month: 'Mar', revenue: 37500 },
+          { month: 'Apr', revenue: 40000 },
+          { month: 'May', revenue: 45000 }
+        ],
+        unitsData: [
+          { month: 'Jan', units: 60 },
+          { month: 'Feb', units: 70 },
+          { month: 'Mar', units: 75 },
+          { month: 'Apr', units: 80 },
+          { month: 'May', units: 90 }
+        ]
+      }
+    ]}
+/>
+```
+
+
 ### Displaying All Columns
+```jsx
 <DataTable
   columns={ [
   { label: 'Name', key: 'name' },
@@ -89,11 +203,11 @@ interface DataTableProps {
   { name: 'Jane Smith', email: 'jane@example.com', role: 'User' }
 ]}
 />
-
+```
 
 ### Selecting Specific Columns
 
-
+```jsx
 <DataTable
   columns={[
   { label: 'Name', key: 'name' },
@@ -108,10 +222,10 @@ interface DataTableProps {
   hover={true}
   bordered={true}
 />
-
+```
 
 ### Formatting Column
-
+```jsx
 <DataTable
     columns={[
       { label: 'Product Name', key: 'name' },
@@ -166,12 +280,12 @@ interface DataTableProps {
     bordered={true}
   
 />
-
+```
 
 
 ### Paginate
 
-
+```jsx
 <DataTable
   columns={[
   { label: 'Name', key: 'name' },
@@ -190,7 +304,7 @@ interface DataTableProps {
   paginated={true}
   pageSize={2}
 />
-
+```
 
 
 
@@ -198,7 +312,7 @@ interface DataTableProps {
 
 ### Deltas
 
-
+```jsx
 <DataTable
   columns={[
   { label: 'Name', key: 'name' },
@@ -222,7 +336,7 @@ interface DataTableProps {
   hover={true}
   bordered={true}
 />
-
+```
 
 
 
@@ -231,7 +345,7 @@ interface DataTableProps {
 
 ### Search
 
-
+```jsx
 <DataTable
   columns={[
   { label: 'Name', key: 'name' },
@@ -253,14 +367,14 @@ interface DataTableProps {
   sortable={true}
   searchable={true}
 />
-
+```
 
 
 
 
 ### Total Row
 
-
+```jsx
 <DataTable
   columns={[
   { label: 'Name', key: 'name' },
@@ -282,194 +396,14 @@ interface DataTableProps {
   sortable={true}
   totalRow={true}
 />
-
-
-### Group By
-
-The `groupBy` feature allows you to group table rows by a specific column value. When enabled:
-
-- Data is grouped by the specified column
-- Group headers show the group value and item count
-- Groups can be expanded/collapsed by clicking the header (accordion type only)
-- Sorting works within each group
-- Search filters data and regroups results
-- Pagination is disabled (all groups are shown)
-- Use `groupOpen` to control whether groups are expanded by default (default: true)
-
-### Group Types
-
-The `groupType` option controls how grouped data is displayed:
-
-#### Accordion Type (Default)
-- `groupType: 'accordion'` or omitted
-- Groups are displayed with collapsible headers
-- Click headers to expand/collapse groups
-- Subtotals appear in the group headers when enabled
-
-#### Section Type
-- `groupType: 'section'`
-- Groups are displayed as merged sections
-- The group column cells are vertically merged for each group
-- Groups are always visible (no expand/collapse)
-- Subtotals appear as separate rows below each group when enabled
-
-### Subtotals with GroupBy
-
-When using `subtotals` with `groupBy`, you can display calculated subtotals for numeric columns in the group headers:
-
-- Specify column keys in the `subtotals` array to calculate subtotals
-- Subtotals are displayed in the group header row, aligned with their respective columns
-- Only numeric columns (currency, percent, number) show subtotals
-- Subtotals respect the column's formatting (currency, number formatting, etc.)
-
-### Group Open/Closed State
-
-The `groupOpen` option controls the default expanded state of groups:
-
-- `groupOpen: true` (default): All groups are expanded by default
-- `groupOpen: false`: All groups are collapsed by default
-- Users can still manually expand/collapse individual groups by clicking the group headers
-- The expanded/collapsed state is maintained when searching or sorting
-
-<DataTable
-  columns={[
-  { label: 'Product Name', key: 'name' },
-  { label: 'Category', key: 'category' },
-  {
-    label: 'Price',
-    key: 'price',
-    format: {
-      type: 'currency',
-      options: { locale: 'en-US', currency: 'USD' }
-    }
-  },
-  {
-    label: 'Stock',
-    key: 'stock',
-    format: { type: 'number' }
-  }
-]}
-  rows={[
-  { name: 'iPhone 15', category: 'Electronics', price: 999, stock: 50 },
-  { name: 'MacBook Pro', category: 'Electronics', price: 2499, stock: 25 },
-  { name: 'Office Chair', category: 'Furniture', price: 299, stock: 100 },
-  { name: 'Standing Desk', category: 'Furniture', price: 599, stock: 30 },
-  { name: 'iPad Air', category: 'Electronics', price: 599, stock: 75 }
-]}
-  groupBy="category"
-  subtotals={["price", "stock"]}
-  groupOpen={false}
-  sortable={true}
-  searchable={true}
-/>
-
-### Section Grouping Example
-
-<DataTable
-  columns={[
-  { label: 'Product Name', key: 'name' },
-  { label: 'Category', key: 'category' },
-  {
-    label: 'Price',
-    key: 'price',
-    format: {
-      type: 'currency',
-      options: { locale: 'en-US', currency: 'USD' }
-    }
-  },
-  {
-    label: 'Stock',
-    key: 'stock',
-    format: { type: 'number' }
-  }
-]}
-  rows={[
-  { name: 'iPhone 15', category: 'Electronics', price: 999, stock: 50 },
-  { name: 'MacBook Pro', category: 'Electronics', price: 2499, stock: 25 },
-  { name: 'Office Chair', category: 'Furniture', price: 299, stock: 100 },
-  { name: 'Standing Desk', category: 'Furniture', price: 599, stock: 30 },
-  { name: 'iPad Air', category: 'Electronics', price: 599, stock: 75 }
-]}
-  groupBy="category"
-  groupType="section"
-  subtotals={["price", "stock"]}
-  sortable={true}
-  searchable={true}
-/>
-
-### Column Header Grouping (groupTo)
-
-The `groupTo` feature allows you to group column headers under common group names. When columns have the same `groupTo` value, they are grouped together with a spanning header row above the regular column headers.
-
-Features:
-- Columns with the same `groupTo` value are grouped together
-- A group header row is added above the regular column headers
-- Group headers span across all columns in the group
-- Columns without `groupTo` are displayed individually
-- Works with all other table features (sorting, grouping, pagination, etc.)
-
-<DataTable
-  columns={[
-    { label: 'Product Name', key: 'name' },
-    {
-      label: 'Q1 Sales',
-      key: 'q1Sales',
-      groupTo: 'Sales Data',
-      format: { type: 'currency', options: { locale: 'en-US', currency: 'USD' } }
-    },
-    {
-      label: 'Q2 Sales',
-      key: 'q2Sales',
-      groupTo: 'Sales Data',
-      format: { type: 'currency', options: { locale: 'en-US', currency: 'USD' } }
-    },
-    {
-      label: 'Q1 Growth',
-      key: 'q1Growth',
-      groupTo: 'Growth Metrics',
-      format: { type: 'percent' }
-    },
-    {
-      label: 'Q2 Growth',
-      key: 'q2Growth',
-      groupTo: 'Growth Metrics',
-      format: { type: 'percent' }
-    }
-  ]}
-  rows={[
-    {
-      name: 'iPhone 15',
-      q1Sales: 50000,
-      q2Sales: 65000,
-      q1Growth: 0.15,
-      q2Growth: 0.30
-    },
-    {
-      name: 'MacBook Pro',
-      q1Sales: 30000,
-      q2Sales: 35000,
-      q1Growth: 0.10,
-      q2Growth: 0.17
-    },
-    {
-      name: 'iPad Air',
-      q1Sales: 25000,
-      q2Sales: 28000,
-      q1Growth: 0.08,
-      q2Growth: 0.12
-    }
-  ]}
-  sortable={true}
-  striped={true}
-  bordered={true}
-/>
-
+```
 
 
 
 
 
 ** info **
+```jsx
 <DataTable
   columns={[
   { label: 'Region', key: 'region' },
@@ -629,7 +563,7 @@ Features:
     }
 ]}
 />
-
+```
 
 
 
@@ -638,6 +572,7 @@ Features:
 
 
 ** positive **
+```jsx
 <DataTable
   columns={[
   { label: 'Region', key: 'region' },
@@ -797,7 +732,7 @@ Features:
     }
 ]}
 />
-
+```
 
 
 
@@ -805,6 +740,7 @@ Features:
 
 
 ** negative **
+```jsx
 <DataTable
   columns={[
   { label: 'Region', key: 'region' },
@@ -964,13 +900,14 @@ Features:
     }
 ]}
 />
-
+```
 
 
 
 
 
 ** custom color **
+```jsx
 <DataTable
   columns={[
   { label: 'Region', key: 'region' },
@@ -1131,7 +1068,7 @@ Features:
     }
 ]}
 />
-
+```
 
 
 
@@ -1140,6 +1077,7 @@ Features:
 ### Custom Color Palettes
 
 ** Diverging Scale **
+```jsx
 <DataTable
   columns={[
   { label: 'Region', key: 'region' },
@@ -1300,10 +1238,11 @@ Features:
     }
 ]}
 />
-
+```
 
 
 ** Heatmap **
+```jsx
 <DataTable
   columns={[
   { label: 'Region', key: 'region' },
@@ -1464,12 +1403,13 @@ Features:
     }
 ]}
 />
-
+```
 
 
 
 
 ** Red Negatives **
+```jsx
 <DataTable
   columns={[
   { label: 'Name', key: 'name' },
@@ -1483,12 +1423,13 @@ Features:
 ]}
   rows={[{"name":"Alice Johnson","number":1200},{"name":"Bob Smith","number":-350},{"name":"Charlie Lee","number":0},{"name":"Dana White","number":875},{"name":"Evan Chen","number":-120}]}
 />
-
+```
 
 
 
 
 ** Color Breakpoints **
+```jsx
 <DataTable
   columns={[
   { label: 'Region', key: 'region' },
@@ -1650,3 +1591,510 @@ Features:
     }
 ]}
 />
+```
+
+** Including Images **
+```jsx
+<DataTable
+
+ columns={[
+  { label: 'Name', key: 'name' },
+  { label: 'Image', key: 'image',
+ format: {
+     type: 'image'
+    } },
+  {
+    label: 'Number',
+    key: 'number',
+    format: {
+      redNegative: true
+    }
+  }
+]}
+rows={[
+    {
+        "name": "Alice Johnson",
+        "number": 1200,
+        "image": "https%3A%2F%2Fplacehold.co%2F640x360.png%3Ftext%3DAlice"
+    },
+   
+  
+    {
+        "name": "Evan Chen",
+        "number": -120,
+        "image": "https%3A%2F%2Fplacehold.co%2F640x360.png%3Ftext%3DEvan"
+    }
+]}
+
+/>
+```
+
+
+** Link Columns **
+```jsx
+<DataTable
+ columns={[
+  { label: 'Image Link', key: 'image',
+ format: {
+     type: 'link',
+options: {
+linkLabel: 'name',
+target: '_blank'
+}
+    } },
+  {
+    label: 'Number',
+    key: 'number',
+    format: {
+      redNegative: true
+    }
+  }
+]}
+rows={[
+    {
+        "name": "Alice Johnson",
+        "number": 1200,
+        "image": "https%3A%2F%2Fplacehold.co%2F640x360.png%3Ftext%3DAlice"
+    },
+   
+  
+    {
+        "name": "Evan Chen",
+        "number": -120,
+        "image": "https%3A%2F%2Fplacehold.co%2F640x360.png%3Ftext%3DEvan"
+    }
+]}
+
+/>
+```
+
+```jsx
+<DataTable
+ columns={[
+  { label: 'Name', key: 'name' },
+  { label: 'Image Link', key: 'image',
+ format: {
+     type: 'link',
+options: {
+linkLabel: 'open image',
+target: '_blank'
+}
+    } },
+  {
+    label: 'Number',
+    key: 'number',
+    format: {
+      redNegative: true
+    }
+  }
+]}
+rows={[
+    {
+        "name": "Alice Johnson",
+        "number": 1200,
+        "image": "https%3A%2F%2Fplacehold.co%2F640x360.png%3Ftext%3DAlice"
+    },
+   
+  
+    {
+        "name": "Evan Chen",
+        "number": -120,
+        "image": "https%3A%2F%2Fplacehold.co%2F640x360.png%3Ftext%3DEvan"
+    }
+]}
+
+/>
+```
+
+
+
+#### Group
+
+** without subtotal **
+```jsx
+<DataTable
+     columns={[
+    { label: 'Product Name', key: 'name' },
+    { label: 'Category', key: 'category' },
+    { 
+      label: 'Price', 
+      key: 'price',
+      format: {
+        type: 'currency',
+        options: { locale: 'en-US', currency: 'USD' }
+      }
+    },
+    { 
+      label: 'Stock', 
+      key: 'stock',
+      format: { type: 'number' }
+    }
+  ]}
+  rows={[
+    { name: 'iPhone 15', category: 'Electronics', price: 999, stock: 50 },
+    { name: 'MacBook Pro', category: 'Electronics', price: 2499, stock: 25 },
+    { name: 'Office Chair', category: 'Furniture', price: 299, stock: 100 },
+    { name: 'Standing Desk', category: 'Furniture', price: 599, stock: 30 },
+    { name: 'iPad Air', category: 'Electronics', price: 599, stock: 75 },
+    { name: 'Coffee Table', category: 'Furniture', price: 199, stock: 40 },
+    { name: 'Running Shoes', category: 'Sports', price: 129, stock: 200 },
+    { name: 'Tennis Racket', category: 'Sports', price: 89, stock: 60 },
+    { name: 'Yoga Mat', category: 'Sports', price: 29, stock: 150 }
+  ]}
+  groupBy="category"
+  sortable={true}
+  searchable={true}
+  striped={true}
+  hover={true}
+/>
+```
+
+
+
+
+** with subtotal **
+```jsx
+<DataTable
+subtotals={['stock']}
+     columns={[
+    { label: 'Product Name', key: 'name' },
+    { label: 'Category', key: 'category' },
+    { 
+      label: 'Price', 
+      key: 'price',
+      format: {
+        type: 'currency',
+        options: { locale: 'en-US', currency: 'USD' }
+      }
+    },
+    { 
+      label: 'Stock', 
+      key: 'stock',
+      format: { type: 'number' }
+    }
+  ]}
+  rows={[
+    { name: 'iPhone 15', category: 'Electronics', price: 999, stock: 50 },
+    { name: 'MacBook Pro', category: 'Electronics', price: 2499, stock: 25 },
+    { name: 'Office Chair', category: 'Furniture', price: 299, stock: 100 },
+    { name: 'Standing Desk', category: 'Furniture', price: 599, stock: 30 },
+    { name: 'iPad Air', category: 'Electronics', price: 599, stock: 75 },
+    { name: 'Coffee Table', category: 'Furniture', price: 199, stock: 40 },
+    { name: 'Running Shoes', category: 'Sports', price: 129, stock: 200 },
+    { name: 'Tennis Racket', category: 'Sports', price: 89, stock: 60 },
+    { name: 'Yoga Mat', category: 'Sports', price: 29, stock: 150 }
+  ]}
+  groupBy="category"
+  sortable={true}
+  searchable={true}
+  striped={true}
+  hover={true}
+/>
+```
+
+
+
+
+
+
+
+
+** Closed by Default **
+```jsx
+<DataTable
+groupOpen={false}
+subtotals={['stock']}
+     columns={[
+    { label: 'Product Name', key: 'name' },
+    { label: 'Category', key: 'category' },
+    { 
+      label: 'Price', 
+      key: 'price',
+      format: {
+        type: 'currency',
+        options: { locale: 'en-US', currency: 'USD' }
+      }
+    },
+    { 
+      label: 'Stock', 
+      key: 'stock',
+      format: { type: 'number' }
+    }
+  ]}
+  rows={[
+    { name: 'iPhone 15', category: 'Electronics', price: 999, stock: 50 },
+    { name: 'MacBook Pro', category: 'Electronics', price: 2499, stock: 25 },
+    { name: 'Office Chair', category: 'Furniture', price: 299, stock: 100 },
+    { name: 'Standing Desk', category: 'Furniture', price: 599, stock: 30 },
+    { name: 'iPad Air', category: 'Electronics', price: 599, stock: 75 },
+    { name: 'Coffee Table', category: 'Furniture', price: 199, stock: 40 },
+    { name: 'Running Shoes', category: 'Sports', price: 129, stock: 200 },
+    { name: 'Tennis Racket', category: 'Sports', price: 89, stock: 60 },
+    { name: 'Yoga Mat', category: 'Sports', price: 29, stock: 150 }
+  ]}
+  groupBy="category"
+  sortable={true}
+  searchable={true}
+  striped={true}
+  hover={true}
+/>
+```
+
+
+
+
+** With Configured Columns **
+```jsx
+<DataTable
+
+subtotals={['stock']}
+     columns={[
+    { label: 'Product Name', key: 'name' },
+    { label: 'Category', key: 'category' },
+    { 
+      label: 'Price', 
+      key: 'price',
+      format: {
+        type: 'currency',
+        options: { locale: 'en-US', currency: 'USD' }
+      }
+    },
+    { 
+      label: 'Stock', 
+      key: 'stock',
+      format: { type: 'number', colorScale: 'negative' }
+    },
+{ 
+      label: 'Growth', 
+      key: 'growth',
+      format: { type: 'percent', showArrow: true }
+    }
+  ]}
+  rows={[
+    { name: 'iPhone 15', category: 'Electronics', price: 999, stock: 50, growth: 10 },
+    { name: 'MacBook Pro', category: 'Electronics', price: 2499, stock: 25, growth: -10 },
+    { name: 'Office Chair', category: 'Furniture', price: 299, stock: 100, growth: 20 },
+    { name: 'Standing Desk', category: 'Furniture', price: 599, stock: 30, growth: 50 },
+    { name: 'iPad Air', category: 'Electronics', price: 599, stock: 75, growth: -40 }
+  ]}
+  groupBy="category"
+  sortable={true}
+/>
+```
+
+
+
+
+
+
+
+### Group section
+
+** with subtotal **
+```jsx
+<DataTable
+subtotals={['stock']}
+  groupType="section"
+     columns={[
+    { label: 'Category', key: 'category' },
+    { label: 'Product Name', key: 'name' },
+    { 
+      label: 'Price', 
+      key: 'price',
+      format: {
+        type: 'currency',
+        options: { locale: 'en-US', currency: 'USD' }
+      }
+    },
+    { 
+      label: 'Stock', 
+      key: 'stock',
+      format: { type: 'number', colorScale: 'negative' }
+    },
+{ 
+      label: 'Growth', 
+      key: 'growth',
+      format: { type: 'percent', showArrow: true }
+    }
+  ]}
+  rows={[
+    { name: 'iPhone 15', category: 'Electronics', price: 999, stock: 50, growth: 10 },
+    { name: 'MacBook Pro', category: 'Electronics', price: 2499, stock: 25, growth: -10 },
+    { name: 'Office Chair', category: 'Furniture', price: 299, stock: 100, growth: 20 },
+    { name: 'Standing Desk', category: 'Furniture', price: 599, stock: 30, growth: 50 },
+    { name: 'iPad Air', category: 'Electronics', price: 599, stock: 75, growth: -40 }
+  ]}
+  groupBy="category"
+  sortable={true}
+/>
+```
+
+
+** without subtotal **
+```jsx
+<DataTable
+
+  groupType="section"
+     columns={[
+    { label: 'Category', key: 'category' },
+    { label: 'Product Name', key: 'name' },
+    { 
+      label: 'Price', 
+      key: 'price',
+      format: {
+        type: 'currency',
+        options: { locale: 'en-US', currency: 'USD' }
+      }
+    },
+    { 
+      label: 'Stock', 
+      key: 'stock',
+      format: { type: 'number', colorScale: 'negative' }
+    },
+{ 
+      label: 'Growth', 
+      key: 'growth',
+      format: { type: 'percent', showArrow: true }
+    }
+  ]}
+  rows={[
+    { name: 'iPhone 15', category: 'Electronics', price: 999, stock: 50, growth: 10 },
+    { name: 'MacBook Pro', category: 'Electronics', price: 2499, stock: 25, growth: -10 },
+    { name: 'Office Chair', category: 'Furniture', price: 299, stock: 100, growth: 20 },
+    { name: 'Standing Desk', category: 'Furniture', price: 599, stock: 30, growth: 50 },
+    { name: 'iPad Air', category: 'Electronics', price: 599, stock: 75, growth: -40 }
+  ]}
+  groupBy="category"
+  sortable={true}
+/>
+```
+
+
+
+** group column **
+```jsx
+<DataTable
+  groupType="section"
+     columns={[
+    { label: 'Category', key: 'category' },
+    { label: 'Product Name', key: 'name' },
+    { 
+      label: 'Price', 
+      key: 'price',
+      format: {
+        type: 'currency',
+        options: { locale: 'en-US', currency: 'USD' }
+      },
+groupTo: 'test'
+    },
+    { 
+      label: 'Stock', 
+      key: 'stock',
+      format: { type: 'number', colorScale: 'negative' },
+groupTo: 'test'
+    },
+{ 
+      label: 'Growth', 
+      key: 'growth',
+      format: { type: 'percent', showArrow: true }
+    }
+  ]}
+  rows={[
+    { name: 'iPhone 15', category: 'Electronics', price: 999, stock: 50, growth: 10 },
+    { name: 'MacBook Pro', category: 'Electronics', price: 2499, stock: 25, growth: -10 },
+    { name: 'Office Chair', category: 'Furniture', price: 299, stock: 100, growth: 20 },
+    { name: 'Standing Desk', category: 'Furniture', price: 599, stock: 30, growth: 50 },
+    { name: 'iPad Air', category: 'Electronics', price: 599, stock: 75, growth: -40 }
+  ]}
+  groupBy="category"
+  sortable={true}
+/>
+```
+
+
+
+### Bar chart column
+```jsx
+<DataTable
+  groupType="section"
+     columns={[
+    { label: 'Category', key: 'category' },
+    { label: 'Product Name', key: 'name' },
+    { 
+      label: 'Price', 
+      key: 'price',
+      format: {
+        type: 'currency',
+        options: { locale: 'en-US', currency: 'USD' }
+      }
+
+    },
+    { 
+      label: 'Stock', 
+      key: 'stock',
+      format: { type: 'bar', options:{barColor: '#c29fe6'} }
+
+    },
+{ 
+      label: 'Growth', 
+      key: 'growth',
+      format: { type: 'percent', showArrow: true }
+    }
+  ]}
+  rows={[
+    { name: 'iPhone 15', category: 'Electronics', price: 999, stock: 50, growth: 10 },
+    { name: 'MacBook Pro', category: 'Electronics', price: 2499, stock: 25, growth: -10 },
+    { name: 'Office Chair', category: 'Furniture', price: 299, stock: 100, growth: 20 },
+    { name: 'Standing Desk', category: 'Furniture', price: 599, stock: 30, growth: 50 },
+    { name: 'iPad Air', category: 'Electronics', price: 599, stock: 75, growth: -40 }
+  ]}
+  groupBy="category"
+  sortable={true}
+/>
+```
+
+
+
+
+
+### HTML Content Column
+
+This example demonstrates a single column containing various HTML content types including bold text, italic text, links, and images.
+```jsx
+<DataTable
+  columns={[
+    { label: 'ID', key: 'id' },
+    {
+      label: 'HTML Content',
+      key: 'htmlContent',
+      format: {
+        type: 'html',
+        options: {
+          sanitize: true
+        }
+      }
+    }
+  ]}
+  rows={[
+    {
+      id: 1,
+      htmlContent: '<strong>This is bold text</strong>'
+    },
+    {
+      id: 2,
+      htmlContent: '<em>This is italic text</em>'
+    },
+    {
+      id: 3,
+      htmlContent: '<a href="https://example.com" target="_blank">Visit Example.com</a>'
+    },
+    {
+      id: 4,
+      htmlContent: '<img src="https://placehold.co/640x360.png" alt="Placeholder Image" style="max-width: 200px; height: auto;" />'
+    }
+  ]}
+  striped={true}
+  bordered={true}
+  hover={true}
+/>
+```

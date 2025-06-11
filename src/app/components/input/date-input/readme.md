@@ -38,7 +38,6 @@ interface DateInputProps {
 ## Usage Examples
 
 ### Basic Usage
-
 ```jsx
 <DateInput 
   label="Event Date"
@@ -47,21 +46,16 @@ interface DateInputProps {
 ```
 
 ### With Date Restrictions
-
 ```jsx
-const today = new Date();
-const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-
 <DateInput 
   label="Appointment Date"
-  minDate={today}
-  maxDate={nextWeek}
+  minDate="2025-05-24T00:38:54.465Z"
+  maxDate="2025-05-30T00:38:54.465Z"
   placeholder="Select appointment date..."
 />
 ```
 
 ### Disabled State
-
 ```jsx
 <DateInput 
   label="Holiday Date"
@@ -71,7 +65,6 @@ const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
 ```
 
 ### Custom Placeholder
-
 ```jsx
 <DateInput 
   label="Start Date"

@@ -18,14 +18,16 @@ interface BigValueProps {
 ## Usage Examples
 
 ### Default
+```jsx
 <BigValue 
   value={1234567}
   label="Total Sales"
   alignment="left"
 />
-
+```
 
 ### Comparisons
+```jsx
 <BigValue 
   value="$50,000"
   label="Revenue"
@@ -33,7 +35,9 @@ interface BigValueProps {
   comparisonTitle="MoM"
   alignment="left"
 />
+```
 
+```jsx
 <BigValue 
   value="85"
   label="Customer Satisfaction"
@@ -41,9 +45,10 @@ interface BigValueProps {
   comparisonTitle="MoM"
   alignment="left"
 />
+```
 
 ### Linking to other pages
-
+```jsx
 <BigValue 
   value="1,234"
   label="Num Orders"
@@ -52,9 +57,10 @@ interface BigValueProps {
   delta="-2.5%"
   link="https://google.com"
 />
-
+```
 
 ### Non-Delta Comparisons
+```jsx
 <BigValue 
   value="1,234"
   label="Num Orders"
@@ -62,6 +68,7 @@ interface BigValueProps {
   comparisonTitle="Last Month"
   comparisonDelta={300}
 />
+```
 
 
 

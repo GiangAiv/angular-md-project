@@ -13,11 +13,7 @@ A hybrid component that combines the functionality of a link with the appearance
 - 💅 Tailwind CSS styling
 
 ## Usage
-
 ```jsx
-import { LinkButton } from '@components/ui/LinkButton';
-
-// In your template:
 <LinkButton
   href="/path/to/page"
   text="Click here"
@@ -98,15 +94,6 @@ import { LinkButton } from '@components/ui/LinkButton';
 />
 ```
 
-### Ghost Button with Custom Icon
-```jsx
-<LinkButton
-  href="/settings"
-  text="Settings"
-  variant="ghost"
-  icon={customIconSvg}
-/>
-```
 
 ### Large Primary Button
 ```jsx

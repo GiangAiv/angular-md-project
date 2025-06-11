@@ -1,11 +1,45 @@
 import { Injectable } from '@angular/core';
-
 import {
   ComponentReference,
   ParsedContent,
 } from 'src/app/models/markdown/markdown-types';
-import { parse as parseYaml } from 'yaml';
+import { parse } from '@babel/parser';
 import { ComponentRegistryService } from './component-registry.service';
+
+// Type definitions for JSX AST nodes
+interface JSXNode {
+  type: string;
+  value?: string;
+  openingElement?: {
+    name: {
+      type: string;
+      name: string;
+    };
+    attributes: JSXAttribute[];
+  };
+  children?: JSXNode[];
+  start?: number;
+  end?: number;
+}
+
+interface JSXAttribute {
+  type: string;
+  name: {
+    name: string;
+  };
+  value?: {
+    type: string;
+    value?: string;
+    expression?: {
+      start: number;
+      end: number;
+    };
+  };
+}
+
+interface ParsedMarkdownResult {
+  segments: (string | ComponentReference)[];
+}
 
 @Injectable({
   providedIn: 'root',
@@ -14,433 +48,365 @@ export class MarkdownParserService {
   constructor(private componentRegistry: ComponentRegistryService) {}
 
   /**
-   * Parse a markdown string to extract content, frontmatter, and component references
-   * @param markdown The markdown string to parse
-   * @returns ParsedContent object containing the parsed markdown
+   * Parse markdown content and return ParsedContent
    */
-  parseMarkdown(markdown: string): ParsedContent {
-    // Parse frontmatter and content
-    const { content, frontmatter } = this.extractFrontmatter(markdown);
+  parseMarkdown(content: string): ParsedContent {
+    if (!content) {
+      return {
+        content: '',
+        frontmatter: {},
+        components: [],
+      };
+    }
 
-    // Extract component references from the content
-    const components = this.extractComponentReferences(content);
-    console.log('components : ', components);
+    try {
+      // Extract frontmatter
+      const frontmatter = this.extractFrontmatter(content);
 
-    return {
-      content,
-      frontmatter,
-      components,
-    };
+      // Remove frontmatter from content
+      const cleanContent = this.removeFrontmatter(content);
+
+      // Extract components from markdown
+      const components = this.extractComponents(cleanContent);
+
+      return {
+        content: cleanContent,
+        frontmatter,
+        components,
+      };
+    } catch (error) {
+      console.error('Error parsing markdown:', error);
+      return {
+        content: content,
+        frontmatter: {},
+        components: [],
+      };
+    }
+  }
+
+  /**
+   * Parse markdown with components and return segments for rendering
+   */
+  parseMarkdownWithComponents(
+    content: string,
+    components: ComponentReference[]
+  ): ParsedMarkdownResult {
+    if (!content) {
+      return { segments: [] };
+    }
+
+    try {
+      const segments: (string | ComponentReference)[] = [];
+
+      // If no components, return the content as a single segment
+      if (!components || components.length === 0) {
+        segments.push(content);
+        return { segments };
+      }
+
+      // Sort components by position
+      const sortedComponents = [...components].sort((a, b) => a.position - b.position);
+
+      // Calculate component end positions by finding the actual component blocks in content
+      const componentsWithEndPositions = sortedComponents.map(component => {
+        const endPosition = this.findComponentEndPosition(content, component);
+        return { ...component, endPosition };
+      });
+
+      let lastPosition = 0;
+
+      for (const component of componentsWithEndPositions) {
+        // Add content before this component
+        if (component.position > lastPosition) {
+          const beforeContent = content.slice(lastPosition, component.position).trim();
+          if (beforeContent) {
+            segments.push(beforeContent);
+          }
+        }
+
+        // Add the component
+        segments.push({
+          type: component.type,
+          props: component.props,
+          position: component.position
+        });
+
+        // Move past the end of this component block
+        lastPosition = component.endPosition || component.position;
+      }
+
+      // Add remaining content after the last component
+      if (lastPosition < content.length) {
+        const remainingContent = content.slice(lastPosition).trim();
+        if (remainingContent) {
+          segments.push(remainingContent);
+        }
+      }
+
+      return { segments };
+    } catch (error) {
+      console.error('Error parsing markdown with components:', error);
+      return { segments: [content] };
+    }
+  }
+
+  /**
+   * Find the end position of a component block in the content
+   */
+  private findComponentEndPosition(content: string, component: ComponentReference): number {
+    // Look for JSX blocks starting at or near the component position
+    const jsxRegex = /```jsx[\s\S]*?```/g;
+    jsxRegex.lastIndex = Math.max(0, component.position - 10); // Start a bit before the position
+
+    let match;
+    while ((match = jsxRegex.exec(content))) {
+      if (Math.abs(match.index - component.position) <= 10) {
+        return match.index + match[0].length;
+      }
+    }
+
+    // Look for component blocks starting at or near the component position
+    const componentRegex = /```component[\s\S]*?```/g;
+    componentRegex.lastIndex = Math.max(0, component.position - 10);
+
+    while ((match = componentRegex.exec(content))) {
+      if (Math.abs(match.index - component.position) <= 10) {
+        return match.index + match[0].length;
+      }
+    }
+
+    // Fallback: assume the component takes no space (shouldn't happen)
+    return component.position;
+  }
+
+  /**
+   * Extract JSX blocks from markdown content
+   */
+  extractJSXBlocks(input: string): string[] {
+    const jsxBlocks: string[] = [];
+    const regex = /```jsx([\s\S]*?)```/g;
+    let match;
+    while ((match = regex.exec(input))) {
+      jsxBlocks.push(match[1].trim());
+    }
+    return jsxBlocks;
+  }
+
+  /**
+   * Extract JSX blocks with their positions in the content
+   */
+  extractJSXBlocksWithPositions(input: string): Array<{ code: string; position: number; endPosition: number }> {
+    const jsxBlocks: Array<{ code: string; position: number; endPosition: number }> = [];
+    const regex = /```jsx([\s\S]*?)```/g;
+    let match;
+    while ((match = regex.exec(input))) {
+      jsxBlocks.push({
+        code: match[1].trim(),
+        position: match.index,
+        endPosition: match.index + match[0].length
+      });
+    }
+    return jsxBlocks;
+  }
+
+  /**
+   * Parse a JSX node from the AST
+   */
+  private parseJSXNode(node: JSXNode, code: string): any {
+    if (node.type === 'JSXText') {
+      const text = node.value?.trim();
+      return text ? text : null;
+    }
+
+    if (node.type === 'JSXElement') {
+      const component =
+        node.openingElement?.name.type === 'JSXIdentifier'
+          ? node.openingElement.name.name
+          : 'Unknown';
+
+      const props: Record<string, any> = {};
+
+      if (node.openingElement?.attributes) {
+        for (const attr of node.openingElement.attributes) {
+          if (attr.type === 'JSXAttribute') {
+            const key = attr.name.name;
+            let value: any = true;
+
+            if (attr.value) {
+              if (attr.value.type === 'StringLiteral') {
+                value = attr.value.value;
+              } else if (attr.value.type === 'JSXExpressionContainer' && attr.value.expression) {
+                const raw = code.slice(attr.value.expression.start, attr.value.expression.end);
+                try {
+                  value = new Function(`return (${raw})`)();
+                } catch {
+                  value = raw;
+                }
+              }
+            }
+            props[key] = value;
+          }
+        }
+      }
+
+      const children = (node.children || [])
+        .map(child => this.parseJSXNode(child, code))
+        .filter(Boolean);
+
+      return { component, props, children };
+    }
+
+    return null;
+  }
+
+  /**
+   * Parse JSX component from code string
+   */
+  parseJSXComponent(code: string): any {
+    try {
+      const ast = parse(code, {
+        sourceType: 'module',
+        plugins: ['jsx', 'typescript'],
+      });
+
+      const jsxNode = ast.program.body.find(
+        (node: any) =>
+          node.type === 'ExpressionStatement' &&
+          node.expression &&
+          node.expression.type === 'JSXElement'
+      ) as any;
+
+      if (!jsxNode || !jsxNode.expression) {
+        return null;
+      }
+
+      return this.parseJSXNode(jsxNode.expression, code);
+    } catch (error) {
+      console.error('Error parsing JSX component:', error);
+      return null;
+    }
   }
 
   /**
    * Extract frontmatter from markdown content
-   * @param markdown The markdown content
-   * @returns Object with content and frontmatter
    */
-  private extractFrontmatter(markdown: string): {
-    content: string;
-    frontmatter: Record<string, any>;
-  } {
-    const frontmatterRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
-    const match = markdown.match(frontmatterRegex);
+  private extractFrontmatter(content: string): Record<string, any> {
+    const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n/;
+    const match = content.match(frontmatterRegex);
 
-    if (match) {
-      // Parse YAML frontmatter
-      try {
-        const frontmatter = parseYaml(match[1]);
-        return {
-          content: match[2].trim(),
-          frontmatter: frontmatter || {},
-        };
-      } catch (error) {
-        console.error('Error parsing frontmatter:', error);
-        return {
-          content: markdown,
-          frontmatter: {},
-        };
-      }
+    if (!match) {
+      return {};
     }
 
-    // No frontmatter found
-    return {
-      content: markdown,
-      frontmatter: {},
-    };
+    try {
+      // Simple YAML-like parsing for basic frontmatter
+      const frontmatterText = match[1];
+      const frontmatter: Record<string, any> = {};
+
+      const lines = frontmatterText.split('\n');
+      for (const line of lines) {
+        const colonIndex = line.indexOf(':');
+        if (colonIndex > 0) {
+          const key = line.slice(0, colonIndex).trim();
+          const value = line.slice(colonIndex + 1).trim();
+
+          // Remove quotes if present
+          const cleanValue = value.replace(/^["']|["']$/g, '');
+          frontmatter[key] = cleanValue;
+        }
+      }
+
+      return frontmatter;
+    } catch (error) {
+      console.error('Error parsing frontmatter:', error);
+      return {};
+    }
   }
 
   /**
-   * Extract component references from markdown content
+   * Remove frontmatter from markdown content
    */
-  extractComponentReferences(content: string): ComponentReference[] {
+  private removeFrontmatter(content: string): string {
+    const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---\s*\n/;
+    return content.replace(frontmatterRegex, '');
+  }
+
+  /**
+   * Extract components from markdown content
+   */
+  private extractComponents(content: string): ComponentReference[] {
     const components: ComponentReference[] = [];
 
-    // Extract JSON-style components
-    this.extractJsonComponents(content, components);
+    // Extract JSX components with their actual positions in content
+    const jsxRegex = /```jsx([\s\S]*?)```/g;
+    let jsxMatch;
 
-    // Extract JSX-style components
-    this.extractJsxComponents(content, components);
+    while ((jsxMatch = jsxRegex.exec(content))) {
+      try {
+        const jsxCode = jsxMatch[1].trim();
+        const parsed = this.parseJSXComponent(jsxCode);
+        if (parsed && parsed.component) {
+          // Validate that the component is registered
+          if (this.componentRegistry.hasComponent(parsed.component)) {
+            components.push({
+              type: parsed.component,
+              props: {...parsed.props,
+                children: parsed.children
+              },
+              position: jsxMatch.index, // Use the actual position in content
+            });
+          } else {
+            console.warn(`Component type '${parsed.component}' is not registered`);
+          }
+        }
+      } catch (error) {
+        console.error('Error extracting JSX component:', error);
+      }
+    }
+
+    // Extract JSON components (```component blocks)
+    const componentRegex = /```component\s*\n([\s\S]*?)\n```/g;
+    let componentMatch;
+
+    while ((componentMatch = componentRegex.exec(content))) {
+      try {
+        const componentData = JSON.parse(componentMatch[1]);
+        if (componentData.type) {
+          // Validate that the component is registered
+          if (this.componentRegistry.hasComponent(componentData.type)) {
+            components.push({
+              type: componentData.type,
+              props: componentData.props || {},
+              position: componentMatch.index, // Use the actual position in content
+            });
+          } else {
+            console.warn(`Component type '${componentData.type}' is not registered`);
+          }
+        }
+      } catch (error) {
+        console.error('Error parsing component JSON:', error);
+      }
+    }
+
+    console.table(components);
 
     return components;
   }
 
   /**
-   * Extract JSON-style component references from markdown content
+   * Validate component props using the component registry
    */
-  private extractJsonComponents(
-    content: string,
-    components: ComponentReference[],
-  ): void {
-    // Regular expression to match component code blocks
-    const componentBlockRegex = /```component\s*\n([\s\S]*?)\n```/g;
-
-    let blockMatch;
-    // For each component block found in the content
-    while ((blockMatch = componentBlockRegex.exec(content)) !== null) {
-      const blockContent = blockMatch[1];
-      const blockPosition = blockMatch.index;
-
-      // Use a regex that can match complete JSON objects
-      // This pattern matches balanced braces, handling nested objects
-      const jsonRegex = /{(?:[^{}]|(?:{[^{}]*})|(?:{(?:[^{}]|{[^{}]*})*}))*}/g;
-
-      let jsonMatch;
-      // For each JSON object found in the block
-      while ((jsonMatch = jsonRegex.exec(blockContent)) !== null) {
-        const jsonString = jsonMatch[0];
-
-        try {
-          // Parse the JSON string to an object
-          const componentData = JSON.parse(jsonString);
-
-          // Validate that the component exists and has the required properties
-          if (
-            typeof componentData === 'object' &&
-            componentData !== null &&
-            typeof componentData.type === 'string' &&
-            typeof componentData.props === 'object'
-          ) {
-            // Check if the component type is registered
-            if (this.componentRegistry.hasComponent(componentData.type)) {
-              components.push({
-                type: componentData.type,
-                props: componentData.props,
-                position: blockPosition, // Using block position
-              });
-            } else {
-              console.warn(
-                `Component type not registered: ${componentData.type}`,
-              );
-            }
-          } else {
-            console.warn(`Invalid component data structure: ${jsonString}`);
-          }
-        } catch (error: any) {
-          console.error(`Error parsing component JSON: ${error.message}`);
-          console.error(`Problematic JSON: ${jsonString}`);
-        }
-      }
-    }
-  }
-
-  /**
-   * Extract JSX-style component references from markdown content
-   */
-  private extractJsxComponents(
-    content: string,
-    components: ComponentReference[],
-  ): void {
-    // Regex for JSX component syntax:
-    // <Component prop1="value1" prop2="value2" /> (self-closing)
-    // <Component prop1="value1">content</Component> (with children)
-    const jsxRegex = /<([A-Z][a-zA-Z]*)\s+([^>]*)(?:\/>|>([\s\S]*?)<\/\1>)/g;
-
-    let match;
-    while ((match = jsxRegex.exec(content)) !== null) {
-      const [fullMatch, componentType, propsString, children] = match;
-      const position = match.index;
-
-      // Only process components that are registered
-      if (this.componentRegistry.hasComponent(componentType)) {
-        // Parse the props from the string
-        const props = this.parseJsxProps(propsString, children);
-        components.push({
-          type: componentType,
-          props,
-          position,
-        });
-      } else {
-        console.warn(`Component type not registered: ${componentType}`);
-      }
-    }
-  }
-
-  /**
-   * Safely evaluate JavaScript expressions in JSX props
-   */
-  private safeEval(expression: string): any {
-    try {
-      // For arrays with objects using JS syntax
-      if (expression.startsWith('[') && expression.endsWith(']')) {
-        // Replace JS property names with JSON format
-        const jsonLike = expression
-          .replace(/(\s*)([a-zA-Z0-9_]+)(\s*):(\s*)/g, '$1"$2"$3:$4')
-          // Replace single quotes with double quotes
-          .replace(/'([^']*)'/g, '"$1"');
-
-        try {
-          return JSON.parse(jsonLike);
-        } catch (e) {
-          console.warn('Failed to parse array expression:', expression);
-          return expression;
-        }
-      }
-
-      // For simple expressions like numbers, booleans, etc.
-      if (expression === 'true') return true;
-      if (expression === 'false') return false;
-      if (!isNaN(Number(expression))) return Number(expression);
-
-      // If all else fails, return the original expression
-      return expression;
-    } catch (error) {
-      console.error('Error evaluating expression:', error);
-      return expression;
-    }
-  }
-
-  /**
-   * Parse JSX-style props string into an object
-   */
-  private parseJsxProps(
-    propsString: string,
-    children?: string,
-  ): Record<string, any> {
-    const props: Record<string, any> = {};
-
-    // If there are children, add them to props
-    if (children) {
-      props['children'] = children.trim();
+  validateComponentProps(componentType: string, props: Record<string, any>): boolean {
+    const component = this.componentRegistry.getComponent(componentType);
+    if (!component) {
+      return false;
     }
 
-    // Process the props string to handle nested brackets correctly
-    let current = 0;
-    let propName = '';
-    let inPropName = true;
-    let propValue = '';
-    let inString = false;
-    let stringChar = '';
-    let inBraces = false;
-    let braceCount = 0;
-
-    while (current < propsString.length) {
-      const char = propsString[current];
-      const nextChar =
-        current + 1 < propsString.length ? propsString[current + 1] : '';
-
-      // Handling string literals
-      if ((char === '"' || char === "'") && !inBraces) {
-        if (inString) {
-          if (char === stringChar) {
-            // End of string
-            inString = false;
-            if (!inPropName) {
-              props[propName.trim()] = propValue;
-              propName = '';
-              propValue = '';
-              inPropName = true;
-            }
-          } else {
-            propValue += char;
-          }
-        } else {
-          inString = true;
-          stringChar = char;
-          if (inPropName) {
-            console.warn('Unexpected string in prop name:', propName);
-          }
-        }
-      }
-      // Handle equals sign (transition from prop name to value)
-      else if (char === '=' && !inString && !inBraces && inPropName) {
-        inPropName = false;
-
-        // Check if next char is a brace
-        if (nextChar === '{') {
-          inBraces = true;
-          braceCount = 0;
-          current++; // Skip the opening brace
-        }
-      }
-      // Handle opening brace
-      else if (char === '{' && !inString && !inPropName) {
-        if (inBraces) {
-          braceCount++;
-          propValue += char;
-        } else {
-          inBraces = true;
-        }
-      }
-      // Handle closing brace
-      else if (char === '}' && !inString && !inPropName && inBraces) {
-        if (braceCount > 0) {
-          braceCount--;
-          propValue += char;
-        } else {
-          // End of JSX expression
-          inBraces = false;
-          props[propName.trim()] = this.safeEval(propValue.trim());
-          propName = '';
-          propValue = '';
-          inPropName = true;
-        }
-      }
-      // Handle whitespace
-      else if (/\s/.test(char) && !inString && !inBraces) {
-        if (inPropName && propName.length > 0) {
-          // Boolean prop (no value)
-          props[propName.trim()] = true;
-          propName = '';
-          inPropName = true;
-        } else if (!inPropName && propValue.length > 0) {
-          // End of unquoted value
-          props[propName.trim()] = propValue.trim();
-          propName = '';
-          propValue = '';
-          inPropName = true;
-        }
-      }
-      // All other characters
-      else {
-        if (inPropName) {
-          propName += char;
-        } else {
-          propValue += char;
-        }
-      }
-
-      current++;
+    if (component.validateProps) {
+      const validation = component.validateProps(props);
+      return validation === true;
     }
 
-    // Handle last prop if it exists
-    if (propName.trim().length > 0) {
-      if (inPropName) {
-        // Boolean prop at the end
-        props[propName.trim()] = true;
-      } else if (propValue.trim().length > 0) {
-        // Value prop at the end
-        if (inBraces) {
-          props[propName.trim()] = this.safeEval(propValue.trim());
-        } else {
-          props[propName.trim()] = propValue.trim();
-        }
-      }
-    }
-
-    return props;
-  }
-
-  /**
-   * Parse markdown content with components and return segments
-   */
-  parseMarkdownWithComponents(
-    content: string,
-    components: ComponentReference[] = [],
-  ): {
-    segments: (string | ComponentReference)[];
-    components: ComponentReference[];
-  } {
-    // Make a copy of the components array to avoid modifying the original
-    const allComponents = [...components];
-
-    // Extract any additional components not already in the array
-    const extractedComponents = this.extractComponentReferences(content);
-
-    // Add only components that don't already exist in the array
-    for (const comp of extractedComponents) {
-      if (!allComponents.some((c) => c.position === comp.position)) {
-        allComponents.push(comp);
-      }
-    }
-
-    // Sort components by position in ascending order
-    const sortedComponents = [...allComponents].sort(
-      (a, b) => a.position - b.position,
-    );
-
-    // Split content into segments
-    const segments: (string | ComponentReference)[] = [];
-    let lastPosition = 0;
-
-    sortedComponents.forEach((component) => {
-      // Add the text segment before the component
-      if (component.position > lastPosition) {
-        segments.push(content.slice(lastPosition, component.position));
-      }
-
-      // Add the component
-      segments.push(component);
-
-      // Update the last position - need to handle both JSX and JSON formats
-      if (component.type && component.props) {
-        // Try to find the matching component in the content
-        const jsonPattern = new RegExp(
-          `(\w+)=\{([\s\S]*?)}|(\w+)=(".*?"|true|false)|(\w+)`,
-          'g',
-        );
-        const jsxPattern = new RegExp(
-          `<${component.type}\\s+[^>]*(?:/>|>[\\s\\S]*?</${component.type}>)`,
-          'g',
-        );
-
-        // Reset regex lastIndex to starting position
-        jsonPattern.lastIndex = component.position;
-        jsxPattern.lastIndex = component.position;
-
-        const jsonMatch = jsonPattern.exec(content);
-        const jsxMatch = jsxPattern.exec(content);
-
-        // Determine which match is closer to the component position
-        if (jsonMatch && jsxMatch) {
-          if (jsonMatch.index < jsxMatch.index) {
-            lastPosition = jsonMatch.index + jsonMatch[0].length;
-          } else {
-            lastPosition = jsxMatch.index + jsxMatch[0].length;
-          }
-        } else if (jsonMatch) {
-          lastPosition = jsonMatch.index + jsonMatch[0].length;
-        } else if (jsxMatch) {
-          lastPosition = jsxMatch.index + jsxMatch[0].length;
-        } else {
-          // If no match found, just move past the current position
-          lastPosition = component.position + 1;
-        }
-      } else {
-        lastPosition = component.position + 1;
-      }
-    });
-
-    // Add the remaining text after the last component
-    if (lastPosition < content.length) {
-      segments.push(content.slice(lastPosition));
-    }
-
-    return { segments, components: sortedComponents };
-  }
-
-  /**
-   * Clean the markdown content by removing component references
-   */
-  cleanMarkdown(content: string): string {
-    // Remove JSON-style component blocks
-    let cleaned = content.replace(/```component\s*\n[\s\S]*?\n```/g, '');
-
-    // Remove JSX-style component tags
-    cleaned = cleaned.replace(
-      /<([A-Z][a-zA-Z]*)\s+([^>]*)(?:\/>|>([\s\S]*?)<\/\1>)/g,
-      '',
-    );
-
-    return cleaned;
+    return true; // If no validation function, assume props are valid
   }
 }

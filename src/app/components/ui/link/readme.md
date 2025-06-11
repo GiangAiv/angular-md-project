@@ -13,11 +13,7 @@ A versatile and accessible link component for Angular applications with built-in
 - 💅 Tailwind CSS integration
 
 ## Usage
-
 ```jsx
-import { Link } from '@components/ui/Link';
-
-// In your template:
 <Link
   href="/path/to/page"
   text="Click here"

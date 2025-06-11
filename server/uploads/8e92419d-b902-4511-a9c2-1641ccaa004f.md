@@ -25,25 +25,33 @@ A component for downloading data as CSV files with customizable display options.
 ## Usage Examples
 
 ### Basic Usage
+```jsx
 <DownloadData data={{"input":"test1"}} />
+```
 
 ### Custom Text
+```jsx
 <DownloadData 
   data={{"input":"test1"}}
   text="Export to CSV"
 />
+```
 
 ### Block Display
+```jsx
 <DownloadData 
   data={{"input":"test1"}}
   display="block"
 />
+```
 
 ### Custom Styling
+```jsx
 <DownloadData 
   data={{"input":"test1"}}
   class="my-custom-class"
 />
+```
 
 ## Important Notes
 

@@ -31,7 +31,6 @@ interface CheckboxProps {
 ## Usage Examples
 
 ### Basic Checkbox
-
 ```jsx
 <Checkbox 
   label="Remember me"
@@ -50,8 +49,8 @@ interface CheckboxProps {
 
 ### Indeterminate State
 
+Useful for nested checkboxes or partial selections
 ```jsx
-// Useful for nested checkboxes or partial selections
 <Checkbox 
   label="Select all items"
   indeterminate={true}
@@ -59,7 +58,6 @@ interface CheckboxProps {
 ```
 
 ### Custom ID and Name
-
 ```jsx
 <Checkbox 
   label="Subscribe to newsletter"
@@ -69,7 +67,6 @@ interface CheckboxProps {
 ```
 
 ### Without Label
-
 ```jsx
 <Checkbox 
   checked={true}

@@ -28,58 +28,138 @@ interface ValueProps {
 ```jsx
 // Display the 'price' from the first row
 const data = [
-  { price: 99.99, name: 'Product 1' },
-  { price: 149.99, name: 'Product 2' }
+  { id: 1, name: "Wireless Mouse", price: 25.99 },
+  { id: 2, name: "Gaming Keyboard", price: 89.49 },
+  { id: 3, name: "HD Monitor", price: 199.99 },
+  { id: 4, name: "USB-C Cable", price: 9.95 },
+  { id: 5, name: "Laptop Stand", price: 39.99 },
+  { id: 6, name: "External SSD 1TB", price: 129.95 },
+  { id: 7, name: "Bluetooth Speaker", price: 45.50 },
+  { id: 8, name: "Smartphone Tripod", price: 19.99 },
+  { id: 9, name: "Noise Cancelling Headphones", price: 149.00 },
+  { id: 10, name: "Portable Charger", price: 29.90 }
 ];
+```
 
+```jsx
 <Value 
-  data={data} 
+  data={[
+  { id: 1, name: "Wireless Mouse", price: 25.99 },
+  { id: 2, name: "Gaming Keyboard", price: 89.49 },
+  { id: 3, name: "HD Monitor", price: 199.99 },
+  { id: 4, name: "USB-C Cable", price: 9.95 },
+  { id: 5, name: "Laptop Stand", price: 39.99 },
+  { id: 6, name: "External SSD 1TB", price: 129.95 },
+  { id: 7, name: "Bluetooth Speaker", price: 45.50 },
+  { id: 8, name: "Smartphone Tripod", price: 19.99 },
+  { id: 9, name: "Noise Cancelling Headphones", price: 149.00 },
+  { id: 10, name: "Portable Charger", price: 29.90 }
+]} 
   column="price"
 />
 ```
 
+
 ### Display Specific Row
 
 ```jsx
-// Display the 'price' from the second row (index 1)
 <Value 
-  data={data} 
+  data={[
+  { id: 1, name: "Wireless Mouse", price: 25.99 },
+  { id: 2, name: "Gaming Keyboard", price: 89.49 },
+  { id: 3, name: "HD Monitor", price: 199.99 },
+  { id: 4, name: "USB-C Cable", price: 9.95 },
+  { id: 5, name: "Laptop Stand", price: 39.99 },
+  { id: 6, name: "External SSD 1TB", price: 129.95 },
+  { id: 7, name: "Bluetooth Speaker", price: 45.50 },
+  { id: 8, name: "Smartphone Tripod", price: 19.99 },
+  { id: 9, name: "Noise Cancelling Headphones", price: 149.00 },
+  { id: 10, name: "Portable Charger", price: 29.90 }
+]} 
   column="price" 
   row={1}
 />
 ```
 
-### Using Aggregation
 
+## Using Aggregation
+
+
+### Calculate average price
 ```jsx
-// Calculate average price
 <Value 
-  data={data} 
+  data={[
+  { id: 1, name: "Wireless Mouse", price: 25.99 },
+  { id: 2, name: "Gaming Keyboard", price: 89.49 },
+  { id: 3, name: "HD Monitor", price: 199.99 },
+  { id: 4, name: "USB-C Cable", price: 9.95 },
+  { id: 5, name: "Laptop Stand", price: 39.99 },
+  { id: 6, name: "External SSD 1TB", price: 129.95 },
+  { id: 7, name: "Bluetooth Speaker", price: 45.50 },
+  { id: 8, name: "Smartphone Tripod", price: 19.99 },
+  { id: 9, name: "Noise Cancelling Headphones", price: 149.00 },
+  { id: 10, name: "Portable Charger", price: 29.90 }
+]} 
   column="price" 
   agg="avg"
 />
+```
 
-// Find maximum price
+### Find maximum price
+```jsx
 <Value 
-  data={data} 
+  data={[
+  { id: 1, name: "Wireless Mouse", price: 25.99 },
+  { id: 2, name: "Gaming Keyboard", price: 89.49 },
+  { id: 3, name: "HD Monitor", price: 199.99 },
+  { id: 4, name: "USB-C Cable", price: 9.95 },
+  { id: 5, name: "Laptop Stand", price: 39.99 },
+  { id: 6, name: "External SSD 1TB", price: 129.95 },
+  { id: 7, name: "Bluetooth Speaker", price: 45.50 },
+  { id: 8, name: "Smartphone Tripod", price: 19.99 },
+  { id: 9, name: "Noise Cancelling Headphones", price: 149.00 },
+  { id: 10, name: "Portable Charger", price: 29.90 }
+]} 
   column="price" 
   agg="max"
 />
+```
 
-// Calculate median price
+### Calculate median price
+```jsx
 <Value 
-  data={data} 
+  data={[
+  { id: 1, name: "Wireless Mouse", price: 25.99 },
+  { id: 2, name: "Gaming Keyboard", price: 89.49 },
+  { id: 3, name: "HD Monitor", price: 199.99 },
+  { id: 4, name: "USB-C Cable", price: 9.95 },
+  { id: 5, name: "Laptop Stand", price: 39.99 },
+  { id: 6, name: "External SSD 1TB", price: 129.95 },
+  { id: 7, name: "Bluetooth Speaker", price: 45.50 },
+  { id: 8, name: "Smartphone Tripod", price: 19.99 },
+  { id: 9, name: "Noise Cancelling Headphones", price: 149.00 },
+  { id: 10, name: "Portable Charger", price: 29.90 }
+]} 
   column="price" 
   agg="median"
 />
 ```
 
 ### Custom Placeholder
-
 ```jsx
-// Display custom text when value is not available
 <Value 
-  data={[]} 
+  data={[
+  { id: 1, name: "Wireless Mouse", price: 25.99 },
+  { id: 2, name: "Gaming Keyboard", price: 89.49 },
+  { id: 3, name: "HD Monitor", price: 199.99 },
+  { id: 4, name: "USB-C Cable", price: 9.95 },
+  { id: 5, name: "Laptop Stand", price: 39.99 },
+  { id: 6, name: "External SSD 1TB", price: 129.95 },
+  { id: 7, name: "Bluetooth Speaker", price: 45.50 },
+  { id: 8, name: "Smartphone Tripod", price: 19.99 },
+  { id: 9, name: "Noise Cancelling Headphones", price: 149.00 },
+  { id: 10, name: "Portable Charger", price: 29.90 }
+]} 
   column="price" 
   placeholder="No price available"
 />

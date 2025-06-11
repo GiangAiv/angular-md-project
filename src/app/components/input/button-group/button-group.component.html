@@ -4,9 +4,9 @@
   aria-label="Button group">
   
   <button
-    *ngFor="let option of props?.options"
+    *ngFor="let option of props?.options; let i = index"
     type="button"
-    [class]="getButtonClasses(getOptionValue(option))"
+    [ngClass]="getButtonClasses(getOptionValue(option), i)"
     [attr.aria-pressed]="isSelected(getOptionValue(option))"
     (click)="onButtonClick(getOptionValue(option))">
     {{ getOptionLabel(option) }}

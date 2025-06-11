@@ -28,6 +28,7 @@ A flexible and reusable accordion component that provides an expandable/collapsi
 ## Usage Examples
 
 ### Basic Accordion
+```jsx
 <Accordion
   single={true}
   items={[
@@ -41,8 +42,10 @@ A flexible and reusable accordion component that provides an expandable/collapsi
     }
   ]}
 />
+```
 
 ### Multiple Open Panels
+```jsx
 <Accordion
   multiple={true}
   defaultOpen={[0, 2]}
@@ -61,8 +64,10 @@ A flexible and reusable accordion component that provides an expandable/collapsi
     }
   ]}
 />
+```
 
 ### Custom Styled Accordion
+```jsx
 <Accordion
   iconPosition="left"
   customIcon="plus"
@@ -73,6 +78,7 @@ A flexible and reusable accordion component that provides an expandable/collapsi
     }
   ]}
 />
+```
 
 ## Important Notes
 

@@ -12,10 +12,10 @@ A simple, responsive horizontal rule component for Angular applications with pri
 
 ## Usage
 
-```jsx
-import { LineBreak } from '@components/ui/LineBreak';
 
 // In your template:
+
+```jsx
 <LineBreak />
 ```
 
@@ -33,36 +33,9 @@ The component uses Tailwind CSS with carefully chosen defaults:
 - Vertical margin: `print:my-4` (maintained in print)
 - High contrast for better print visibility
 
-## Examples
 
-### Basic Usage
-```jsx
-<div>
-  <p>Content above the line</p>
-  <LineBreak />
-  <p>Content below the line</p>
-</div>
-```
 
-### Section Divider
-```jsx
-<section>
-  <h2>Section 1</h2>
-  <p>Section content...</p>
-  <LineBreak />
-  <h2>Section 2</h2>
-  <p>Section content...</p>
-</section>
-```
 
-### Print Layout
-```jsx
-<div className="print:block">
-  <div>Print header content</div>
-  <LineBreak />
-  <div>Print body content</div>
-</div>
-```
 
 ## Best Practices
 

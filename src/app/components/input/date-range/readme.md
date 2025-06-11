@@ -22,36 +22,42 @@ interface DateRangeProps {
 
 ### Basic Usage - with title
 
-
+```jsx
 <DateRange 
   label="Date Range"
   placeholder="Select date range..."
 />
+```
 
-<br/>
 
 ### With Initial Dates
+```jsx
 <DateRange 
   startDate='2024-01-01'
   endDate='2024-12-31'
 />
+```
 
-
-
-<br/>
+### With Date Restrictions
+```jsx
+<DateRange 
+  minDate={'2025-01-01'}
+  maxDate={'2026-01-01'}
+  placeholder="Select dates within next year"
+/>
+```
 
 ### Disabled State
-
+```jsx
 <DateRange 
   startDate={'2024-01-01'}
   endDate={'2024-12-31'}
   disabled={true}
 />
-
-<br/>
+```
 
 ### Customizing Multiple Preset Ranges + Default Preset
-
+```jsx
 <DateRange 
   label="Custom Presets"
   showPresets={true}
@@ -64,7 +70,7 @@ interface DateRangeProps {
     { label: 'This Year', value: 'year-to-date' }
   ]}
 />
-
+```
 #### preset ranges values:
 - last-7-days
 - last-30-days

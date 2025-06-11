@@ -1,5 +1,14 @@
 # AreaChart Component
 
+A configurable area chart component for Angular applications using Chart.js.
+
+## Installation
+
+First, install Chart.js:
+
+```bash
+npm install chart.js
+```
 
 ## Props
 
@@ -49,6 +58,7 @@ interface Dataset {
 ## Usage Examples
 
 ### Basic Area Chart
+```jsx
 <AreaChart
   data={[
     { month: 'Jan', sales: 100 },
@@ -60,8 +70,10 @@ interface Dataset {
   title="Monthly Sales"
   downloadableImage={true}
 />
+```
 
 ### Stacked Area Chart with Custom Styling
+```jsx
 <AreaChart
   data={[
     { month: 'Jan', sales: 100, category: 'Electronics' },
@@ -83,8 +95,10 @@ interface Dataset {
   showLabels={true}
   labelPosition="top"
 />
+```
 
 ### 100% Stacked Area Chart with Missing Data Handling
+```jsx
 <AreaChart
   data={[
     { month: 'Jan', sales: 100, category: 'Electronics' },
@@ -103,8 +117,10 @@ interface Dataset {
   xAxisTitle="Month"
   yAxisTitle="Percentage"
 />
+```
 
 ### Stepped Line Chart with Custom Series Order
+```jsx
 <AreaChart
   data={[
     { month: 'Jan', sales: 100, category: 'Electronics' },
@@ -123,7 +139,7 @@ interface Dataset {
   title="Monthly Sales Trend"
   downloadableImage={true}
 />
-
+```
 ## Features
 
 - Multiple chart types:

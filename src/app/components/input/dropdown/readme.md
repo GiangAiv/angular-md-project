@@ -14,11 +14,7 @@ A versatile dropdown select component for Angular applications with keyboard nav
 - 🎯 Smart option highlighting
 
 ## Usage
-
 ```jsx
-import { Dropdown } from '@components/input/Dropdown';
-
-// Basic usage
 <Dropdown
   options={[
     { label: 'Option 1', value: '1' },
@@ -26,10 +22,13 @@ import { Dropdown } from '@components/input/Dropdown';
   ]}
   onSelectionChange={handleChange}
 />
-
-// With all options
+```
+```jsx
 <Dropdown
-  options={options}
+  options={[
+    { label: 'Option 1', value: '1' },
+    { label: 'Option 2', value: '2' }
+  ]}
   selected="value1"
   placeholder="Select an item"
   disabled={false}
@@ -79,7 +78,10 @@ interface DropdownOption {
 ### Full Width with Placeholder
 ```jsx
 <Dropdown
-  options={options}
+  options={[
+    { label: 'Option 1', value: '1' },
+    { label: 'Option 2', value: '2' }
+  ]}
   placeholder="Choose a fruit"
   width="full"
 />
@@ -88,7 +90,10 @@ interface DropdownOption {
 ### Fixed Width with Selection
 ```jsx
 <Dropdown
-  options={options}
+  options={[
+    { label: 'Option 1', value: '1' },
+    { label: 'Option 2', value: '2' }
+  ]}
   selected="apple"
   width="fixed"
 />
@@ -97,7 +102,10 @@ interface DropdownOption {
 ### Disabled State
 ```jsx
 <Dropdown
-  options={options}
+  options={[
+    { label: 'Option 1', value: '1' },
+    { label: 'Option 2', value: '2' }
+  ]}
   disabled={true}
 />
 ```

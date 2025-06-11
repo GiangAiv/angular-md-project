@@ -209,8 +209,18 @@
                         *ngIf="isHtmlColumn(column)"
                         [innerHTML]="getHtmlContent(row[column.key], column)"
                       ></div>
-                      <!-- Non-image, non-link, non-html, non-bar column -->
-                      <span [class]="redNegativeClasses(row[column.key], column)" *ngIf="!isImageColumn(column) && !isLinkColumn(column) && !isHtmlColumn(column) && !isBarColumn(column)">
+                      <!-- Spark column -->
+                      <div
+                        *ngIf="isSparkColumn(column)"
+                        class="w-full h-8"
+                      >
+                        <canvas
+                          [id]="getSparkChartId(rowIndex, column.key)"
+                          class="w-full h-full"
+                        ></canvas>
+                      </div>
+                      <!-- Non-image, non-link, non-html, non-bar, non-spark column -->
+                      <span [class]="redNegativeClasses(row[column.key], column)" *ngIf="!isImageColumn(column) && !isLinkColumn(column) && !isHtmlColumn(column) && !isBarColumn(column) && !isSparkColumn(column)">
                         {{ formatCellValue(row[column.key], column) }}
                       </span>
                       <span  *ngIf="column.format?.showArrow" [class]="getArrowClasses(row[column.key])"></span>
@@ -281,8 +291,18 @@
               *ngIf="isHtmlColumn(column)"
               [innerHTML]="getHtmlContent(row[column.key], column)"
             ></div>
-            <!-- Non-image, non-link, non-html, non-bar column -->
-            <span [class]="redNegativeClasses(row[column.key], column)" *ngIf="!isImageColumn(column) && !isLinkColumn(column) && !isHtmlColumn(column) && !isBarColumn(column)">
+            <!-- Spark column -->
+            <div
+              *ngIf="isSparkColumn(column)"
+              class="w-full h-8"
+            >
+              <canvas
+                [id]="getSparkChartId(i, column.key)"
+                class="w-full h-full"
+              ></canvas>
+            </div>
+            <!-- Non-image, non-link, non-html, non-bar, non-spark column -->
+            <span [class]="redNegativeClasses(row[column.key], column)" *ngIf="!isImageColumn(column) && !isLinkColumn(column) && !isHtmlColumn(column) && !isBarColumn(column) && !isSparkColumn(column)">
               {{ formatCellValue(row[column.key], column) }}
             </span>
             <span  *ngIf="column.format?.showArrow" [class]="getArrowClasses(row[column.key])"></span>
@@ -321,15 +341,15 @@
               {{ formatCellValue(calculateColumnTotal(column), column) }}
             </span>
           </div>
-          <!-- Image, link, HTML, and bar columns don't show regular totals, just display empty or "Total" text -->
-          <span *ngIf="!isImageColumn(column) && !isLinkColumn(column) && !isHtmlColumn(column) && !isBarColumn(column)">
+          <!-- Image, link, HTML, bar, and spark columns don't show regular totals, just display empty or "Total" text -->
+          <span *ngIf="!isImageColumn(column) && !isLinkColumn(column) && !isHtmlColumn(column) && !isBarColumn(column) && !isSparkColumn(column)">
             {{ formatCellValue(calculateColumnTotal(column), column) }}
           </span>
           <!-- For bar columns that show "Total" text -->
           <span *ngIf="isBarColumn(column) && (calculateColumnTotal(column) === '' || calculateColumnTotal(column) === 'Total')">
             {{ calculateColumnTotal(column) }}
           </span>
-          <span  *ngIf="column.format?.showArrow && !isImageColumn(column) && !isLinkColumn(column) && !isHtmlColumn(column) && !isBarColumn(column)" [class]="getArrowClasses(calculateColumnTotal(column))"></span>
+          <span  *ngIf="column.format?.showArrow && !isImageColumn(column) && !isLinkColumn(column) && !isHtmlColumn(column) && !isBarColumn(column) && !isSparkColumn(column)" [class]="getArrowClasses(calculateColumnTotal(column))"></span>
         </div>
         </td>
       </tr>
