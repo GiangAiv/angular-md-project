@@ -222,7 +222,7 @@ export class DimensionGridComponent extends BaseComponent<DimensionGridProps> {
       'transition-colors',
       'duration-150',
       'cursor-pointer',
-      'hover:bg-gray-50'
+      'hover:bg-gray-100'
     ];
 
     if (isFiltered) {
@@ -241,7 +241,7 @@ export class DimensionGridComponent extends BaseComponent<DimensionGridProps> {
     return [
       'absolute',
       'inset-0',
-      'bg-blue-50',
+      'bg-blue-100',
       'transition-all',
       'duration-300'
     ].join(' ');

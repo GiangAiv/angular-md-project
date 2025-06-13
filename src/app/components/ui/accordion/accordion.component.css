@@ -1,5 +1,4 @@
 .accordion {
-  border-radius: 0.5rem;
   overflow: hidden;
 }
 
@@ -8,12 +7,8 @@
 }
 
 .accordion-item:last-child {
-  border-bottom: none;
+  /* border-bottom: none; */
 }
-
-
-
-
 
 .accordion-item.disabled .accordion-header {
   opacity: 0.5;

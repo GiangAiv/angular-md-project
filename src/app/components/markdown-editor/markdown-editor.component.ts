@@ -56,7 +56,7 @@ export class MarkdownEditorComponent implements OnInit, OnDestroy {
     if (contentControl) {
       this.contentSubscription = contentControl.valueChanges
         .pipe(
-          debounceTime(300), // Wait for 300ms pause in typing
+          debounceTime(500), // Wait for 500ms pause in typing
           distinctUntilChanged(), // Only process if content has changed
         )
         .subscribe((content) => {

@@ -3,12 +3,12 @@
   [attr.aria-label]="getAriaLabel()"
   role="text"
 >
+  <span class="whitespace-nowrap">
+    {{ getPrefix() }}{{ getFormattedValue() }}
+  </span>
   <span 
     *ngIf="props?.showArrow !== false"
     class="flex-shrink-0"
     [innerHTML]="getArrowIcon() | safeHtml"
   ></span>
-  <span class="whitespace-nowrap">
-    {{ getPrefix() }}{{ getFormattedValue() }}
-  </span>
 </div> 

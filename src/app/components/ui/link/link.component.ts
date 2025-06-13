@@ -49,7 +49,7 @@ export class LinkComponent extends BaseComponent<LinkProps> {
       'inline-flex',
       'items-center',
       'gap-1',
-      'font-medium',
+      'font-normal',
       'transition-colors',
       'duration-150',
       'focus:outline-none',
@@ -58,6 +58,7 @@ export class LinkComponent extends BaseComponent<LinkProps> {
       'rounded',
       'min-h-[24px]',
       'px-0.5',
+      'no-underline',
       this.underline ? 'underline' : 'no-underline'
     ];
 

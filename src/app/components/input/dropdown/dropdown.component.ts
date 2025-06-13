@@ -186,11 +186,10 @@ export class DropdownComponent extends BaseComponent<DropdownProps> implements O
       'py-2',
       'text-left',
       'shadow-sm',
-      'focus:outline-none',
-      'focus:ring-2',
-      'focus:ring-blue-500',
+      'focus:outlin2',
+      'focus:ring-gray-100',
       this.props.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-      this.isOpen ? 'ring-2 ring-blue-500' : ''
+      this.isOpen ? 'ring-2 ring-gray-100' : ''
     ].join(' ');
   }
 
@@ -202,9 +201,9 @@ export class DropdownComponent extends BaseComponent<DropdownProps> implements O
       'px-4',
       'py-2',
       'text-sm',
-      'hover:bg-blue-50',
-      option.value === this.props.selected ? 'font-semibold text-blue-600' : 'text-gray-700',
-      index === this.highlightedIndex ? 'bg-blue-50' : ''
+      'hover:bg-gray-100',
+      option.value === this.props.selected ? 'font-semibold text-dark' : 'text-gray-700',
+      index === this.highlightedIndex ? 'bg-gray-100' : ''
     ].join(' ');
   }
 

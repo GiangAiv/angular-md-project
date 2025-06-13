@@ -1,7 +1,25 @@
-<div 
+<!-- <div 
   class="inline-block px-3 py-2 bg-gray-50 rounded-md min-w-[40px] text-center text-base leading-normal hover:bg-gray-100 transition-colors duration-200"
   [attr.data-value]="getValue()"
   [class.text-gray-500]="getValue() === (props?.placeholder ?? 'N/A')"
 >
-  {{ getValue() }}
-</div> 
+  <ng-container *ngIf="getValue()?.isPrice; else normalValue">
+    {{ getValue().value | currency:'USD':'symbol':'1.0-2':'en-US' }}
+  </ng-container>
+  <ng-template #normalValue>
+    {{ getValue()?.value ?? getValue() }}
+  </ng-template>
+</div>  -->
+
+<div 
+  class="inline-block px-3 py-2 bg-gray-50 rounded-md min-w-[40px] text-center text-base leading-normal hover:bg-gray-100 transition-colors duration-200"
+  [attr.data-value]="displayValue"
+  [class.text-gray-500]="isPlaceholder"
+>
+  <ng-container *ngIf="isPrice; else normalValue">
+    {{ displayValue | currency:'USD':'symbol':'1.0-2':'en-US' }}
+  </ng-container>
+  <ng-template #normalValue>
+    {{ displayValue }}
+  </ng-template>
+</div>

@@ -2,6 +2,13 @@
   <input
     type="range"
     [class]="getSliderClasses()"
+    [style.background]="
+      'linear-gradient(to right, black 0%, black ' +
+      (((currentValue - (props?.min ?? 0)) / ((props?.max ?? 100) - (props?.min ?? 0))) * 100) +
+      '%, #e5e7eb ' +
+      (((currentValue - (props?.min ?? 0)) / ((props?.max ?? 100) - (props?.min ?? 0))) * 100) +
+      '%, #e5e7eb 100%)'
+    "
     [min]="props?.min"
     [max]="props?.max"
     [step]="props?.step"

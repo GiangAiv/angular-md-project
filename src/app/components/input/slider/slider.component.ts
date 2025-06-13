@@ -103,13 +103,12 @@ export class SliderComponent extends BaseComponent<SliderProps> implements OnIni
     return [
       'flex-1',
       'h-2',
-      'rounded',
       'bg-gray-200',
       'appearance-none',
       'cursor-pointer',
       'focus:outline-none',
-      'focus:ring-2',
-      'focus:ring-blue-500',
+      // 'focus:ring-2',
+      // 'focus:ring-blue-500',
       'focus:ring-offset-2',
       this.props.disabled ? 'cursor-not-allowed' : ''
     ].join(' ');

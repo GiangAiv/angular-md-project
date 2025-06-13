@@ -14,7 +14,7 @@
 <!-- Modal Content -->
 <ng-template #modalContainer>
   <div *ngIf="props.open || closing" [class]="modalClasses">
-    <div class="fixed inset-0 bg-black/80 z-[9998]" (click)="isOpen()"></div>
+    <div class="fixed inset-0 bg-gray-100/80 z-[9998]" (click)="isOpen()"></div>
     <div class="relative bg-white border border-base-300 bg-base-100 w-4/5 max-w-lg mx-auto rounded-lg shadow-lg z-[9999] overflow-y-auto font-ui">
       <div [class]="titleClasses">
         <ng-container *ngIf="props.title.trim() !== ''">

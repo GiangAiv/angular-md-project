@@ -86,9 +86,9 @@ export class TextInputComponent extends BaseComponent<TextInputProps> implements
       'duration-150',
       // Focus state
       'focus:outline-none',
-      'focus:ring-2',
-      'focus:ring-blue-500',
-      'focus:border-blue-500',
+      'focus:ring-1',
+      'focus:ring-gray-400',
+      'focus:border-gray-400',
       // Disabled state
       this.props.disabled ? 'opacity-50 cursor-not-allowed bg-gray-50' : '',
       // Readonly state
