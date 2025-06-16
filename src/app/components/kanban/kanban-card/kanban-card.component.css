@@ -1,0 +1,17 @@
+/* Tailwind CSS classes are used in the HTML template */
+/* Priority-specific border styles */
+.priority-critical {
+  @apply border-l-4 border-red-600;
+}
+
+.priority-high {
+  @apply border-l-4 border-orange-500;
+}
+
+.priority-normal {
+  @apply border-l-4 border-green-600;
+}
+
+.priority-low {
+  @apply border-l-4 border-blue-600;
+}

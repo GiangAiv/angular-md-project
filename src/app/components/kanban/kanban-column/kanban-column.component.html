@@ -1,0 +1,38 @@
+<div class="bg-gray-100 rounded-lg p-3 min-h-96 min-w-[200px] xl:min-w-[250px] 2xl:min-w-64 flex flex-col"
+     [class]="customClass"
+     [ngClass]="{
+       'border-b-blue-600': column.status === 'Open',
+       'border-b-orange-500': column.status === 'InProgress',
+       'border-b-purple-600': column.status === 'Review',
+       'border-b-green-600': column.status === 'Close'
+     }">
+  <div class="flex justify-between items-center mb-4 pb-2 border-b-2"
+       [ngClass]="{
+         'border-blue-600': column.status === 'Open',
+         'border-orange-500': column.status === 'InProgress',
+         'border-purple-600': column.status === 'Review',
+         'border-green-600': column.status === 'Close'
+       }">
+    <h3 class="text-base font-semibold m-0"
+        [ngClass]="{
+          'text-blue-600': column.status === 'Open',
+          'text-orange-500': column.status === 'InProgress',
+          'text-purple-600': column.status === 'Review',
+          'text-green-600': column.status === 'Close'
+        }">{{ getStatusDisplayName() }}</h3>
+    <span class="bg-gray-300 text-gray-600 text-xs font-semibold px-2 py-1 rounded-full min-w-5 text-center">{{ getTotalItemCount() }}</span>
+  </div>
+
+  <div class="column-content flex-1 overflow-y-auto">
+    <app-kanban-group
+      *ngFor="let group of getSortedGroups()"
+      [group]="group"
+      (collapsedChange)="onGroupCollapsedChange(group.assignee, $event)"
+    ></app-kanban-group>
+
+
+    <div *ngIf="column.groups.length === 0" class="text-center py-10 px-5 text-gray-600">
+      <p class="m-0 italic">No items in {{ getStatusDisplayName() }}</p>
+    </div>
+  </div>
+</div>

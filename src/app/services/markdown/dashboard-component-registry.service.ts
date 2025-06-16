@@ -39,6 +39,8 @@ import { LinkComponent } from 'src/app/components/ui/link/link.component';
 import { LinkButtonComponent } from 'src/app/components/ui/link-button/link-button.component';
 import { NoteComponent } from 'src/app/components/ui/note/note.component';
 import { PageBreakComponent } from 'src/app/components/ui/page-break/page-break.component';
+import { RenderHtmlComponent } from 'src/app/components/dashboard/render-html/render-html.component';
+import { KanbanComponent } from 'src/app/components/kanban';
 
 
 @Injectable({
@@ -526,6 +528,31 @@ export class DashboardComponentRegistryService {
         };
       },
     });
+
+    this.componentRegistry.register({
+      type: "RenderHtml",
+      name: "Render Html",
+      description: "A render html component for displaying a render html",
+      render: (props) => {
+        return {
+          component: RenderHtmlComponent,
+          props,
+        };
+      },
+    });
+
+    this.componentRegistry.register({
+      type: "Kanban",
+      name: "Kanban",
+      description: "A kanban component for displaying a kanban",
+      render: (props) => {
+        return {
+          component: KanbanComponent,
+          props,
+        };
+      },
+    });
+
     this.componentsRegistered = true;
   }
   private extractTabsContent(children: string): TabItem[] {

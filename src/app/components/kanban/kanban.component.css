@@ -1,0 +1,17 @@
+/* Tailwind CSS classes are used in the HTML template */
+/* Custom scrollbar styles for webkit browsers */
+.kanban-columns::-webkit-scrollbar {
+  @apply h-2;
+}
+
+.kanban-columns::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded;
+}
+
+.kanban-columns::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded;
+}
+
+.kanban-columns::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}

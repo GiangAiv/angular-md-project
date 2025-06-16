@@ -1,0 +1,17 @@
+/* Tailwind CSS classes are used in the HTML template */
+/* Custom transition for group content */
+.group-content {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.group-content.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin-bottom: 0;
+}
+
+.group-content:not(.collapsed) {
+  max-height: none;
+  opacity: 1;
+}
