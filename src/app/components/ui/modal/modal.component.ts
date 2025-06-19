@@ -56,7 +56,7 @@ export class ModalComponent extends BaseComponent<ModalProps> implements AfterVi
     }
   }
 
-  ngOnDestroy() {
+  override ngOnDestroy() {
     if (this.portalOutlet) {
       this.portalOutlet.dispose();
       const container = document.getElementById('modal-portal-container');

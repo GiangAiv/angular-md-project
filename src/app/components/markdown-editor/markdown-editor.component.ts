@@ -184,14 +184,19 @@ export class MarkdownEditorComponent implements OnInit, OnDestroy {
   /**
    * Parse markdown content and update parsedContent for preview
    */
-  updateParsedContent(content: string): void {
+  async updateParsedContent(content: string): Promise<void> {
     if (!content) {
       this.parsedContent = null;
       return;
     }
 
     try {
-      this.parsedContent = this.markdownParserService.parseMarkdown(content);
+      this.parsedContent = await this.markdownParserService.parseMarkdown(content);
+
+      // Update the dashboard component registry with extracted variables
+      if (this.parsedContent.variables && Object.keys(this.parsedContent.variables).length > 0) {
+        this.dashboardComponentRegistry.setVariables(this.parsedContent.variables);
+      }
     } catch (error) {
       console.error('Error parsing markdown:', error);
       // Still set parsedContent with what we have to show partial preview
@@ -199,6 +204,7 @@ export class MarkdownEditorComponent implements OnInit, OnDestroy {
         content: content,
         frontmatter: {},
         components: [],
+        variables: {},
       };
     }
   }

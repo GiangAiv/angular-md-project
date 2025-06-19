@@ -41,14 +41,19 @@ export class MarkdownViewerComponent implements OnInit {
   loadFile(id: string): void {
     this.isLoading = true;
     this.markdownService.getMarkdownFile(id).subscribe({
-      next: (file) => {
+      next: async (file) => {
         this.file = file;
 
         // Parse the markdown content
         if (file && file.content) {
-          this.parsedMarkdownContent = this.markdownParserService.parseMarkdown(
+          this.parsedMarkdownContent = await this.markdownParserService.parseMarkdown(
             file.content,
           );
+
+          // Update the dashboard component registry with extracted variables
+          if (this.parsedMarkdownContent.variables && Object.keys(this.parsedMarkdownContent.variables).length > 0) {
+            this.dashboardComponentRegistry.setVariables(this.parsedMarkdownContent.variables);
+          }
         }
 
         this.isLoading = false;

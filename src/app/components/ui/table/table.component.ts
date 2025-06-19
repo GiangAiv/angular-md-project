@@ -13,7 +13,7 @@ export class TableComponent extends BaseComponent implements OnInit {
   sortColumn: string | null = null;
   sortDirection: 'asc' | 'desc' = 'asc';
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
     this.updateDisplayData();
   }
 

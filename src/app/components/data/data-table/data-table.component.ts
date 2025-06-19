@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, OnChanges, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as moment from 'moment';
@@ -74,7 +74,7 @@ interface ColumnGroup {
 
 interface DataTableProps {
   columns: Column[];
-  rows: Record<string, any>[];
+  rows: Record<string, any>[] | string; // Can be array data or variable reference
   striped?: boolean;
   hover?: boolean;
   bordered?: boolean;
@@ -108,7 +108,7 @@ type SortDirection = 'asc' | 'desc' | null;
   standalone: true,
   imports: [CommonModule, FormsModule]
 })
-export class DataTableComponent extends BaseComponent<DataTableProps> implements OnInit, AfterViewInit, OnDestroy {
+export class DataTableComponent extends BaseComponent<DataTableProps> implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   private currentSortColumn: string | null = null;
   private currentSortDirection: SortDirection = null;
 
@@ -133,6 +133,12 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
 
   // Column grouping functionality
   private columnGroups: ColumnGroup[] = [];
+
+  // Getter for resolved rows to use in template
+  get resolvedRows(): Record<string, any>[] {
+    const resolved = this.resolveValue(this.props?.rows);
+    return Array.isArray(resolved) ? resolved : [];
+  }
 
   getTableClasses(): string {
     const baseClasses = 'min-w-full table-auto';
@@ -671,9 +677,25 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
   }
 
   // Initialize data
-  ngOnInit(): void {
-    if (this.props?.rows) {
-      this.originalRows = [...this.props.rows];
+  override ngOnInit(): void {
+    super.ngOnInit(); // Set up variable subscriptions
+    this.initializeData();
+  }
+
+  ngOnChanges(): void {
+    this.initializeData();
+  }
+
+  protected override onVariablesChanged(_variables: Record<string, any>): void {
+    this.initializeData();
+  }
+
+  private initializeData(): void {
+    // Resolve rows data (could be a variable reference)
+    const resolvedRows = this.resolveValue(this.props?.rows);
+
+    if (resolvedRows && Array.isArray(resolvedRows)) {
+      this.originalRows = [...resolvedRows];
       this.processColumnGroups();
 
       // Auto-sort by colorScale columns in descending order
@@ -690,7 +712,8 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
     }, 0);
   }
 
-  ngOnDestroy(): void {
+  override ngOnDestroy(): void {
+    super.ngOnDestroy(); // Clean up variable subscriptions
     // Clean up all spark charts
     this.destroyAllSparkCharts();
   }
@@ -1233,11 +1256,11 @@ export class DataTableComponent extends BaseComponent<DataTableProps> implements
   }
 
   createAllSparkCharts(): void {
-    if (!this.props?.columns || !this.props?.rows) return;
+    if (!this.props?.columns || !this.resolvedRows.length) return;
 
     this.props.columns.forEach(column => {
       if (this.isSparkColumn(column)) {
-        this.props!.rows.forEach((row, rowIndex) => {
+        this.resolvedRows.forEach((row: Record<string, any>, rowIndex: number) => {
           const chartId = this.getSparkChartId(rowIndex, column.key);
           const data = row[column.key];
           if (Array.isArray(data) && data.length > 0) {

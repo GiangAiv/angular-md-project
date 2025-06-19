@@ -35,7 +35,7 @@ export interface KanbanGroup {
 
 export interface KanbanColumn {
   status: string;
-  groups: KanbanGroup[];
+  items: KanbanItem[];
   order: number;
 }
 
@@ -43,6 +43,12 @@ export function extractUniqueStatuses(data: KanbanItem[]): string[] {
   const statuses = new Set<string>();
   data.forEach(item => statuses.add(item.Status));
   return Array.from(statuses);
+}
+
+export function extractUniqueAssignees(data: KanbanItem[]): string[] {
+  const assignees = new Set<string>();
+  data.forEach(item => assignees.add(item.Assignee));
+  return Array.from(assignees).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
 }
 
 export function groupByAssignee(items: KanbanItem[]): KanbanGroup[] {
@@ -67,11 +73,10 @@ export function organizeDataByStatus(data: KanbanItem[], statusOrder?: string[])
   
   return statuses.map((status, index) => {
     const statusItems = data.filter(item => item.Status === status);
-    const groups = groupByAssignee(statusItems);
     
     return {
       status,
-      groups,
+      items: statusItems,
       order: index
     };
   });

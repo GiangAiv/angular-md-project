@@ -19,7 +19,8 @@ export class LastRefreshedComponent extends BaseComponent<LastRefreshedProps> im
   private updateInterval?: number;
   private readonly defaultLabel = 'Last updated';
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
+    super.ngOnInit(); // Call parent ngOnInit to set up variable subscriptions
     if (this.isRelativeFormat) {
       this.updateInterval = window.setInterval(() => {
         this.props = { ...this.props! };
@@ -27,7 +28,8 @@ export class LastRefreshedComponent extends BaseComponent<LastRefreshedProps> im
     }
   }
 
-  ngOnDestroy(): void {
+  override ngOnDestroy(): void {
+    super.ngOnDestroy(); // Clean up variable subscriptions
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
     }

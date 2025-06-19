@@ -41,6 +41,14 @@ interface ParsedMarkdownResult {
   segments: (string | ComponentReference)[];
 }
 
+interface FetchConfig {
+  api: string;
+  path?: string;
+  valueAs: string;
+  loadingAs?: string;
+  defaultValue?: any;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -50,12 +58,13 @@ export class MarkdownParserService {
   /**
    * Parse markdown content and return ParsedContent
    */
-  parseMarkdown(content: string): ParsedContent {
+  async parseMarkdown(content: string): Promise<ParsedContent> {
     if (!content) {
       return {
         content: '',
         frontmatter: {},
         components: [],
+        variables: {},
       };
     }
 
@@ -64,15 +73,26 @@ export class MarkdownParserService {
       const frontmatter = this.extractFrontmatter(content);
 
       // Remove frontmatter from content
-      const cleanContent = this.removeFrontmatter(content);
+      let cleanContent = this.removeFrontmatter(content);
 
-      // Extract components from markdown
-      const components = this.extractComponents(cleanContent);
+      // Extract variables from JS blocks
+      const variables = this.extractVariables(cleanContent);
+
+      // Extract and process fetch blocks
+      await this.processFetchBlocks(cleanContent, variables);
+
+      // Remove JS blocks and fetch blocks from content (they should not be rendered)
+      cleanContent = this.removeJSBlocks(cleanContent);
+      cleanContent = this.removeFetchBlocks(cleanContent);
+
+      // Extract components from markdown (pass variables for JSX parsing)
+      const components = this.extractComponents(cleanContent, variables);
 
       return {
         content: cleanContent,
         frontmatter,
         components,
+        variables,
       };
     } catch (error) {
       console.error('Error parsing markdown:', error);
@@ -80,6 +100,7 @@ export class MarkdownParserService {
         content: content,
         frontmatter: {},
         components: [],
+        variables: {},
       };
     }
   }
@@ -212,7 +233,7 @@ export class MarkdownParserService {
   /**
    * Parse a JSX node from the AST
    */
-  private parseJSXNode(node: JSXNode, code: string): any {
+  private parseJSXNode(node: JSXNode, code: string, variables?: Record<string, any>): any {
     if (node.type === 'JSXText') {
       const text = node.value?.trim();
       return text ? text : null;
@@ -238,8 +259,17 @@ export class MarkdownParserService {
               } else if (attr.value.type === 'JSXExpressionContainer' && attr.value.expression) {
                 const raw = code.slice(attr.value.expression.start, attr.value.expression.end);
                 try {
-                  value = new Function(`return (${raw})`)();
+                  // Try to resolve variable references first
+                  if (variables && variables.hasOwnProperty(raw)) {
+                    value = variables[raw];
+                  } else {
+                    // Fallback to evaluation with variables in scope
+                    const variableNames = variables ? Object.keys(variables) : [];
+                    const variableValues = variables ? Object.values(variables) : [];
+                    value = new Function(...variableNames, `return (${raw})`)(...variableValues);
+                  }
                 } catch {
+                  // If evaluation fails, store as variable reference string for later resolution
                   value = raw;
                 }
               }
@@ -250,7 +280,7 @@ export class MarkdownParserService {
       }
 
       const children = (node.children || [])
-        .map(child => this.parseJSXNode(child, code))
+        .map(child => this.parseJSXNode(child, code, variables))
         .filter(Boolean);
 
       return { component, props, children };
@@ -262,7 +292,7 @@ export class MarkdownParserService {
   /**
    * Parse JSX component from code string
    */
-  parseJSXComponent(code: string): any {
+  parseJSXComponent(code: string, variables?: Record<string, any>): any {
     try {
       const ast = parse(code, {
         sourceType: 'module',
@@ -280,7 +310,7 @@ export class MarkdownParserService {
         return null;
       }
 
-      return this.parseJSXNode(jsxNode.expression, code);
+      return this.parseJSXNode(jsxNode.expression, code, variables);
     } catch (error) {
       console.error('Error parsing JSX component:', error);
       return null;
@@ -332,10 +362,410 @@ export class MarkdownParserService {
   }
 
   /**
+   * Remove JS blocks from markdown content (they should not be rendered)
+   */
+  private removeJSBlocks(content: string): string {
+    const jsBlockRegex = /```js\s*\n([\s\S]*?)\n```/g;
+    return content.replace(jsBlockRegex, '');
+  }
+
+  /**
+   * Remove fetch blocks from markdown content (they should not be rendered)
+   */
+  private removeFetchBlocks(content: string): string {
+    const fetchBlockRegex = /```fetch\s*\n([\s\S]*?)\n```/g;
+    return content.replace(fetchBlockRegex, '');
+  }
+
+  /**
+   * Process fetch blocks to retrieve data from APIs and bind to variables
+   */
+  private async processFetchBlocks(content: string, variables: Record<string, any>): Promise<void> {
+    const fetchBlockRegex = /```fetch\s*\n([\s\S]*?)\n```/g;
+    let match;
+
+    const fetchPromises: Promise<void>[] = [];
+
+    while ((match = fetchBlockRegex.exec(content))) {
+      const fetchContent = match[1].trim();
+      const fetchConfig = this.parseFetchConfig(fetchContent);
+
+      if (fetchConfig) {
+        const fetchPromise = this.executeFetch(fetchConfig, variables);
+        fetchPromises.push(fetchPromise);
+      }
+    }
+
+    // Wait for all fetch operations to complete
+    await Promise.all(fetchPromises);
+  }
+
+  /**
+   * Parse fetch block configuration
+   */
+  private parseFetchConfig(fetchContent: string): FetchConfig | null {
+    const config: Partial<FetchConfig> = {};
+    const lines = fetchContent.split('\n');
+
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      if (!trimmedLine || trimmedLine.startsWith('#')) continue;
+
+      // Parse -key: value format
+      const match = trimmedLine.match(/^-([a-zA-Z]+):\s*(.+)$/);
+      if (match) {
+        const key = match[1].trim();
+        const value = match[2].trim();
+
+        switch (key) {
+          case 'api':
+            config.api = value;
+            break;
+          case 'path':
+            config.path = value;
+            break;
+          case 'valueAs':
+            config.valueAs = value;
+            break;
+          case 'loadingAs':
+            config.loadingAs = value;
+            break;
+          case 'defaultValue':
+            try {
+              config.defaultValue = this.parseVariableValue(value);
+            } catch {
+              config.defaultValue = value;
+            }
+            break;
+        }
+      }
+    }
+
+    // Validate required fields
+    if (!config.api || !config.valueAs) {
+      console.warn('Fetch block missing required fields (api, valueAs):', config);
+      return null;
+    }
+
+    return config as FetchConfig;
+  }
+
+  /**
+   * Execute fetch operation and bind results to variables
+   */
+  private async executeFetch(config: FetchConfig, variables: Record<string, any>): Promise<void> {
+    // Set loading state if specified
+    if (config.loadingAs) {
+      variables[config.loadingAs] = true;
+    }
+
+    // Set default value initially
+    if (config.defaultValue !== undefined) {
+      variables[config.valueAs] = config.defaultValue;
+    }
+
+    try {
+      console.log(`Fetching data from: ${config.api}`);
+      const response = await fetch(config.api);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      let data = await response.json();
+
+      // Apply path if specified (using lodash-style path)
+      if (config.path) {
+        data = this.getValueByPath(data, config.path);
+      }
+
+      // Bind the result to the specified variable
+      variables[config.valueAs] = data;
+      console.log(`Successfully fetched and bound data to variable '${config.valueAs}':`, data);
+
+    } catch (error) {
+      console.error(`Error fetching data from ${config.api}:`, error);
+
+      // Keep default value on error, or set to null if no default
+      if (config.defaultValue === undefined) {
+        variables[config.valueAs] = null;
+      }
+    } finally {
+      // Clear loading state
+      if (config.loadingAs) {
+        variables[config.loadingAs] = false;
+      }
+    }
+  }
+
+  /**
+   * Get value from object using lodash-style path (e.g., 'data.items[0].name')
+   */
+  private getValueByPath(obj: any, path: string): any {
+    if (!obj || !path) return obj;
+
+    // Handle array notation like 'data[0]' or 'items[1].name'
+    const normalizedPath = path
+      .replace(/\[(\d+)\]/g, '.$1') // Convert [0] to .0
+      .replace(/^\./, ''); // Remove leading dot
+
+    const keys = normalizedPath.split('.');
+    let result = obj;
+
+    for (const key of keys) {
+      if (result === null || result === undefined) {
+        return undefined;
+      }
+
+      // Handle numeric keys (array indices)
+      if (/^\d+$/.test(key)) {
+        const index = parseInt(key, 10);
+        if (Array.isArray(result) && index < result.length) {
+          result = result[index];
+        } else {
+          return undefined;
+        }
+      } else {
+        // Handle object properties
+        if (typeof result === 'object' && key in result) {
+          result = result[key];
+        } else {
+          return undefined;
+        }
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Extract variables from JS blocks in markdown content
+   * Supports JavaScript variable declarations inside ```js blocks
+   */
+  private extractVariables(content: string): Record<string, any> {
+    const variables: Record<string, any> = {};
+
+    // Find all ```js blocks
+    const jsBlockRegex = /```js\s*\n([\s\S]*?)\n```/g;
+    let match;
+
+    while ((match = jsBlockRegex.exec(content))) {
+      const jsContent = match[1].trim();
+
+      try {
+        // Parse the entire JS block as JavaScript code
+        const ast = parse(jsContent, {
+          sourceType: 'module',
+          plugins: ['jsx', 'typescript'],
+        });
+
+        // Extract variable declarations from the AST
+        for (const statement of ast.program.body) {
+          if (statement.type === 'VariableDeclaration') {
+            for (const declaration of statement.declarations) {
+              if (declaration.type === 'VariableDeclarator' &&
+                  declaration.id.type === 'Identifier' &&
+                  declaration.init) {
+
+                const variableName = declaration.id.name;
+                try {
+                  const parsedValue = this.evaluateExpression(declaration.init, jsContent);
+                  variables[variableName] = parsedValue;
+                  console.log(`Successfully parsed variable '${variableName}':`, parsedValue);
+                } catch (error) {
+                  console.warn(`Error evaluating variable '${variableName}':`, error);
+                  // Store as string if evaluation fails
+                  const start = declaration.init.start ?? 0;
+                  const end = declaration.init.end ?? jsContent.length;
+                  variables[variableName] = jsContent.slice(start, end);
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.warn(`Error parsing JS block:`, error);
+        // Fallback to line-by-line parsing for simple assignments
+        this.parseJSBlockFallback(jsContent, variables);
+      }
+    }
+
+    return variables;
+  }
+
+  /**
+   * Fallback parser for JS blocks when babel parsing fails
+   */
+  private parseJSBlockFallback(jsContent: string, variables: Record<string, any>): void {
+    const lines = jsContent.split('\n');
+
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      if (!trimmedLine || trimmedLine.startsWith('//')) continue;
+
+      // Match const/let/var variable declarations
+      const variableMatch = trimmedLine.match(/^(?:const|let|var)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(.+?)(?:;|$)/);
+
+      if (variableMatch) {
+        const variableName = variableMatch[1].trim();
+        const variableValue = variableMatch[2].trim();
+
+        try {
+          const parsedValue = this.parseVariableValue(variableValue);
+          variables[variableName] = parsedValue;
+          console.log(`Successfully parsed variable '${variableName}' (fallback):`, parsedValue);
+        } catch (error) {
+          console.warn(`Error parsing variable '${variableName}' with value '${variableValue}':`, error);
+          variables[variableName] = variableValue;
+        }
+      }
+    }
+  }
+
+  /**
+   * Parse variable value using babel/parser for robust JavaScript expression parsing
+   */
+  private parseVariableValue(value: string): any {
+    const trimmedValue = value.trim();
+
+    try {
+      // Use babel/parser to parse the value as a JavaScript expression
+      const ast = parse(`const temp = ${trimmedValue}`, {
+        sourceType: 'module',
+        plugins: ['jsx', 'typescript'],
+      });
+
+      // Extract the expression from the variable declaration
+      const declaration = ast.program.body[0] as any;
+      if (declaration.type === 'VariableDeclaration' &&
+          declaration.declarations[0] &&
+          declaration.declarations[0].init) {
+
+        const expression = declaration.declarations[0].init;
+        return this.evaluateExpression(expression, trimmedValue);
+      }
+    } catch (error) {
+      // If babel parsing fails, fall back to simple parsing
+      console.warn(`Babel parsing failed for value '${trimmedValue}', falling back to simple parsing:`, error);
+    }
+
+    // Fallback to simple parsing
+    return this.parseVariableValueSimple(trimmedValue);
+  }
+
+  /**
+   * Evaluate a babel AST expression to get the actual value
+   */
+  private evaluateExpression(expression: any, originalValue: string): any {
+    switch (expression.type) {
+      case 'StringLiteral':
+        return expression.value;
+
+      case 'NumericLiteral':
+        return expression.value;
+
+      case 'BooleanLiteral':
+        return expression.value;
+
+      case 'NullLiteral':
+        return null;
+
+      case 'ArrayExpression':
+        return expression.elements.map((element: any) =>
+          element ? this.evaluateExpression(element, originalValue) : null
+        );
+
+      case 'ObjectExpression':
+        const obj: Record<string, any> = {};
+        for (const property of expression.properties) {
+          if (property.type === 'ObjectProperty') {
+            const key = property.key.type === 'Identifier'
+              ? property.key.name
+              : this.evaluateExpression(property.key, originalValue);
+            const value = this.evaluateExpression(property.value, originalValue);
+            obj[key] = value;
+          }
+        }
+        return obj;
+
+      case 'Identifier':
+        // Handle special identifiers
+        if (expression.name === 'undefined') return undefined;
+        // For other identifiers, return as string (could be enhanced to support variables)
+        return expression.name;
+
+      case 'UnaryExpression':
+        if (expression.operator === '-' && expression.argument.type === 'NumericLiteral') {
+          return -expression.argument.value;
+        }
+        break;
+
+      default:
+        // For complex expressions, fall back to eval (with caution)
+        console.warn(`Unsupported expression type: ${expression.type}, using eval fallback`);
+        try {
+          return new Function(`return (${originalValue})`)();
+        } catch (evalError) {
+          throw new Error(`Cannot evaluate expression: ${originalValue}`);
+        }
+    }
+
+    throw new Error(`Cannot evaluate expression: ${originalValue}`);
+  }
+
+  /**
+   * Simple fallback parser for when babel parsing fails
+   */
+  private parseVariableValueSimple(value: string): any {
+    const trimmedValue = value.trim();
+
+    // Handle string values (quoted)
+    if ((trimmedValue.startsWith("'") && trimmedValue.endsWith("'")) ||
+        (trimmedValue.startsWith('"') && trimmedValue.endsWith('"'))) {
+      return trimmedValue.slice(1, -1); // Remove quotes
+    }
+
+    // Handle numbers
+    if (/^-?\d+(\.\d+)?$/.test(trimmedValue)) {
+      return parseFloat(trimmedValue);
+    }
+
+    // Handle booleans
+    if (trimmedValue === 'true') return true;
+    if (trimmedValue === 'false') return false;
+
+    // Handle null
+    if (trimmedValue === 'null') return null;
+
+    // Handle arrays and objects (JavaScript syntax with single quotes)
+    if (trimmedValue.startsWith('[') || trimmedValue.startsWith('{')) {
+      try {
+        // First try JSON.parse for valid JSON
+        return JSON.parse(trimmedValue);
+      } catch (jsonError) {
+        try {
+          // If JSON.parse fails, try evaluating as JavaScript
+          // This handles single quotes and other JavaScript syntax
+          return new Function(`return (${trimmedValue})`)();
+        } catch (jsError) {
+          console.warn(`Failed to parse value as JSON or JavaScript: ${trimmedValue}`, { jsonError, jsError });
+          throw new Error(`Invalid syntax: ${trimmedValue}`);
+        }
+      }
+    }
+
+    // Default to string if no other type matches
+    return trimmedValue;
+  }
+
+  /**
    * Extract components from markdown content
    */
-  private extractComponents(content: string): ComponentReference[] {
+  private extractComponents(content: string, variables?: Record<string, any>): ComponentReference[] {
     const components: ComponentReference[] = [];
+
+    // Use provided variables or extract them if not provided
+    const variablesToUse = variables || this.extractVariables(content);
 
     // Extract JSX components with their actual positions in content
     const jsxRegex = /```jsx([\s\S]*?)```/g;
@@ -344,7 +774,7 @@ export class MarkdownParserService {
     while ((jsxMatch = jsxRegex.exec(content))) {
       try {
         const jsxCode = jsxMatch[1].trim();
-        const parsed = this.parseJSXComponent(jsxCode);
+        const parsed = this.parseJSXComponent(jsxCode, variablesToUse);
         if (parsed && parsed.component) {
           // Validate that the component is registered
           if (this.componentRegistry.hasComponent(parsed.component)) {

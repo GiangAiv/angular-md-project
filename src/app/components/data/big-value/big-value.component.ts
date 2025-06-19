@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, OnChanges } from '@angular/core';
 import { BaseComponent } from '../../base-component';
 
 type AlignmentType = 'left' | 'center' | 'right';
 
 interface BigValueProps {
-  value: string | number;
+  value: string | number; // Can be a direct value or variable reference
   label?: string;
-  delta?: string;
+  delta?: string; // Can be a direct value or variable reference
   alignment?: AlignmentType;
   comparisonTitle?: string;
   comparisonDelta?: string;
-  link: string
+  link?: string;
 }
 
 @Component({
@@ -20,7 +20,19 @@ interface BigValueProps {
   standalone: true,
   imports: [CommonModule]
 })
-export class BigValueComponent extends BaseComponent<BigValueProps> {
+export class BigValueComponent extends BaseComponent<BigValueProps> implements OnInit, OnChanges {
+
+  override ngOnInit() {
+    super.ngOnInit(); // Call parent ngOnInit to set up variable subscriptions
+  }
+
+  ngOnChanges(): void {
+    // Component will automatically re-render when props change
+  }
+
+  protected override onVariablesChanged(_variables: Record<string, any>): void {
+    // Component will automatically re-render when variables change
+  }
   getContainerClasses(): string {
     const baseClasses = 'p-4 flex flex-col gap-1 w-full';
     const alignmentClasses = {
@@ -33,22 +45,27 @@ export class BigValueComponent extends BaseComponent<BigValueProps> {
   }
 
   formatValue(value: string | number | undefined): string {
-    if (value === undefined) return '';
-    if (typeof value === 'number') {
+    // Resolve the value (could be a variable reference)
+    const resolvedValue = this.resolveValue(value);
+
+    if (resolvedValue === undefined || resolvedValue === null) return '';
+    if (typeof resolvedValue === 'number') {
       // Format numbers with commas for thousands
-      return value.toLocaleString();
+      return resolvedValue.toLocaleString();
     }
-    return value;
+    return String(resolvedValue);
   }
 
   isDeltaPositive(): boolean {
-    if (!this.props?.delta) return false;
-    return this.props.delta.trim().startsWith('+');
+    const resolvedDelta = this.resolveValue(this.props?.delta);
+    if (!resolvedDelta) return false;
+    return String(resolvedDelta).trim().startsWith('+');
   }
 
   isDeltaNegative(): boolean {
-    if (!this.props?.delta) return false;
-    return this.props.delta.trim().startsWith('-');
+    const resolvedDelta = this.resolveValue(this.props?.delta);
+    if (!resolvedDelta) return false;
+    return String(resolvedDelta).trim().startsWith('-');
   }
 
   getDeltaClasses(): string {

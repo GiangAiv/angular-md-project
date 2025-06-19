@@ -250,7 +250,7 @@
       <!-- Non-Grouped Display -->
       <ng-container *ngIf="!isGrouped">
         <tr
-          *ngFor="let row of props?.rows; let i = index"
+          *ngFor="let row of resolvedRows; let i = index"
           [class]="getRowClasses(i)"
         >
           <td
@@ -312,7 +312,7 @@
       </ng-container>
 
       <!-- Empty State -->
-      <tr *ngIf="(!isGrouped && !props?.rows?.length) || (isGrouped && !displayGroupedData?.length)">
+      <tr *ngIf="(!isGrouped && !resolvedRows?.length) || (isGrouped && !displayGroupedData?.length)">
         <td
           [attr.colspan]="props?.columns?.length"
           class="px-4 py-8 text-center text-gray-500"

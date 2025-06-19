@@ -5,6 +5,7 @@ import {
   ElementRef,
   AfterViewInit,
   OnDestroy,
+  OnChanges,
 } from '@angular/core';
 
 import { Chart, registerables } from 'chart.js';
@@ -20,23 +21,50 @@ Chart.register(...registerables);
 })
 export class BarChartComponent
   extends BaseComponent
-  implements AfterViewInit, OnDestroy
+  implements OnInit, AfterViewInit, OnDestroy, OnChanges
 {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   chart: Chart | null = null;
+
+  override ngOnInit() {
+    super.ngOnInit(); // Set up variable subscriptions
+  }
 
   ngAfterViewInit(): void {
     this.renderChart();
   }
 
-  ngOnDestroy(): void {
+  ngOnChanges(): void {
+    // Re-render chart when props change
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
+    if (this.chartCanvas) {
+      this.renderChart();
+    }
+  }
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy(); // Clean up variable subscriptions
     if (this.chart) {
       this.chart.destroy();
     }
   }
 
+  protected override onVariablesChanged(_variables: Record<string, any>): void {
+    // Re-render chart when variables change
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
+    if (this.chartCanvas) {
+      this.renderChart();
+    }
+  }
+
   private renderChart(): void {
-    if (!this.props || !this.props.data || !this.chartCanvas) {
+    if (!this.props || !this.chartCanvas) {
       return;
     }
 
@@ -45,14 +73,17 @@ export class BarChartComponent
       return;
     }
 
-    // Parse data
-    const data = this.props.data;
+    // Resolve data (could be a variable reference)
+    const resolvedData = this.resolveValue(this.props.data);
+    if (!resolvedData || !Array.isArray(resolvedData)) {
+      return;
+    }
     const xKey = this.props.x || 'region';
     const yKey = this.props.y || 'revenue';
 
     // Format labels and data
-    const labels = data.map((item: any) => item[xKey]);
-    const values = data.map((item: any) => {
+    const labels = resolvedData.map((item: any) => item[xKey]);
+    const values = resolvedData.map((item: any) => {
       // Handle formatting for currency if needed
       if (typeof item[yKey] === 'string' && item[yKey].startsWith('$')) {
         return parseFloat(item[yKey].replace(/[$,]/g, ''));

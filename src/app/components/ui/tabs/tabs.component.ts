@@ -22,7 +22,7 @@ export class TabsComponent extends BaseComponent implements OnInit {
     super();
   }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
     console.log('TabsComponent initialized');
     console.log('Props:', this.props);
 
@@ -38,11 +38,11 @@ export class TabsComponent extends BaseComponent implements OnInit {
     }
 
     // Parse each tab's content
-    tabs.forEach((tab) => {
+    tabs.forEach(async (tab) => {
       console.log(
         `Processing tab ${tab.id}, content length: ${tab.content?.length || 0}`,
       );
-      this.parsedContents[tab.id] = this.markdownParser.parseMarkdown(
+      this.parsedContents[tab.id] = await this.markdownParser.parseMarkdown(
         tab.content,
       );
     });

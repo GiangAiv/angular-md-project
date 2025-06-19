@@ -7,7 +7,7 @@ import { BaseComponent } from '../../base-component';
   styleUrls: ['./chart.component.css'],
 })
 export class ChartComponent extends BaseComponent implements OnInit {
-  ngOnInit(): void {
+  override ngOnInit(): void {
     console.log('Chart initialized with props:', this.props);
   }
 

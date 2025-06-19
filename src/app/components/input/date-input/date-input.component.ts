@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnChanges } from '@angular/core';
 import { BaseComponent } from '../../base-component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -34,7 +34,7 @@ export class DateInputComponent extends BaseComponent<DateInputProps> {
   private generatedId = `date-input-${Math.random().toString(36).substr(2, 9)}`;
   selected: Date | null = null;
 
-  ngOnInit() {
+  override ngOnInit() {
     this.updateSelectedDate();
   }
 

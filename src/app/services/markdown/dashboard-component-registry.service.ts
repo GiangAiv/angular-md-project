@@ -1,5 +1,7 @@
 // src/app/services/markdown/dashboard-component-registry.service.ts
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AccordionItemComponent } from 'src/app/components/ui/accordion/accordion-item/accordion-item.component';
 import { AccordionComponent } from 'src/app/components/ui/accordion/accordion.component';
 import { AreaChartComponent } from 'src/app/components/dashboard/area-chart/area-chart.component';
@@ -43,13 +45,84 @@ import { RenderHtmlComponent } from 'src/app/components/dashboard/render-html/re
 import { KanbanComponent } from 'src/app/components/kanban';
 
 
+
 @Injectable({
   providedIn: 'root',
 })
 export class DashboardComponentRegistryService {
   private componentsRegistered = false;
 
+  // Immutable state management for variables
+  private variablesSubject = new BehaviorSubject<Record<string, any>>({});
+  public variables$ = this.variablesSubject.asObservable();
+
   constructor(private componentRegistry: ComponentRegistryService) {}
+
+  /**
+   * Get current variables state
+   */
+  getVariables(): Record<string, any> {
+    return { ...this.variablesSubject.value };
+  }
+
+  /**
+   * Get a specific variable value
+   */
+  getVariable(key: string): any {
+    return this.variablesSubject.value[key];
+  }
+
+  /**
+   * Set variables (immutable update)
+   */
+  setVariables(variables: Record<string, any>): void {
+    const currentVariables = this.variablesSubject.value;
+    const newVariables = { ...currentVariables, ...variables };
+    this.variablesSubject.next(newVariables);
+  }
+
+  /**
+   * Set a single variable (immutable update)
+   */
+  setVariable(key: string, value: any): void {
+    const currentVariables = this.variablesSubject.value;
+    const newVariables = { ...currentVariables, [key]: value };
+    this.variablesSubject.next(newVariables);
+  }
+
+  /**
+   * Update a variable with a function (immutable update)
+   */
+  updateVariable(key: string, updateFn: (currentValue: any) => any): void {
+    const currentVariables = this.variablesSubject.value;
+    const currentValue = currentVariables[key];
+    const newValue = updateFn(currentValue);
+    const newVariables = { ...currentVariables, [key]: newValue };
+    this.variablesSubject.next(newVariables);
+  }
+
+  /**
+   * Clear all variables
+   */
+  clearVariables(): void {
+    this.variablesSubject.next({});
+  }
+
+  /**
+   * Subscribe to variable changes
+   */
+  subscribeToVariables(): Observable<Record<string, any>> {
+    return this.variables$;
+  }
+
+  /**
+   * Subscribe to a specific variable changes
+   */
+  subscribeToVariable(key: string): Observable<any> {
+    return this.variables$.pipe(
+      map(variables => variables[key])
+    );
+  }
 
   /**
    * Register all dashboard components with the component registry

@@ -4,6 +4,7 @@ export interface ParsedContent {
   content: string;
   frontmatter: Record<string, any>;
   components: ComponentReference[];
+  variables: Record<string, any>;
 }
 
 export interface ComponentReference {

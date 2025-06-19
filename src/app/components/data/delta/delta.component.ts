@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseComponent } from '../../base-component';
 import { SafeHtmlPipe } from '../../../pipes/safe-html.pipe';
@@ -7,7 +7,7 @@ type Direction = 'up' | 'down' | 'auto';
 type Format = 'percent' | 'number';
 
 interface DeltaProps {
-  value: number | string;
+  value: number | string; // Can be a direct value or variable reference
   direction?: Direction;
   showArrow?: boolean;
   format?: Format;
@@ -20,7 +20,7 @@ interface DeltaProps {
   standalone: true,
   imports: [SafeHtmlPipe, CommonModule]
 })
-export class DeltaComponent extends BaseComponent<DeltaProps> {
+export class DeltaComponent extends BaseComponent<DeltaProps> implements OnInit, OnChanges {
   private readonly upArrowSvg = `
     ▲
   `;
@@ -29,16 +29,31 @@ export class DeltaComponent extends BaseComponent<DeltaProps> {
     ▼
   `;
 
+  override ngOnInit() {
+    super.ngOnInit(); // Call parent ngOnInit to set up variable subscriptions
+  }
+
+  ngOnChanges(): void {
+    // Component will automatically re-render when props change
+  }
+
+  protected override onVariablesChanged(_variables: Record<string, any>): void {
+    // Component will automatically re-render when variables change
+  }
+
   getNumericValue(): number {
-    if (!this.props?.value) return 0;
-    
-    if (typeof this.props.value === 'string') {
+    // Resolve the value (could be a variable reference)
+    const resolvedValue = this.resolveValue(this.props?.value);
+
+    if (!resolvedValue) return 0;
+
+    if (typeof resolvedValue === 'string') {
       // Remove any non-numeric characters except decimal point and minus sign
-      const cleanValue = this.props.value.replace(/[^-\d.]/g, '');
+      const cleanValue = resolvedValue.replace(/[^-\d.]/g, '');
       const parsed = parseFloat(cleanValue);
       return isNaN(parsed) ? 0 : parsed;
     }
-    return this.props.value;
+    return typeof resolvedValue === 'number' ? resolvedValue : 0;
   }
 
   getDirection(): 'up' | 'down' | null {

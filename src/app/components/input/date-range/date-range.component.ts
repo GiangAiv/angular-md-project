@@ -46,7 +46,7 @@ export class DateRangeComponent extends BaseComponent<DateRangeProps> {
   selected: { start?: Date; end?: Date } = {};
   selectedPreset?: string;
 
-  ngOnInit() {
+  override ngOnInit() {
     // Handle default preset if provided and no dates are set
     if (this.props?.defaultPreset && !this.props?.startDate && !this.props?.endDate) {
       this.handlePresetChange(this.props.defaultPreset);
